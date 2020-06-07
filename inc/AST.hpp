@@ -1,10 +1,10 @@
-/*
- * @Author: Elendeer
- * @Date: 2020-06-05 08:19:49
- * @LastEditors: Elendeer
- * @LastEditTime: 2020-06-05 20:11:01
- * @Description: file content
- */
+/*********************************************
+ * @Author       : Elendeer
+ * @Date         : 2020-06-05 08:19:49
+* @LastEditors  : Elendeer
+* @LastEditTime : 2020-06-07 15:11:06
+ * @Description  : Abstract syntax tree header
+ *********************************************/
 
 #ifndef AST_HPP_
 #define AST_HPP_
@@ -15,35 +15,38 @@
 
 namespace ESI {
 
-// enum type for nodes of abstract
-enum NodeType { NUM, BINOP };
-const string NodeTypeString[] = {"NUM", "BINOP"};
+// enum type for nodes of abstract syntax tree
+enum NodeType { NUM, BINOP, UNARYOP };
+const string NodeTypeString[] = {"NUM", "BINOP", "UNARYOP"};
 
 /**
  * @description: abstract syntax tree (node) calss
- * and is derived classes BinOp / Num
+ *
  */
 class AST {
    protected:
-    AST *m_left;
+    AST* m_left;
     Token m_token;
-    AST *m_right;
+    AST* m_right;
 
    public:
     AST(AST* left = NULL, Token token = Token(), AST* right = NULL);
 
     /**
      * @description: Return the type of node according to polymorphism.
-     * NUM / BINOP
      */
     virtual NodeType getType() const = 0;
 
-    virtual Token getToken() const = 0;
-    virtual AST* getLeft() const;
-    virtual AST* getRight() const;
+    Token getToken() const;
+    AST* getLeft() const;
+    AST* getRight() const;
 
     virtual ~AST();
 };
+
+/*********************************************
+ * Derived classes
+ *********************************************/
 
 class BinOp : public AST {
    private:
@@ -53,7 +56,21 @@ class BinOp : public AST {
     BinOp(AST* left, Token op, AST* right);
 
     virtual NodeType getType() const;
-    virtual Token getToken() const;
+
+    virtual ~BinOp();
+};
+
+class UnaryOp : public AST {
+private:
+    NodeType m_nodeType;
+
+public:
+    // Unary operator modify rvalue
+    UnaryOp(Token op, AST* right);
+
+    virtual NodeType getType() const;
+
+    virtual ~UnaryOp();
 };
 
 class Num : public AST {
@@ -66,7 +83,8 @@ class Num : public AST {
     Num(Token token);
 
     virtual NodeType getType() const;
-    virtual Token getToken() const;
+
+    virtual ~Num();
 };
 
 }  // namespace ESI

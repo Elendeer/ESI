@@ -16,9 +16,7 @@ Parser::Parser(Lexer lexer) : m_lexer(lexer) {
     m_current_token = m_lexer.get_next_token();
 }
 
-void Parser::error() {
-    throw std::runtime_error("Invalid syntax");
-}
+void Parser::error() { throw std::runtime_error("Invalid syntax"); }
 
 /**
  * @description:
@@ -39,16 +37,29 @@ void Parser::eat(TokenType token_type) {
 /**
  * @description: The next three functions are all parts of parser.
  * Based on grammar.
- * factor : INTEGER | LPAREN expr RPAREN
+ * factor : (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN
  */
-AST* Parser::factor() {
+AST *Parser::factor() {
     Token token = m_current_token;
-    if (m_current_token.getType() == INTEGER) {
+
+    if (m_current_token.getType() == PLUS || m_current_token.getType() == MINUS) {
+
+        if (m_current_token.getType() == PLUS) {
+            eat(PLUS);
+        } else {
+            eat(MINUS);
+        }
+
+        return new UnaryOp(token, factor());
+
+    } else if (m_current_token.getType() == INTEGER) {
         eat(INTEGER);
+
         return new Num(token);
+
     } else {
         eat(LPAREN);
-        AST* node = expr();
+        AST *node = expr();
         eat(RPAREN);
         return node;
     }
@@ -56,12 +67,11 @@ AST* Parser::factor() {
 /**
  * @description: term : factor((MUL | DIV) factor)*
  */
-AST* Parser::term() {
-    AST* node = factor();
+AST *Parser::term() {
+    AST *node = factor();
 
     Token token = m_current_token;
-    while (m_current_token.getType() == MUL ||
-           m_current_token.getType() == DIV) {
+    while (m_current_token.getType() == MUL || m_current_token.getType() == DIV) {
         if (m_current_token.getType() == MUL) {
             eat(MUL);
         } else {
@@ -76,12 +86,11 @@ AST* Parser::term() {
 /**
  * @description: expr : term ((PLUS | MINUS) term)*
  */
-AST* Parser::expr() {
-    AST* node = term();
+AST *Parser::expr() {
+    AST *node = term();
 
     Token token = m_current_token;
-    while (m_current_token.getType() == PLUS ||
-           m_current_token.getType() == MINUS) {
+    while (m_current_token.getType() == PLUS || m_current_token.getType() == MINUS) {
         if (m_current_token.getType() == PLUS) {
             eat(PLUS);
         } else {
@@ -94,8 +103,6 @@ AST* Parser::expr() {
     return node;
 }
 
-AST* Parser::parse() {
-    return expr();
-}
+AST *Parser::parse() { return expr(); }
 
-}  // namespace ESI
+} // namespace ESI

@@ -1,10 +1,10 @@
-/*
- * @Author: Elendeer
- * @Date: 2020-06-05 16:22:37
- * @LastEditors: Elendeer
- * @LastEditTime: 2020-06-05 18:38:47
- * @Description: file content
- */
+/*********************************************
+* @Author       : Elendeer
+* @Date         : 2020-06-05 16:22:37
+* @LastEditors  : Elendeer
+* @LastEditTime : 2020-06-07 16:18:43
+* @Description  :
+*********************************************/
 
 #ifndef INTERPRETER_HPP_
 #define INTERPRETER_HPP_
@@ -29,6 +29,7 @@ class Interpreter : public NodeVisitor {
 private:
     Parser m_parser;
 
+    int visit_UnaryOp(AST* node);
     int visit_BinOp(AST* node);
     int visit_Num(AST* node);
 
