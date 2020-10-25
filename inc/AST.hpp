@@ -1,8 +1,8 @@
 /*********************************************
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
-* @LastEditors  : Elendeer
-* @LastEditTime : 2020-06-07 15:11:06
+ * @LastEditors  : ,: Daniel_Elendeer
+ * @LastEditTime : ,: 2020-10-25 13:31:23
  * @Description  : Abstract syntax tree header
  *********************************************/
 
@@ -10,36 +10,65 @@
 #define AST_HPP_
 
 #include <string>
+#include <vector>
 
 #include "token.hpp"
 
 namespace ESI {
 
+/*********************************************
+ * enum types & reflections
+*********************************************/
 // enum type for nodes of abstract syntax tree
-enum NodeType { NUM, BINOP, UNARYOP };
-const string NodeTypeString[] = {"NUM", "BINOP", "UNARYOP"};
+enum class NodeType {
+    BASE,
+    NUM,
+    BINOP,
+    UNARYOP,
 
-/**
- * @description: abstract syntax tree (node) calss
- *
- */
+    COMPOUND,
+    ASSIGN,
+    VAR,
+    NOOP
+};
+const string NodeTypeString[] = {
+    "BASE",
+    "NUM",
+    "BINOP",
+    "UNARYOP",
+
+    "COMPOUND",
+    "ASSIGN",
+    "VAR",
+    "NOOP"
+};
+
+
+/*********************************************
+* classes
+*********************************************/
+
+/*********************************************
+* @description: abstract syntax tree (node) base calss
+*********************************************/
 class AST {
-   protected:
-    AST* m_left;
+protected:
+    NodeType m_nodeType;
+    AST *m_left;
     Token m_token;
-    AST* m_right;
+    AST *m_right;
 
-   public:
-    AST(AST* left = NULL, Token token = Token(), AST* right = NULL);
+public:
+    AST(NodeType type = NodeType::BASE, AST *left = NULL, Token token = Token(), AST *right = NULL);
 
-    /**
-     * @description: Return the type of node according to polymorphism.
-     */
-    virtual NodeType getType() const = 0;
+    // Return node type of a AST node
+    NodeType getType() const;
 
     Token getToken() const;
-    AST* getLeft() const;
-    AST* getRight() const;
+    AST *getLeft() const;
+    AST *getRight() const;
+    virtual std::vector<AST*> getChildren() const;
+    virtual void pushChild(AST* node);
 
     virtual ~AST();
 };
@@ -49,44 +78,94 @@ class AST {
  *********************************************/
 
 class BinOp : public AST {
-   private:
-    NodeType m_nodeType;
+private:
 
-   public:
-    BinOp(AST* left, Token op, AST* right);
-
-    virtual NodeType getType() const;
+public:
+    BinOp(AST *left, Token op, AST *right);
 
     virtual ~BinOp();
 };
 
 class UnaryOp : public AST {
 private:
-    NodeType m_nodeType;
 
 public:
-    // Unary operator modify rvalue
-    UnaryOp(Token op, AST* right);
-
-    virtual NodeType getType() const;
+    // Unary operator modify right-side-operand
+    UnaryOp(Token op, AST *right);
 
     virtual ~UnaryOp();
 };
 
 class Num : public AST {
-   private:
+private:
     Token m_token;
-    int m_value;  // this one looks useless
+    int m_value; // this one looks useless
     NodeType m_nodeType;
 
-   public:
+public:
     Num(Token token);
-
-    virtual NodeType getType() const;
 
     virtual ~Num();
 };
 
-}  // namespace ESI
+/*********************************************
+ * @description: Represents a 'BEGIN ... END' block.
+*********************************************/
+class Compound : public AST {
+private:
+    std::vector<AST*> m_Children;
+
+public:
+    Compound();
+
+    virtual std::vector<AST*> getChildren() const;
+    virtual void pushChild(AST* node);
+
+    virtual ~Compound();
+};
+
+/*********************************************
+ * @description: Assign AST node represents an
+ *  assignment statement.
+*********************************************/
+class Assign : public AST {
+private:
+
+public:
+    Assign(AST* left, Token op, AST* right);
+
+    virtual ~Assign() = default;
+};
+
+/*********************************************
+ * @description: The Var node represents a variable.
+ * It is constructed out of ID toekn.
+*********************************************/
+class Var : public AST {
+private:
+    std::string m_value;
+
+public:
+    Var(Token token);
+
+    std::string getVal() const;
+
+    virtual ~Var() = default;
+};
+
+/*********************************************
+ * @description: NoOp node is used to represent
+ *  an empty statement.
+*********************************************/
+class NoOp : public AST {
+private:
+
+public:
+    NoOp();
+
+    virtual ~NoOp() = default;
+};
+
+} // namespace ESI
 
 #endif

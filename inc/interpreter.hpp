@@ -1,8 +1,8 @@
 /*********************************************
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:22:37
-* @LastEditors  : Elendeer
-* @LastEditTime : 2020-06-07 16:18:43
+ * @LastEditors  : ,: Daniel_Elendeer
+ * @LastEditTime : ,: 2020-10-25 13:21:18
 * @Description  :
 *********************************************/
 
@@ -10,38 +10,47 @@
 #define INTERPRETER_HPP_
 
 // #include"../inc/AST.hpp"
-#include"../inc/parser.hpp"
+#include "../inc/parser.hpp"
 
+#include <map>
 
 namespace ESI {
 
-// As a virtual base class
+// As a abstract base class
 class NodeVisitor {
 protected:
-    virtual void generic_visit(AST* node) = 0;
+    virtual void generic_visit(AST *node) = 0;
 
 public:
-    virtual int visit(AST* node) = 0;
+    virtual int visit(AST *node) = 0;
 };
 
 // interpreter is a node-visitor
 class Interpreter : public NodeVisitor {
 private:
     Parser m_parser;
+    std::map<std::string, int> m_GLOBAL_SCOPE;
 
-    int visit_UnaryOp(AST* node);
-    int visit_BinOp(AST* node);
-    int visit_Num(AST* node);
+    int visit_UnaryOp(AST *node);
+    int visit_BinOp(AST *node);
+    int visit_Num(AST *node);
 
-    virtual void generic_visit(AST* node);
+    void visit_Compound(AST *node);
+    void visit_NoOp();
+    void visit_Assign(AST *node);
+    int visit_Var(AST *node);
+
+    virtual void generic_visit(AST *node);
 
 public:
     Interpreter(Parser parser);
 
-    virtual int visit(AST* node);
+    virtual int visit(AST *node);
 
-    int interpret();
+    void interpret();
+
+    void printScope();
 };
-} // namepace ESI
+} // namespace ESI
 
 #endif

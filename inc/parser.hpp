@@ -1,10 +1,10 @@
-/*
- * @Author: Elendeer
- * @Date: 2020-06-05 15:45:21
- * @LastEditors: Elendeer
- * @LastEditTime: 2020-06-05 18:38:27
- * @Description: file content
- */
+/*********************************************
+ * @Author       : Elendeer
+ * @Date         : 2020-06-05 15:45:21
+ * @LastEditors  : Elendeer
+ * @LastEditTime : 2020-06-12 18:29:45
+ * @Description  :
+*********************************************/
 
 #ifndef PARSER_HPP_
 #define PARSER_HPP_
@@ -28,9 +28,20 @@ class Parser {
     void eat(TokenType token_type);
 
     // non-terminals
+
     AST* factor();
     AST* term();
     AST* expr();
+
+    AST* program();
+    AST* compound_statement();
+    std::vector<AST*> statement_list();
+    AST* statement();
+    AST* assignment_statement();
+    AST* variable();
+    AST* empty();
+
+
     AST* parse();
 };
 

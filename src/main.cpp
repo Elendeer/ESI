@@ -1,15 +1,14 @@
-/*
- * @Author: Elendeer
- * @Date: 2020-06-05 16:37:36
- * @LastEditors: Elendeer
- * @LastEditTime: 2020-06-06 18:02:24
- * @Description: main function
- */
+/*********************************************
+* @Author       : Elendeer
+* @Date         : 2020-06-05 16:37:36
+ * @LastEditors  : Daniel_Elendeer
+ * @LastEditTime : 2020-10-25 15:18:38
+* @Description  : main function
+*********************************************/
 
-#include"inc/interpreter.hpp"
+#include "../inc/interpreter.hpp"
 
-#include<iostream>
-
+#include <iostream>
 
 int main() {
     using namespace ESI;
@@ -17,7 +16,7 @@ int main() {
     while (true) {
         string text;
 
-        std::cout << "espi> " ;
+        std::cout << "esi> ";
         std::getline(std::cin, text);
 
         if (text.length() == 0) {
@@ -28,21 +27,20 @@ int main() {
         }
 
         Lexer lexer(text);
-        int result;
 
         try {
             Parser parser(lexer);
             Interpreter interpreter(parser);
-            result = interpreter.interpret();
-        }
-        catch (std::runtime_error& error) {
+            interpreter.interpret();
+
+        } catch (std::runtime_error &error) {
             // break;
             std::cout << error.what() << std::endl;
             continue;
         }
-
-        std::cout << result << std::endl;
     }
+
+
 
     return 0;
 }
