@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 15:27:18
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-09-28 21:51:57
+ * @LastEditTime : 2020-11-14 10:16:10
 * @Description  :
 *********************************************/
 
@@ -40,7 +40,10 @@ const vector<Token> reservedKeywordsToken{
 class Lexer {
 private:
     string m_text;
-    int m_pos; // index of m_text
+
+    // index of m_text
+    int m_pos;
+
     // Token m_current_token;
     char m_current_char;
 
@@ -58,9 +61,6 @@ public:
     int interger();
 
     Token get_next_token();
-    // void eat(TokenType token_type);
-    // int term();
-    // int expr();
 };
 
 } // namespace ESI

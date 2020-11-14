@@ -1,8 +1,8 @@
 /*********************************************
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
- * @LastEditors  : ,: Daniel_Elendeer
- * @LastEditTime : ,: 2020-10-25 14:06:41
+ * @LastEditors  : Daniel_Elendeer
+ * @LastEditTime : 2020-11-14 11:38:22
  * @Description  :
  *********************************************/
 
@@ -117,31 +117,57 @@ int Interpreter::visit_Var(AST *node) {
     std::map<std::string, int>::iterator iter = m_GLOBAL_SCOPE.find(var_name);
 
     if (iter == m_GLOBAL_SCOPE.end()) {
-        /*********************************************
-         * Mark for a test
-        *********************************************/
-        std::cout << "name error!" << std::endl;
-        return 0;
+        throw(std::runtime_error(
+            "interpreter: Undefined Symble: " + var_name
+            ));
     }
 
     return iter->second;
 }
 
 void Interpreter::interpret() {
-    AST *tree = m_parser.parse();
+    AST *tree = nullptr;
+    try {
+        tree = m_parser.parse();
+    }
+    catch (const std::runtime_error & error) {
 
-    if (tree == NULL) {
+        std::cout << "When building AST :" << std::endl;
+        std::cout << "\t" << error.what() << std::endl;
+        // std::cout << m_parser.getTmpRoot() << std::endl;
+
+        if (m_parser.getTmpRoot() != nullptr) {
+            delete m_parser.getTmpRoot();
+            // std::cout << "tree deleted" << std::endl;
+        }
+        // else {
+        //     std::cout << "tmp root is nullptr" << std::endl;
+        // }
+
+    }
+
+    if (tree == nullptr) {
         return;
     }
 
-    int result = visit(tree);
-    // 'result' is useless in fact.
-    if (!result) {
-        this -> printScope();
+    int result = -1;
+    try {
+        result = visit(tree);
+
+        // 'result' is useless in fact.
+        if (!result) {
+            this -> printScope();
+        }
+
+        delete tree;
     }
+    catch (const std::runtime_error & error) {
 
+        std::cout << "When visiting AST :" << std::endl;
+        std::cout  << "\t" << error.what() << std::endl;
 
-    delete tree;
+        delete tree;
+    }
 }
 
 void Interpreter::printScope() {

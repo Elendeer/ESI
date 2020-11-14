@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-10-25 15:18:38
+ * @LastEditTime : 2020-11-14 11:38:33
 * @Description  : main function
 *********************************************/
 
@@ -30,12 +30,16 @@ int main() {
 
         try {
             Parser parser(lexer);
+
             Interpreter interpreter(parser);
+
+            // There are try-catch blocks inside interpret()
+            // to solve problems itself.
             interpreter.interpret();
 
         } catch (std::runtime_error &error) {
-            // break;
-            std::cout << error.what() << std::endl;
+            std::cout << "when parser initing :" << std::endl;
+            std::cout  << "\t" << error.what() << std::endl;
             continue;
         }
     }

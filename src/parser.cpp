@@ -13,21 +13,23 @@
 
 namespace ESI {
 
-Parser::Parser(Lexer lexer) : m_lexer(lexer) {
+// Might throw expection when init.
+Parser::Parser(Lexer lexer) : m_lexer(lexer), m_tmp_root(nullptr) {
     m_current_token = m_lexer.get_next_token();
 }
 
 void Parser::error() {
-    throw std::runtime_error("Invalid syntax");
-    // std::cout << "Invalid syntax" << std::endl;
+    throw std::runtime_error("Invalid Syntax");
 }
 
 /*********************************************
- * @description:
- *  compare the current token type with the passed token
+ *  Compare the current token type with the passed token
  *  type and if they match then "eat" the current token
- *  and assign the next token to the self.current_token,
- *  otherwise raise an exception.
+ *  and assign the next token to the this->m_current_token,
+ *  otherwise throw an exception.
+ *
+ *  Might throw exceptions in Lexer::error() or
+ *  Parser::error().
 *********************************************/
 void Parser::eat(TokenType token_type) {
     if (m_current_token.getType() == token_type) {
@@ -141,7 +143,12 @@ AST* Parser::compound_statement() {
     std::vector<AST*> nodes = statement_list();
     eat(TokenType::END);
 
+    // First memory allocate of all.
+
     AST* root = new Compound();
+
+    m_tmp_root = root;
+
     for (AST* node : nodes) {
         root->pushChild(node);
     }
@@ -241,6 +248,10 @@ AST *Parser::parse() {
     }
 
     return node;
+}
+
+AST* Parser::getTmpRoot() const {
+    return m_tmp_root;
 }
 
 } // namespace ESI

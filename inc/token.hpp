@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-09-28 21:42:40
+ * @LastEditTime : 2020-11-14 09:33:52
 * @Description  :
 *********************************************/
 
@@ -18,7 +18,8 @@ using std::string;
 * enum types, reflections & constants
 *********************************************/
 
-enum class TokenType { // define enum type to record the type of a token.
+// Enum type to record the type of a token.
+enum class TokenType {
     NONE,
     INTEGER,
     MUL,
@@ -36,6 +37,8 @@ enum class TokenType { // define enum type to record the type of a token.
     SEMI,
     ID
 };
+
+// String representation of TokenTypes.
 const std::string TokenTypeString[] = {
     "NONE",
     "INTEGER",
@@ -49,7 +52,9 @@ const std::string TokenTypeString[] = {
     "DOT",
     "ASSIGN",
     "SEMI",
-    "ID"};
+    "ID"
+};
+
 const char NOCHAR = '#';
 const int NOVAL = -1;
 
@@ -57,6 +62,9 @@ const int NOVAL = -1;
 * classes & functions
 *********************************************/
 
+/**
+ * @description: convert a interger to a string representation
+ */
 string repr(int num);
 
 class Token {
@@ -71,6 +79,10 @@ public:
     Token(TokenType type, string value);
     Token(const Token &obj) = default;
 
+    // String representation of the class instance.
+    // Examples:
+    // Token(INTEGER, 3)
+    // Token(MUL, '+')
     string str_repr();
 
     TokenType getType() const;

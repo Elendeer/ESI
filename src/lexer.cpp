@@ -35,8 +35,7 @@ Lexer::Lexer(string text)
 }
 
 void Lexer::error() {
-    throw std::runtime_error("Invalid syntax");
-    // std::cout << "Invalid syntax" << std::endl;
+    throw std::runtime_error("Lexer : Invalid Syntax");
 }
 
 /*********************************************

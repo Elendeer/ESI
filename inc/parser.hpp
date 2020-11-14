@@ -1,8 +1,8 @@
 /*********************************************
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
- * @LastEditors  : Elendeer
- * @LastEditTime : 2020-06-12 18:29:45
+ * @LastEditors  : Daniel_Elendeer
+ * @LastEditTime : 2020-11-14 10:44:34
  * @Description  :
 *********************************************/
 
@@ -18,6 +18,10 @@ class Parser {
    private:
     Lexer m_lexer;
     Token m_current_token;
+
+    // A pointer point to root node of AST.
+    // Exist since the first memory allocate.
+    AST* m_tmp_root;
 
    public:
     Parser(Lexer lexer);
@@ -43,6 +47,8 @@ class Parser {
 
 
     AST* parse();
+
+    AST* getTmpRoot() const ;
 };
 
 } // namespace ESI
