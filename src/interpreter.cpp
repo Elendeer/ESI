@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-14 11:38:22
+ * @LastEditTime : 2020-11-18 16:16:05
  * @Description  :
  *********************************************/
 
@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <stdexcept>
+
 
 namespace ESI {
 
@@ -20,7 +21,11 @@ Interpreter::Interpreter(Parser parser) : m_parser(parser) {}
  * to visit a node depends on type of the node.
  */
 int Interpreter::visit(AST *node) {
-    // THIS FUNCTION MUST BE CHANGED!!
+
+    if (node == nullptr) {
+        return 0;
+    }
+
     if (node->getType() == NodeType::NUM) {
         return visit_Num(node);
 
@@ -153,6 +158,8 @@ void Interpreter::interpret() {
     int result = -1;
     try {
         result = visit(tree);
+
+        std::cout << "result: " << result << std::endl;
 
         // 'result' is useless in fact.
         if (!result) {

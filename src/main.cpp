@@ -2,22 +2,44 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-14 11:38:33
+ * @LastEditTime : 2020-11-18 14:55:33
 * @Description  : main function
 *********************************************/
 
 #include "../inc/interpreter.hpp"
 
 #include <iostream>
+#include <cstring>
 
-int main() {
+int main(int args, char * argv[]) {
+
     using namespace ESI;
+    using namespace std;
+
+    switch (args) {
+        case 1:
+            break;
+        case 2:
+            if (strcmp(argv[1], "-t\n")) {
+                // TODO: Open testing_mode.
+            }
+            else {
+                cout << "wrong variables" << endl;
+                return 0;
+            }
+            break;
+
+        default:
+            exit(1);
+            break;
+    }
+
 
     while (true) {
         string text;
 
-        std::cout << "esi> ";
-        std::getline(std::cin, text);
+        cout << "esi> ";
+        getline(std::cin, text);
 
         if (text.length() == 0) {
             continue;
@@ -30,6 +52,7 @@ int main() {
 
         try {
             Parser parser(lexer);
+            cout << "parsed" << endl;
 
             Interpreter interpreter(parser);
 
@@ -38,8 +61,8 @@ int main() {
             interpreter.interpret();
 
         } catch (std::runtime_error &error) {
-            std::cout << "when parser initing :" << std::endl;
-            std::cout  << "\t" << error.what() << std::endl;
+            cout << "when parser initing :" << endl;
+            cout  << "\t" << error.what() << endl;
             continue;
         }
     }

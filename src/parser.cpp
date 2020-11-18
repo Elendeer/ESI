@@ -190,7 +190,7 @@ std::vector<AST*> Parser::statement_list() {
  *          | empty
 *********************************************/
 AST* Parser::statement() {
-    AST* node = NULL;
+    AST* node = nullptr;
     if (m_current_token.getType() == TokenType::BEGIN) {
         node = compound_statement();
 
@@ -244,7 +244,7 @@ AST *Parser::parse() {
         error();
 
         delete node;
-        return NULL;
+        return nullptr;
     }
 
     return node;
