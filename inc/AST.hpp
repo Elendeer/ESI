@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-18 16:24:42
+ * @LastEditTime : 2020-11-19 16:22:53
  * @Description  : Abstract syntax tree header
  *********************************************/
 
@@ -19,9 +19,11 @@
 
 namespace ESI {
 
+
 /*********************************************
  * enum types & reflections
 *********************************************/
+
 // enum type for nodes of abstract syntax tree
 enum class NodeType {
     BASE,
@@ -59,14 +61,12 @@ protected:
     NodeType m_nodeType;
     Token m_token;
 
-    // Every node may have more than two children.
-    // Appointment:
-    // m_children.front() is called left child
-    // m_children.back() is called right child
+    // Holds pointers to children nodes.
     std::vector<AST*> m_children;
 
 public:
-    AST(NodeType type = NodeType::BASE, AST *left = nullptr, Token token = Token(), AST *right = nullptr);
+
+    AST(NodeType type, Token token);
 
     // Return node type of a AST node
     virtual NodeType getType() const;
@@ -75,9 +75,15 @@ public:
     virtual Token getToken() const;
 
     // Returns the pointer to its left child.
+    // Apointment:
+    // m_children.front() is the left child,
+    // m_children.back() is the right child.
     virtual AST *getLeft() const;
 
     // Returns the pointer to its right child.
+    // Apointment:
+    // m_children.front() is the left child,
+    // m_children.back() is the right child.
     virtual AST *getRight() const;
 
     // Returns a vector that contains all children of
@@ -90,34 +96,49 @@ public:
     virtual ~AST();
 };
 
+
 /*********************************************
  * Derived classes
  *********************************************/
 
+// Binary operator
 class BinOp : public AST {
 private:
 
 public:
+    // Apointment:
+    // m_children.front() is the left child,
+    // m_children.back() is the right child.
     BinOp(AST *left, Token op, AST *right);
 
     virtual ~BinOp();
 };
 
+// Unary operator
 class UnaryOp : public AST {
 private:
 
 public:
-    // Unary operator modify right-side-operand
+    // Unary operator modify right-side-operand.
+    // Apointment:
+    // Only have a pointor inside m_children, which pointing
+    // to the right child.
     UnaryOp(Token op, AST *right);
+
+    // Returns the pointer to its left child, which is nullptr
+    // for unary operator.
+    virtual AST*getLeft() const;
+
+    // Returns the pointer to its right child.
+    virtual AST *getRight() const;
 
     virtual ~UnaryOp();
 };
 
+
+// Number
 class Num : public AST {
 private:
-    Token m_token;
-    int m_value; // this one looks useless
-    NodeType m_nodeType;
 
 public:
     Num(Token token);
@@ -125,35 +146,36 @@ public:
     virtual ~Num();
 };
 
-/*********************************************
-Represents a 'BEGIN ... END' block.
-*********************************************/
+
+// Represents a 'BEGIN ... END' block.
 class Compound : public AST {
 private:
 
 public:
+    // No token inside.
     Compound();
 
     virtual ~Compound();
 };
 
-/*********************************************
- * Assign AST node represents an
- * assignment statement.
-*********************************************/
+
+// Assign AST node represents an
+// assignment statement.
 class Assign : public AST {
 private:
 
 public:
+    // Apointment:
+    // m_children.front() is the left child,
+    // m_children.back() is the right child.
     Assign(AST* left, Token op, AST* right);
 
     virtual ~Assign();
 };
 
-/*********************************************
- * The Var node represents a variable.
- * It is constructed out of ID toekn.
-*********************************************/
+
+// Variable node represents a variable.
+// It is constructed out of ID toekn.
 class Var : public AST {
 private:
     std::string m_value;
@@ -166,10 +188,8 @@ public:
     virtual ~Var();
 };
 
-/*********************************************
- * NoOp node is used to represent
- *  an empty statement.
-*********************************************/
+// No-operation node is used to represent
+// an empty statement.
 class NoOp : public AST {
 private:
 

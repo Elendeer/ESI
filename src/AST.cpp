@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-18 16:20:16
+ * @LastEditTime : 2020-11-19 16:34:25
  * @Description  :
  *********************************************/
 
@@ -14,33 +14,37 @@
 
 namespace ESI {
 
-
 /*********************************************
  * AST node base class
  *********************************************/
-AST::AST(NodeType type, AST *left, Token token, AST *right)
-    : m_nodeType(type), m_token(token) {
 
-    m_children.push_back(left);
-    m_children.push_back(right);
+AST::AST(NodeType type, Token token) : m_nodeType(type), m_token(token) {
 }
 
 NodeType AST::getType() const {
     return m_nodeType;
 }
-
 Token AST::getToken() const {
     return m_token;
 }
+
 AST *AST::getLeft() const {
-    return m_children.front();
+    if (!m_children.empty())
+        return m_children.front();
+    else
+        return nullptr;
 }
 AST *AST::getRight() const {
-    return m_children.back();
+    if (!m_children.empty())
+        return m_children.back();
+    else
+        return nullptr;
 }
+
 std::vector<AST *> AST::getChildren() const {
     return m_children;
 }
+
 void AST::pushChild(AST *node) {
     m_children.push_back(node);
     return;
@@ -52,7 +56,7 @@ AST::~AST() {
     for (auto p : m_children) {
         if (p != nullptr) {
             delete p;
-            std::cout << "dd" << std::endl;
+            std::cout << "~AST()" << std::endl;
         }
     }
 }
@@ -62,7 +66,11 @@ AST::~AST() {
  *********************************************/
 
 BinOp::BinOp(AST *left, Token op, AST *right)
-    : AST(NodeType::BINOP, left, op, right) {}
+    : AST(NodeType::BINOP, op) {
+
+    m_children.push_back(left);
+    m_children.push_back(right);
+}
 
 BinOp::~BinOp() {
     std::cout << "~BinOp()" << std::endl;
@@ -71,8 +79,19 @@ BinOp::~BinOp() {
 /*********************************************
  * UnaryOp node
  *********************************************/
+
 UnaryOp::UnaryOp(Token op, AST *right)
-    : AST(NodeType::UNARYOP, nullptr, op, right) {}
+    : AST(NodeType::UNARYOP, op) {
+
+    m_children.push_back(right);
+}
+
+AST *UnaryOp::getLeft() const {
+    return nullptr;
+}
+AST *UnaryOp::getRight() const {
+    return m_children.front();
+}
 
 UnaryOp::~UnaryOp() {
     std::cout << "~UnaryOp()" << std::endl;
@@ -81,10 +100,9 @@ UnaryOp::~UnaryOp() {
 /*********************************************
  * Num node
  *********************************************/
+
 Num::Num(Token token)
-    : AST(NodeType::NUM, nullptr, token, nullptr),
-      m_token(token),
-      m_value(token.getVal()) {}
+    : AST(NodeType::NUM, token) {}
 
 Num::~Num() {
     std::cout << "~Num()" << std::endl;
@@ -94,13 +112,9 @@ Num::~Num() {
  * Compound node
  *********************************************/
 
-Compound::Compound() : AST(NodeType::COMPOUND) {
-    // The base class pushes in two nullptr by default
-    // on initialization, which is not required here.
-    m_children.clear();
+Compound::Compound() : AST(NodeType::COMPOUND, Token()) {
 
     std::cout << "Compound()" << std::endl;
-
 }
 
 Compound::~Compound() {
@@ -111,17 +125,23 @@ Compound::~Compound() {
  * Assign node
  *********************************************/
 
-Assign::Assign(AST *left, Token op, AST *right) : AST(NodeType::ASSIGN, left, op, right) {}
+Assign::Assign(AST *left, Token op, AST *right)
+    : AST(NodeType::ASSIGN, op) {
+
+    m_children.push_back(left);
+    m_children.push_back(right);
+}
 
 Assign::~Assign() {
     std::cout << "~Assign()" << std::endl;
 }
 
+
 /*********************************************
  * Variable node
  *********************************************/
 
-Var::Var(Token token) : AST(NodeType::VAR, nullptr, token, nullptr) {
+Var::Var(Token token) : AST(NodeType::VAR, token) {
     m_value = token.getStrVal();
 }
 
@@ -137,7 +157,7 @@ Var::~Var() {
  * No-operation node
 *********************************************/
 
-NoOp::NoOp() : AST() {}
+NoOp::NoOp() : AST(NodeType::NOOP, Token()) {}
 
 NoOp::~NoOp() {
     std::cout << "~NoOp()" << std::endl;
