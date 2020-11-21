@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-21 12:04:01
+ * @LastEditTime : 2020-11-21 12:39:57
 * @Description  :
 *********************************************/
 
@@ -102,11 +102,25 @@ const int NOVAL = -1;
 // The type of value of each token may be different,
 // And each token have noly one value.
 // So we put pointers of different types into this union.
+// It's not really necessery in fact, because it can be
+// replace by a simple viod*.
 union TokenValue {
+    // This pointer for return in getVal().
+    void * p_void;
+
+    // Pointers below for make the code inside
+    // Token class more clear. Like having a
+    // automatically type cast exactly.
+
     int * p_int;
     string * p_str;
     double * p_double;
 };
+
+
+/*********************************************
+ * Token class
+*********************************************/
 
 class Token {
 private:
@@ -131,11 +145,8 @@ public:
 
     TokenType getType() const;
 
-    // Return a void pointer depends on type of
-    // this token.
-    // Example:
-    // if m_type is TokenType::INTEGER_CONST,
-    // return a 'int *'.
+    // Return a void pointer pionting to the value of
+    // the token.
     void * getVal() const;
 
     ~Token();

@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:41:25
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-21 12:05:27
+ * @LastEditTime : 2020-11-21 12:33:34
 * @Description  :
 *********************************************/
 
@@ -55,15 +55,7 @@ TokenType Token::getType() const {
 }
 
 void * Token::getVal() const {
-    if (m_type == TokenType::INTEGER_CONST) {
-		return m_value.p_int;
-    }
-	else if (m_type == TokenType::REAL_CONST) {
-		return m_value.p_double;
-	}
-	else {
-		return m_value.p_str;
-	}
+    return m_value.p_void;
 }
 
 Token::~Token() {
