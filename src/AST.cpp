@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-19 16:34:25
+ * @LastEditTime : 2020-11-20 10:03:28
  * @Description  :
  *********************************************/
 
@@ -56,7 +56,7 @@ AST::~AST() {
     for (auto p : m_children) {
         if (p != nullptr) {
             delete p;
-            std::cout << "~AST()" << std::endl;
+            // std::cout << "~AST()" << std::endl;
         }
     }
 }
@@ -73,7 +73,7 @@ BinOp::BinOp(AST *left, Token op, AST *right)
 }
 
 BinOp::~BinOp() {
-    std::cout << "~BinOp()" << std::endl;
+    // std::cout << "~BinOp()" << std::endl;
 }
 
 /*********************************************
@@ -94,7 +94,7 @@ AST *UnaryOp::getRight() const {
 }
 
 UnaryOp::~UnaryOp() {
-    std::cout << "~UnaryOp()" << std::endl;
+    // std::cout << "~UnaryOp()" << std::endl;
 }
 
 /*********************************************
@@ -105,20 +105,17 @@ Num::Num(Token token)
     : AST(NodeType::NUM, token) {}
 
 Num::~Num() {
-    std::cout << "~Num()" << std::endl;
+    // std::cout << "~Num()" << std::endl;
 }
 
 /*********************************************
  * Compound node
  *********************************************/
 
-Compound::Compound() : AST(NodeType::COMPOUND, Token()) {
-
-    std::cout << "Compound()" << std::endl;
-}
+Compound::Compound() : AST(NodeType::COMPOUND, Token()) {}
 
 Compound::~Compound() {
-    std::cout << "~Compound()" << std::endl;
+    // std::cout << "~Compound()" << std::endl;
 }
 
 /*********************************************
@@ -133,7 +130,7 @@ Assign::Assign(AST *left, Token op, AST *right)
 }
 
 Assign::~Assign() {
-    std::cout << "~Assign()" << std::endl;
+    // std::cout << "~Assign()" << std::endl;
 }
 
 
@@ -150,7 +147,7 @@ std::string Var::getVal() const {
 }
 
 Var::~Var() {
-    std::cout << "~Var()" << std::endl;
+    // std::cout << "~Var()" << std::endl;
 }
 
 /*********************************************
@@ -160,7 +157,7 @@ Var::~Var() {
 NoOp::NoOp() : AST(NodeType::NOOP, Token()) {}
 
 NoOp::~NoOp() {
-    std::cout << "~NoOp()" << std::endl;
+    // std::cout << "~NoOp()" << std::endl;
 }
 
 } // namespace ESI

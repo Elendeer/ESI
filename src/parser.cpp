@@ -8,13 +8,13 @@
 
 #include "../inc/parser.hpp"
 
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 
 namespace ESI {
 
 // Might throw expection when init.
-Parser::Parser(Lexer lexer) : m_lexer(lexer), m_tmp_root(nullptr) {
+Parser::Parser(const Lexer &lexer) : m_lexer(lexer), m_tmp_root(nullptr) {
     m_current_token = m_lexer.get_next_token();
 }
 
@@ -38,7 +38,6 @@ void Parser::eat(TokenType token_type) {
         error();
     }
 }
-
 
 /*********************************************
  * Arithmetic expressions about
@@ -70,7 +69,7 @@ AST *Parser::factor() {
 
         return new Num(token);
 
-    } else if (m_current_token.getType() == TokenType::LPAREN){
+    } else if (m_current_token.getType() == TokenType::LPAREN) {
         eat(TokenType::LPAREN);
         AST *node = expr();
         eat(TokenType::RPAREN);
@@ -127,8 +126,8 @@ AST *Parser::expr() {
  * @description:
  * program : compound_statement DOT
 *********************************************/
-AST* Parser::program() {
-    AST* node = compound_statement();
+AST *Parser::program() {
+    AST *node = compound_statement();
     eat(TokenType::DOT);
 
     return node;
@@ -138,18 +137,18 @@ AST* Parser::program() {
  * @description:
  * compound_statement : BEGIN statement_list END
 *********************************************/
-AST* Parser::compound_statement() {
+AST *Parser::compound_statement() {
     eat(TokenType::BEGIN);
-    std::vector<AST*> nodes = statement_list();
+    std::vector<AST *> nodes = statement_list();
     eat(TokenType::END);
 
     // First memory allocate of all.
 
-    AST* root = new Compound();
+    AST *root = new Compound();
 
     m_tmp_root = root;
 
-    for (AST* node : nodes) {
+    for (AST *node : nodes) {
         root->pushChild(node);
     }
 
@@ -161,11 +160,11 @@ AST* Parser::compound_statement() {
  * statement_list : statement
  *                | statement SEMI statement_list
 *********************************************/
-std::vector<AST*> Parser::statement_list() {
-    AST* node = statement();
+std::vector<AST *> Parser::statement_list() {
+    AST *node = statement();
 
     using std::vector;
-    vector<AST*> result;
+    vector<AST *> result;
     result.push_back(node);
 
     // std::cout << TokenTypeString[(int)m_current_token.getType()] << std::endl;
@@ -189,8 +188,8 @@ std::vector<AST*> Parser::statement_list() {
  *          | assignment_statement
  *          | empty
 *********************************************/
-AST* Parser::statement() {
-    AST* node = nullptr;
+AST *Parser::statement() {
+    AST *node = nullptr;
     if (m_current_token.getType() == TokenType::BEGIN) {
         node = compound_statement();
 
@@ -208,15 +207,15 @@ AST* Parser::statement() {
  * @description:
  * assignment_statement : variable ASSIGN expr
 *********************************************/
-AST* Parser::assignment_statement() {
-    AST* left = variable();
+AST *Parser::assignment_statement() {
+    AST *left = variable();
     Token token = m_current_token;
 
     eat(TokenType::ASSIGN);
 
-    AST* right = expr();
+    AST *right = expr();
 
-    AST* node = new Assign(left, token, right);
+    AST *node = new Assign(left, token, right);
     return node;
 }
 
@@ -224,8 +223,8 @@ AST* Parser::assignment_statement() {
  * @description:
  * variable : ID
 *********************************************/
-AST* Parser::variable() {
-    AST* node = new Var(m_current_token);
+AST *Parser::variable() {
+    AST *node = new Var(m_current_token);
     eat(TokenType::ID);
     return node;
 }
@@ -234,12 +233,12 @@ AST* Parser::variable() {
  * @description:
  * An empty production.
 *********************************************/
-AST* Parser::empty() {
+AST *Parser::empty() {
     return new NoOp();
 }
 
 AST *Parser::parse() {
-    AST* node = program();
+    AST *node = program();
     if (m_current_token.getType() != TokenType::eEOF) {
         error();
 
@@ -250,7 +249,7 @@ AST *Parser::parse() {
     return node;
 }
 
-AST* Parser::getTmpRoot() const {
+AST *Parser::getTmpRoot() const {
     return m_tmp_root;
 }
 

@@ -1,9 +1,9 @@
 /*********************************************
-* @Author       : Elendeer
-* @Date         : 2020-06-05 16:22:37
+ * @Author       : Elendeer
+ * @Date         : 2020-06-05 16:22:37
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-14 10:30:42
-* @Description  :
+ * @LastEditTime : 2020-11-21 10:26:54
+ * @Description  :
 *********************************************/
 
 #ifndef INTERPRETER_HPP_
@@ -22,7 +22,11 @@ protected:
     virtual void generic_visit(AST *node) = 0;
 
 public:
+    NodeVisitor();
+
     virtual int visit(AST *node) = 0;
+
+    virtual ~NodeVisitor();
 };
 
 // interpreter is a node-visitor
@@ -43,8 +47,10 @@ private:
     virtual void generic_visit(AST *node);
 
 public:
-    Interpreter(Parser parser);
+    Interpreter(const Parser & parser);
 
+    // It will transfer a funtion
+    // to visit a node depends on type of the node.
     virtual int visit(AST *node);
 
     void interpret();

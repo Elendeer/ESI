@@ -2,12 +2,9 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-19 16:22:53
+ * @LastEditTime : 2020-11-20 09:35:11
  * @Description  : Abstract syntax tree header
  *********************************************/
-
-// TODO: Reconstruct node classes. Children-functions in
-// base class, left-right-funcs in derived classes.
 
 #ifndef AST_HPP_
 #define AST_HPP_

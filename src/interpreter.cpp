@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-18 16:16:05
+ * @LastEditTime : 2020-11-21 10:27:32
  * @Description  :
  *********************************************/
 
@@ -14,12 +14,21 @@
 
 namespace ESI {
 
-Interpreter::Interpreter(Parser parser) : m_parser(parser) {}
+/*********************************************
+ * NodeVisitor Class
+*********************************************/
 
-/**
- * @description: It will transfer a funtion
- * to visit a node depends on type of the node.
- */
+NodeVisitor::NodeVisitor() {}
+
+NodeVisitor::~NodeVisitor() {}
+
+/*********************************************
+ * Interpreter Class
+*********************************************/
+
+Interpreter::Interpreter(const Parser & parser) : m_parser(parser) {}
+
+
 int Interpreter::visit(AST *node) {
 
     if (node == nullptr) {
@@ -159,7 +168,7 @@ void Interpreter::interpret() {
     try {
         result = visit(tree);
 
-        std::cout << "result: " << result << std::endl;
+        // std::cout << "result: " << result << std::endl;
 
         // 'result' is useless in fact.
         if (!result) {

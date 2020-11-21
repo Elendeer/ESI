@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-18 14:55:33
+ * @LastEditTime : 2020-11-20 11:24:32
 * @Description  : main function
 *********************************************/
 
@@ -52,7 +52,7 @@ int main(int args, char * argv[]) {
 
         try {
             Parser parser(lexer);
-            cout << "parsed" << endl;
+            // cout << "parsed" << endl;
 
             Interpreter interpreter(parser);
 

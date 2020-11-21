@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-14 09:33:52
+ * @LastEditTime : 2020-11-21 12:04:01
 * @Description  :
 *********************************************/
 
@@ -21,38 +21,75 @@ using std::string;
 // Enum type to record the type of a token.
 enum class TokenType {
     NONE,
+
+    // Reserved keywords
+    BEGIN,
+    END,
+    PROGRAM,
+    VAR,
+
+    // Types, which are also reserved keywords.
     INTEGER,
+    REAL,
+
+    // Values
+    INTEGER_CONST,
+    REAL_CONST,
+
     MUL,
-    DIV,
+    INTEGER_DIV, // the DIV reserved keyword
+    FLOAT_DIV,
     PLUS,
     MINUS,
     LPAREN,
     RPAREN,
+
     eEOF,
 
-    BEGIN,
-    END,
     DOT,
     ASSIGN,
     SEMI,
-    ID
+    COMMA,
+    ID,
+
+    COLON,
 };
 
 // String representation of TokenTypes.
 const std::string TokenTypeString[] = {
     "NONE",
-    "INTEGER",
-    "MUL",
-    "DIV", "PLUS",
-    "MINUS", "LPAREN",
-    "RPAREN", "EOF",
 
+    // Reserved keywords
     "BEGIN",
     "END",
+    "PROGRAM",
+    "VAR",
+
+    // Types, which are also reserved keywords.
+    "INTEGER",
+    "REAL",
+
+    // Values
+    "INTEGER_CONST",
+    "REAL_CONST",
+
+    "MUL",
+    "INTEGER_DIV", // the DIV reserved keyword
+    "FLOAT_DIV",
+    "PLUS",
+    "MINUS",
+    "LPAREN",
+    "RPAREN",
+
+    "eEOF",
+
     "DOT",
     "ASSIGN",
     "SEMI",
-    "ID"
+    "COMMA",
+    "ID",
+
+    "COLON",
 };
 
 const char NOCHAR = '#';
@@ -62,32 +99,46 @@ const int NOVAL = -1;
 * classes & functions
 *********************************************/
 
-/**
- * @description: convert a interger to a string representation
- */
-string repr(int num);
+// The type of value of each token may be different,
+// And each token have noly one value.
+// So we put pointers of different types into this union.
+union TokenValue {
+    int * p_int;
+    string * p_str;
+    double * p_double;
+};
 
 class Token {
 private:
     TokenType m_type;
-    int m_value;
-    string m_strVal;
+
+    // Union type, pointers inside.
+    TokenValue m_value;
+
 
 public:
     Token();
     Token(TokenType type, int value);
-    Token(TokenType type, string value);
+    Token(TokenType type, double value);
+    Token(TokenType type, const string & value);
     Token(const Token &obj) = default;
 
     // String representation of the class instance.
     // Examples:
     // Token(INTEGER, 3)
     // Token(MUL, '+')
-    string str_repr();
+    void print_str_repr();
 
     TokenType getType() const;
-    int getVal() const;
-    string getStrVal() const;
+
+    // Return a void pointer depends on type of
+    // this token.
+    // Example:
+    // if m_type is TokenType::INTEGER_CONST,
+    // return a 'int *'.
+    void * getVal() const;
+
+    ~Token();
 };
 
 } // namespace ESI

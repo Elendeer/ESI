@@ -5,9 +5,6 @@
 
 namespace ESI {
 
-/*********************************************
-* @description: Handle identifiers and reserved keywords.
-*********************************************/
 Token Lexer::id() {
     std::string result = "";
 
@@ -17,19 +14,17 @@ Token Lexer::id() {
         advance();
     }
 
-    for (int j = 0; j <= (int)reservedKeywordsString.size() - 1; ++j) {
-        if (result == reservedKeywordsString[j]) {
-            return reservedKeywordsToken[j];
-        }
-    }
+    // If it's a reserved word
+    if (reservedKeywords.find(result) != reservedKeywords.end())
+        // Can't ues operator [] for it may change the map,
+        // which is a const here.
+        return reservedKeywords.at(result);
 
     return Token(TokenType::ID, result);
 }
 
-/*********************************************
-* @description: Construction function.
-*********************************************/
-Lexer::Lexer(string text)
+// Construction function.
+Lexer::Lexer(const string & text)
     : m_text(text), m_pos(0), m_current_char(m_text[m_pos]) {
     // text : client string input, e.g. "3+5"
 }
@@ -38,11 +33,6 @@ void Lexer::error() {
     throw std::runtime_error("Lexer : Invalid Syntax");
 }
 
-/*********************************************
-* @description:
-* Peek a char from input buffer without actually consuming the
-* next char.
-*********************************************/
 char Lexer::peek() {
     int peek_pos = m_pos + 1;
 
@@ -53,10 +43,6 @@ char Lexer::peek() {
     }
 }
 
-/*********************************************
-* @description:
-Advance the 'm_pos' pointer and set the 'm_current_char' variable.
-*********************************************/
 void Lexer::advance() {
     ++m_pos;
     if ((long long unsigned)m_pos > m_text.length() - 1) {
@@ -70,25 +56,36 @@ void Lexer::skip_whitespace() {
         advance();
     }
 }
+void Lexer::skip_comment() {
+    while (m_current_char != '}') {
+        advance();
+    }
+    // Skip the closing curly brase.
+    advance();
+}
 
-/*********************************************
-* @description: Return a (multidigit) integer consumed from the input.
-*********************************************/
-int Lexer::interger() {
-    int result = 0;
+Token Lexer::number() {
+    double result = 0;
+
     while (m_current_char >= '0' && m_current_char <= '9') {
         result = result * 10 + (int)(m_current_char - '0');
         advance();
     }
-    return result;
+    if (m_current_char == '.') {
+        int power = 10;
+
+        while (m_current_char >= '0' && m_current_char <= '9') {
+            result = result + (double)(m_current_char - '0') / power;
+            power *= 10;
+        }
+
+        return Token(TokenType::REAL_CONST, result);
+    }
+    else {
+        return Token(TokenType::INTEGER_CONST, (int)result);
+    }
 }
 
-/*********************************************
-* @description:
-    Lexical analyzer (also know as scanner or tokenizer)
-    This function is responsible for breaking a sentance
-    apart into tokens. One token at a time.
-*********************************************/
 Token Lexer::get_next_token() {
     while (m_current_char != NOCHAR) {
         // Arithmetic expression about

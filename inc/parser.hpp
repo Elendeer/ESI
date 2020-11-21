@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-14 10:44:34
+ * @LastEditTime : 2020-11-21 10:03:34
  * @Description  :
 *********************************************/
 
@@ -15,17 +15,17 @@
 namespace ESI {
 
 class Parser {
-   private:
+private:
     Lexer m_lexer;
     Token m_current_token;
 
     // A pointer point to root node of AST.
     // Exist since the first memory allocate.
-    AST* m_tmp_root;
+    AST *m_tmp_root;
 
-   public:
-    Parser(Lexer lexer);
-    Parser(const Parser&) = default;
+public:
+    Parser(const Lexer &lexer);
+    Parser(const Parser &) = default;
 
     void error();
 
@@ -33,22 +33,21 @@ class Parser {
 
     // non-terminals
 
-    AST* factor();
-    AST* term();
-    AST* expr();
+    AST *factor();
+    AST *term();
+    AST *expr();
 
-    AST* program();
-    AST* compound_statement();
-    std::vector<AST*> statement_list();
-    AST* statement();
-    AST* assignment_statement();
-    AST* variable();
-    AST* empty();
+    AST *program();
+    AST *compound_statement();
+    std::vector<AST *> statement_list();
+    AST *statement();
+    AST *assignment_statement();
+    AST *variable();
+    AST *empty();
 
+    AST *parse();
 
-    AST* parse();
-
-    AST* getTmpRoot() const ;
+    AST *getTmpRoot() const;
 };
 
 } // namespace ESI
