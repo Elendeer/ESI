@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-21 10:03:34
+ * @LastEditTime : 2021-02-18 15:05:31
  * @Description  :
 *********************************************/
 
@@ -14,40 +14,54 @@
 
 namespace ESI {
 
+// Organizing AST according tokens and grammar.
+// Only produce AST, will not manager to delete it.
 class Parser {
 private:
     Lexer m_lexer;
     Token m_current_token;
+    AST * mp_ast_root;
 
-    // A pointer point to root node of AST.
-    // Exist since the first memory allocate.
-    AST *m_tmp_root;
+    // ===== Functions =====
 
-public:
-    Parser(const Lexer &lexer);
-    Parser(const Parser &) = default;
-
+    // Throw a exception of invalid syntex.
     void error();
 
     void eat(TokenType token_type);
 
-    // non-terminals
+    // ===== non-terminals =====
+
 
     AST *factor();
     AST *term();
     AST *expr();
 
     AST *program();
-    AST *compound_statement();
-    std::vector<AST *> statement_list();
+    AST *block();
+    std::vector<AST *> declarations();
+    std::vector<AST *> variableDeclaration();
+    AST * typeSpec();
+
+    AST *compoundStatement();
+    std::vector<AST *> statementList();
     AST *statement();
-    AST *assignment_statement();
+    AST *assignmentStatement();
     AST *variable();
     AST *empty();
 
+public:
+    // Might throw exception when init.
+    Parser(const Lexer &lexer);
+    Parser(const Parser &) = default;
+    ~Parser();
+
+    // Return a AST node pointor pointing root of AST.
+    // May throw exception when Syntax error is met.
     AST *parse();
 
-    AST *getTmpRoot() const;
+    // Return a AST node pointor pointing root of AST.
+    // Used by interpreter only when parsing error is met.
+    AST * getAstRoot() const ;
 };
 
 } // namespace ESI

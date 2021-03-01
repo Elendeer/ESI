@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-20 10:03:28
+ * @LastEditTime : 2021-03-01 15:38:00
  * @Description  :
  *********************************************/
 
@@ -12,7 +12,10 @@
 
 #include <iostream>
 
+using std::string;
+
 namespace ESI {
+
 
 /*********************************************
  * AST node base class
@@ -139,7 +142,7 @@ Assign::~Assign() {
  *********************************************/
 
 Var::Var(Token token) : AST(NodeType::VAR, token) {
-    m_value = token.getStrVal();
+    m_value = Any::anyCast<string>(token.getVal());
 }
 
 std::string Var::getVal() const {
@@ -149,6 +152,58 @@ std::string Var::getVal() const {
 Var::~Var() {
     // std::cout << "~Var()" << std::endl;
 }
+
+/*********************************************
+ * Block node
+*********************************************/
+
+Block::Block(std::vector<AST*> & declarations, AST* compound_statement) :
+    AST(NodeType::BLOCK, Token()){
+
+    for (auto item : declarations) {
+        m_children.push_back(item);
+    }
+    m_children.push_back(compound_statement);
+}
+Block::~Block() {
+}
+
+/*********************************************
+ * Program node
+*********************************************/
+
+Program::Program(string name, AST* block) :
+    AST(NodeType::PROGRAM, Token()),
+    m_name(name) {
+
+    m_children.push_back(block);
+}
+Program::~Program() {
+}
+
+/*********************************************
+ * Type node
+*********************************************/
+
+VarDecl::VarDecl(AST * variable, AST * type)
+    :AST(NodeType::VAR_DECL, Token()) {
+        m_children.push_back(variable);
+        m_children.push_back(type);
+}
+
+VarDecl::~VarDecl() {}
+
+
+/*********************************************
+ * Type node
+*********************************************/
+
+Type::Type(Token type) : AST(NodeType::TYPE, type) {
+    m_value = Any::anyCast<string>(type.getVal());
+}
+Type::~Type() {
+}
+
 
 /*********************************************
  * No-operation node

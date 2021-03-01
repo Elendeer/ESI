@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-20 11:24:32
+ * @LastEditTime : 2021-03-01 20:55:14
 * @Description  : main function
 *********************************************/
 
@@ -11,28 +11,11 @@
 #include <iostream>
 #include <cstring>
 
-int main(int args, char * argv[]) {
 
-    using namespace ESI;
+int main() {
     using namespace std;
-
-    switch (args) {
-        case 1:
-            break;
-        case 2:
-            if (strcmp(argv[1], "-t\n")) {
-                // TODO: Open testing_mode.
-            }
-            else {
-                cout << "wrong variables" << endl;
-                return 0;
-            }
-            break;
-
-        default:
-            exit(1);
-            break;
-    }
+    using namespace ESI;
+    cout << "starting ... " << endl;
 
 
     while (true) {

@@ -2,12 +2,15 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:41:25
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-21 12:33:34
+ * @LastEditTime : 2021-03-01 17:39:17
 * @Description  :
 *********************************************/
 
 #include <iostream>
+
 #include "../inc/token.hpp"
+
+using std::string;
 
 namespace ESI {
 
@@ -16,19 +19,14 @@ namespace ESI {
 * input value (int / string).
 *********************************************/
 
-// Appointment: None type token by default.
 Token::Token() : m_type(TokenType::NONE) {
-    m_value.p_str = new string("NONE");
+    m_value = Any((string)"NONE");
 }
 
-Token::Token(TokenType type, int value) : m_type(type) {
-    m_value.p_int = new int(value);
-}
-Token::Token(TokenType type, double value) : m_type(type) {
-	m_value.p_double = new double (value);
-}
-Token::Token(TokenType type, const string &value) : m_type(type) {
-    m_value.p_str = new string(value);
+Token::Token(TokenType type, Any value)
+    : m_type(type), m_value(value) {}
+
+Token::~Token() {
 }
 
 
@@ -38,15 +36,15 @@ void Token::print_str_repr() {
     string type = TokenTypeString[(int)m_type];
 	if (m_type == TokenType::INTEGER_CONST) {
 		cout << "Token(" + type + ", " <<
-		*m_value.p_int << ")";
+		Any::anyCast<int>(m_value) << ")";
 	}
 	else if (m_type == TokenType::REAL_CONST) {
 		cout << "Token(" + type + ", " <<
-		*m_value.p_double << ")";
+		Any::anyCast<double>(m_value) << ")";
 	}
 	else {
 		cout << "Token(" + type + ", " <<
-		*m_value.p_str << ")";
+		Any::anyCast<string>(m_value) << ")";
 	}
 }
 
@@ -54,20 +52,9 @@ TokenType Token::getType() const {
     return m_type;
 }
 
-void * Token::getVal() const {
-    return m_value.p_void;
+Any Token::getVal() const {
+    return m_value;
 }
 
-Token::~Token() {
-    if (m_type == TokenType::INTEGER_CONST) {
-        delete m_value.p_int;
-    }
-    else if (m_type == TokenType::REAL_CONST) {
-        delete m_value.p_double;
-    }
-    else {
-        delete m_value.p_str;
-    }
-}
 
 } // namespace ESI

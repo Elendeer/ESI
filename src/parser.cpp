@@ -13,24 +13,25 @@
 
 namespace ESI {
 
-// Might throw expection when init.
-Parser::Parser(const Lexer &lexer) : m_lexer(lexer), m_tmp_root(nullptr) {
+Parser::Parser(const Lexer &lexer) :
+    m_lexer(lexer), mp_ast_root(nullptr) {
+
     m_current_token = m_lexer.get_next_token();
+}
+Parser::~Parser() {
 }
 
 void Parser::error() {
     throw std::runtime_error("Invalid Syntax");
 }
 
-/*********************************************
- *  Compare the current token type with the passed token
- *  type and if they match then "eat" the current token
- *  and assign the next token to the this->m_current_token,
- *  otherwise throw an exception.
- *
- *  Might throw exceptions in Lexer::error() or
- *  Parser::error().
-*********************************************/
+//  Compare the current token type with the passed token
+//  type and if they match then "eat" the current token
+//  and assign the next token to the this->m_current_token,
+//  otherwise throw an exception.
+//
+//  Might throw exceptions in Lexer::error() or
+//  Parser::error().
 void Parser::eat(TokenType token_type) {
     if (m_current_token.getType() == token_type) {
         m_current_token = m_lexer.get_next_token();
@@ -43,54 +44,71 @@ void Parser::eat(TokenType token_type) {
  * Arithmetic expressions about
 *********************************************/
 
-/*********************************************
- * @description:
- * The next three functions are all parts of parser.
- * Based on grammar.
- * factor : PLUS factor
- *          | MINUS factor
- *          | INTEGER
- *          | LPAREN expr RPAREN
- *          | variable
-*********************************************/
+// The next three functions are all parts of parser.
+// Based on grammar.
+// factor : PLUS factor
+//          | MINUS factor
+//          | INTEGER_CONST
+//          | REAL_CONST
+//          | LPAREN expr RPAREN
+//          | variable
 AST *Parser::factor() {
+    // For keeping current token.
+    // m_current_token will change after function eat() is called.
     Token token = m_current_token;
 
-    if (m_current_token.getType() == TokenType::PLUS) {
+    if (token.getType() == TokenType::PLUS) {
         eat(TokenType::PLUS);
-        return new UnaryOp(token, factor());
 
-    } else if (m_current_token.getType() == TokenType::MINUS) {
+        return new UnaryOp(token, factor());
+    }
+    else if (token.getType() == TokenType::MINUS) {
         eat(TokenType::MINUS);
-        return new UnaryOp(token, factor());
 
-    } else if (m_current_token.getType() == TokenType::INTEGER) {
-        eat(TokenType::INTEGER);
+        return new UnaryOp(token, factor());
+    }
+    else if (token.getType() == TokenType::INTEGER_CONST) {
+        eat(TokenType::INTEGER_CONST);
 
         return new Num(token);
+    }
+    else if (token.getType() == TokenType::REAL_CONST) {
+        eat(TokenType::REAL_CONST);
 
-    } else if (m_current_token.getType() == TokenType::LPAREN) {
+        return new Num(token);
+    }
+    else if (token.getType() == TokenType::LPAREN) {
         eat(TokenType::LPAREN);
         AST *node = expr();
         eat(TokenType::RPAREN);
-        return node;
 
-    } else {
+        return node;
+    }
+    else {
         return variable();
     }
 }
-/**
- * @description: term : factor((MUL | DIV) factor)*
- */
+
+// term : factor((MUL | INTEGER_DIV | FLOAT_DIV) factor)*
 AST *Parser::term() {
     AST *node = factor();
 
+    // For keeping current token.
+    // m_current_token will change after function eat() is called.
     Token token = m_current_token;
-    while (m_current_token.getType() == TokenType::MUL || m_current_token.getType() == TokenType::DIV) {
+
+    while (m_current_token.getType() == TokenType::MUL
+        || m_current_token.getType() == TokenType::INTEGER_DIV
+        || m_current_token.getType() == TokenType::FLOAT_DIV) {
+
         if (m_current_token.getType() == TokenType::MUL) {
             eat(TokenType::MUL);
-        } else {
-            eat(TokenType::DIV);
+        }
+        else if (m_current_token.getType() == TokenType::INTEGER_DIV) {
+            eat(TokenType::INTEGER_DIV);
+        }
+        else {
+            eat(TokenType::FLOAT_DIV);
         }
 
         node = new BinOp(node, token, factor());
@@ -98,17 +116,22 @@ AST *Parser::term() {
 
     return node;
 }
-/**
- * @description: expr : term ((PLUS | MINUS) term)*
- */
+
+// expr : term ((PLUS | MINUS) term)*
 AST *Parser::expr() {
     AST *node = term();
 
+    // For keeping current token.
+    // m_current_token will change after function eat() is called.
     Token token = m_current_token;
-    while (m_current_token.getType() == TokenType::PLUS || m_current_token.getType() == TokenType::MINUS) {
+
+    while (m_current_token.getType() == TokenType::PLUS
+        || m_current_token.getType() == TokenType::MINUS) {
+
         if (m_current_token.getType() == TokenType::PLUS) {
             eat(TokenType::PLUS);
-        } else {
+        }
+        else {
             eat(TokenType::MINUS);
         }
 
@@ -122,31 +145,112 @@ AST *Parser::expr() {
  * Programs about
 *********************************************/
 
-/*********************************************
- * @description:
- * program : compound_statement DOT
-*********************************************/
+// program : PROGRAM variable SEMI block DOT
 AST *Parser::program() {
-    AST *node = compound_statement();
+    eat(TokenType::PROGRAM);
+    AST * var_node = variable();
+    // TODO: change the way of type changing.
+    std::string program_name = ((Var *)var_node) -> getVal();
+    eat(TokenType::SEMI);
+
+    AST * block_node = block();
     eat(TokenType::DOT);
 
-    return node;
+    return new Program(program_name, block_node);
 }
 
-/*********************************************
- * @description:
- * compound_statement : BEGIN statement_list END
-*********************************************/
-AST *Parser::compound_statement() {
+// block : declarations compound_statement
+AST * Parser::block() {
+    std::vector<AST *> declaration_nodes = declarations();
+    return new Block(declaration_nodes, compoundStatement());
+}
+
+// declarations : VAR (variable_declaration SEMI)+ | empty
+std::vector<AST *> Parser::declarations() {
+    std::vector<AST *> declarations;
+
+    if (m_current_token.getType() == TokenType::VAR) {
+        eat(TokenType::VAR);
+        while (m_current_token.getType() == TokenType::ID) {
+            // Pointors pointing to variable nodes(Var).
+            std::vector<AST *> var_decl = variableDeclaration();
+
+            for (auto variable_node : var_decl) {
+                declarations.push_back(variable_node);
+            }
+
+            eat(TokenType::SEMI);
+        }
+    }
+
+    return declarations;
+}
+
+// variable_declaration : ID (COMMA ID)* COLON type_spec
+std::vector<AST *> Parser::variableDeclaration() {
+    std::vector<AST *> var_nodes;
+
+    // For m_current_token will change after function eat() is called.
+    Token tmp_token = m_current_token;
+
+    eat(TokenType::ID);
+    var_nodes.push_back(new Var(tmp_token));
+
+    while (m_current_token.getType() == TokenType::COMMA) {
+        eat(TokenType::COMMA);
+        tmp_token = m_current_token;
+        eat(TokenType::ID);
+
+        var_nodes.push_back(new Var(tmp_token));
+    }
+    eat(TokenType::COLON);
+
+    // There is a memory allocation of a node inside function typeSpec(),
+    // and it will return a pointer poiting to that.
+    // Type node may be used more than one time (e.g. a, b : INTEGER),
+    // so this node will be used as a template.
+    // Delete this pointer on time is necessary.
+    AST* p_type_node = typeSpec();
+
+    std::vector<AST *> var_decl;
+    for (auto p_var_node : var_nodes) {
+        AST * tmp_p_type_node = new Type(p_type_node -> getToken());
+        var_decl.push_back(new VarDecl(p_var_node, tmp_p_type_node));
+    }
+
+    delete p_type_node;
+
+    return var_decl;
+}
+
+// type_spec : INTERGER | REAL
+AST * Parser::typeSpec() {
+    Token token = m_current_token;
+    if (m_current_token.getType() == TokenType::INTEGER) {
+        eat(TokenType::INTEGER);
+        return new Type(token);
+    }
+    else if (m_current_token.getType() == TokenType::REAL) {
+        eat(TokenType::REAL);
+        return new Type(token);
+    }
+    else {
+        error();
+    }
+
+    // useless.
+    return nullptr;
+}
+
+
+
+// compound_statement : BEGIN statement_list END
+AST *Parser::compoundStatement() {
     eat(TokenType::BEGIN);
-    std::vector<AST *> nodes = statement_list();
+    std::vector<AST *> nodes = statementList();
     eat(TokenType::END);
 
-    // First memory allocate of all.
-
     AST *root = new Compound();
-
-    m_tmp_root = root;
 
     for (AST *node : nodes) {
         root->pushChild(node);
@@ -155,12 +259,9 @@ AST *Parser::compound_statement() {
     return root;
 }
 
-/*********************************************
- * @description:
- * statement_list : statement
- *                | statement SEMI statement_list
-*********************************************/
-std::vector<AST *> Parser::statement_list() {
+// statement_list : statement
+//                | statement SEMI statement_list
+std::vector<AST *> Parser::statementList() {
     AST *node = statement();
 
     using std::vector;
@@ -182,19 +283,16 @@ std::vector<AST *> Parser::statement_list() {
     return result;
 }
 
-/*********************************************
- * @description:
- * statement : compound_statement
- *          | assignment_statement
- *          | empty
-*********************************************/
+// statement : compound_statement
+//          | assignment_statement
+//          | empty
 AST *Parser::statement() {
     AST *node = nullptr;
     if (m_current_token.getType() == TokenType::BEGIN) {
-        node = compound_statement();
+        node = compoundStatement();
 
     } else if (m_current_token.getType() == TokenType::ID) {
-        node = assignment_statement();
+        node = assignmentStatement();
 
     } else {
         node = empty();
@@ -203,11 +301,8 @@ AST *Parser::statement() {
     return node;
 }
 
-/*********************************************
- * @description:
- * assignment_statement : variable ASSIGN expr
-*********************************************/
-AST *Parser::assignment_statement() {
+// assignment_statement : variable ASSIGN expr
+AST *Parser::assignmentStatement() {
     AST *left = variable();
     Token token = m_current_token;
 
@@ -219,38 +314,35 @@ AST *Parser::assignment_statement() {
     return node;
 }
 
-/*********************************************
- * @description:
- * variable : ID
-*********************************************/
+// variable : ID
 AST *Parser::variable() {
     AST *node = new Var(m_current_token);
+
+    // TODO: mark for the first new
+    mp_ast_root = node;
+
     eat(TokenType::ID);
     return node;
 }
 
-/*********************************************
- * @description:
- * An empty production.
-*********************************************/
+// An empty production.
 AST *Parser::empty() {
     return new NoOp();
 }
 
 AST *Parser::parse() {
-    AST *node = program();
+    mp_ast_root = program();
+
+    // TODO: exam the necessity.
     if (m_current_token.getType() != TokenType::eEOF) {
         error();
-
-        delete node;
-        return nullptr;
     }
 
-    return node;
+    return mp_ast_root;
 }
 
-AST *Parser::getTmpRoot() const {
-    return m_tmp_root;
+AST * Parser::getAstRoot() const {
+    return mp_ast_root;
 }
 
 } // namespace ESI

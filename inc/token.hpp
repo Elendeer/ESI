@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-21 12:39:57
+ * @LastEditTime : 2021-03-01 16:24:46
 * @Description  :
 *********************************************/
 
@@ -11,8 +11,9 @@
 
 #include <string>
 
+#include "../inc/any.hpp"
+
 namespace ESI {
-using std::string;
 
 /*********************************************
 * enum types, reflections & constants
@@ -56,7 +57,7 @@ enum class TokenType {
 };
 
 // String representation of TokenTypes.
-const std::string TokenTypeString[] = {
+const static std::string TokenTypeString[] = {
     "NONE",
 
     // Reserved keywords
@@ -92,30 +93,8 @@ const std::string TokenTypeString[] = {
     "COLON",
 };
 
-const char NOCHAR = '#';
-const int NOVAL = -1;
-
-/*********************************************
-* classes & functions
-*********************************************/
-
-// The type of value of each token may be different,
-// And each token have noly one value.
-// So we put pointers of different types into this union.
-// It's not really necessery in fact, because it can be
-// replace by a simple viod*.
-union TokenValue {
-    // This pointer for return in getVal().
-    void * p_void;
-
-    // Pointers below for make the code inside
-    // Token class more clear. Like having a
-    // automatically type cast exactly.
-
-    int * p_int;
-    string * p_str;
-    double * p_double;
-};
+const static char NOCHAR = (char)(-1);
+const static int NOVAL = -1;
 
 
 /*********************************************
@@ -125,16 +104,13 @@ union TokenValue {
 class Token {
 private:
     TokenType m_type;
-
-    // Union type, pointers inside.
-    TokenValue m_value;
+    Any m_value;
 
 
 public:
+    // Appointment: None type token by default.
     Token();
-    Token(TokenType type, int value);
-    Token(TokenType type, double value);
-    Token(TokenType type, const string & value);
+    Token(TokenType type, Any value);
     Token(const Token &obj) = default;
 
     // String representation of the class instance.
@@ -143,11 +119,13 @@ public:
     // Token(MUL, '+')
     void print_str_repr();
 
+    // Return the type of the token.
+    // The type of token will be a TokenType type
+    // variable (enum type).
     TokenType getType() const;
 
-    // Return a void pointer pionting to the value of
-    // the token.
-    void * getVal() const;
+    // Return the value inside token which is Any type.
+    Any getVal() const;
 
     ~Token();
 };

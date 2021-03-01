@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-11-14 09:06:48
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2020-11-14 09:12:28
+ * @LastEditTime : 2021-02-16 10:06:22
  * @Description  :
 -->
 
@@ -10,7 +10,16 @@
 
 ```note
 
-program : compound_statement DOT
+program : PROGRAM variable SEMI block DOT
+
+block : declarations compound_statement
+
+declarations : VAR (variable_declaration SEMI)+
+            | empty
+
+variable_declaration : ID (COMMA ID)* COLON type_spec
+
+type_spec : INTEGER | REAL
 
 compound_statement : BEGIN statement_list END
 
@@ -27,11 +36,12 @@ variable : ID
 
 factor : PLUS factor
          | MINUS factor
-         | INTEGER
+         | INTEGER_CONST
+         | REAL_CONST
          | LPAREN expr RPAREN
          | variable
 
-term : factor((MUL | DIV) factor)*
+term : factor((MUL | INTEGER_DIV | FLOAT_DIV) factor)*
 
 expr : term ((PLUS | MINUS) term)*
 

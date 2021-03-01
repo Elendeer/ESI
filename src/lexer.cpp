@@ -3,31 +3,34 @@
 #include <stdexcept> // std::runtime error
 #include <iostream>
 
+using std::string;
+
 namespace ESI {
+
 
 Token Lexer::id() {
     std::string result = "";
 
-    while (m_current_char != NOCHAR && ((m_current_char >= '0' && m_current_char <= '9') || (m_current_char >= 'a' && m_current_char <= 'z') || (m_current_char >= 'A' && m_current_char <= 'Z'))) {
+    while (
+        m_current_char != NOCHAR
+        && ((m_current_char >= '0' && m_current_char <= '9')
+        || (m_current_char >= 'a' && m_current_char <= 'z')
+        || (m_current_char >= 'A' && m_current_char <= 'Z'))) {
 
         result += m_current_char;
         advance();
     }
 
     // If it's a reserved word
-    if (reservedKeywords.find(result) != reservedKeywords.end())
-        // Can't ues operator [] for it may change the map,
+    if (reservedKeywords.find(result) != reservedKeywords.end()) {
+        // Using operator [] may change the map,
         // which is a const here.
-        return reservedKeywords.at(result);
+        return Token(reservedKeywords.at(result));
+    }
 
     return Token(TokenType::ID, result);
 }
 
-// Construction function.
-Lexer::Lexer(const string & text)
-    : m_text(text), m_pos(0), m_current_char(m_text[m_pos]) {
-    // text : client string input, e.g. "3+5"
-}
 
 void Lexer::error() {
     throw std::runtime_error("Lexer : Invalid Syntax");
@@ -51,11 +54,16 @@ void Lexer::advance() {
         m_current_char = m_text[m_pos];
     }
 }
+
 void Lexer::skip_whitespace() {
-    while (m_current_char == ' ') {
+    while (m_current_char == ' '
+    || m_current_char == '\t'
+    || m_current_char == '\n') {
+
         advance();
     }
 }
+
 void Lexer::skip_comment() {
     while (m_current_char != '}') {
         advance();
@@ -86,59 +94,91 @@ Token Lexer::number() {
     }
 }
 
+
+// Constructor.
+Lexer::Lexer(const string & text)
+    : m_text(text), m_pos(0), m_current_char(m_text[m_pos]) {
+    // text : client string input, e.g. "3+5"
+}
+
+Lexer::~Lexer() {
+
+}
+
+
 Token Lexer::get_next_token() {
     while (m_current_char != NOCHAR) {
-        // Arithmetic expression about
+
         if (m_current_char == ' ') {
             skip_whitespace();
             continue;
         }
-        if (m_current_char >= '0' && m_current_char <= '9') {
-            return Token(TokenType::INTEGER, interger());
+        else if (m_current_char == '{') {
+            advance();
+            skip_comment();
+            continue;
         }
-        if (m_current_char == '*') {
+        // Arithmetic expression about
+        else if (m_current_char >= '0' && m_current_char <= '9') {
+            return number();
+        }
+
+        else if (m_current_char == '*') {
             advance();
             return Token(TokenType::MUL, "*");
         }
-        if (m_current_char == '/') {
+        else if (m_current_char == '/') {
             advance();
-            return Token(TokenType::DIV, "/");
+            return Token(TokenType::FLOAT_DIV, "/");
         }
-        if (m_current_char == '+') {
+        else if (m_current_char == '+') {
             advance();
             return Token(TokenType::PLUS, "+");
         }
-        if (m_current_char == '-') {
+        else if (m_current_char == '-') {
             advance();
             return Token(TokenType::MINUS, "-");
         }
-        if (m_current_char == '(') {
+
+        else if (m_current_char == '(') {
             advance();
             return Token(TokenType::LPAREN, "(");
         }
-        if (m_current_char == ')') {
+        else if (m_current_char == ')') {
             advance();
             return Token(TokenType::RPAREN, ")");
         }
         // Symbols about
-        if ((m_current_char >= 'a' && m_current_char <= 'z') || (m_current_char >= 'A' && m_current_char <= 'Z')) {
+        else if ((m_current_char >= 'a' && m_current_char <= 'z') || (m_current_char >= 'A' && m_current_char <= 'Z')) {
             return id();
         }
-        if (m_current_char == ':' && peek() == '=') {
+
+        else if (m_current_char == ':' && peek() == '=') {
             advance();
             advance();
             return Token(TokenType::ASSIGN, ":=");
         }
-        if (m_current_char == ';') {
+        else if (m_current_char == ':') {
+            advance();
+            return Token(TokenType::COLON, ":");
+        }
+
+        else if (m_current_char == ';') {
             advance();
             return Token(TokenType::SEMI, ";");
         }
-        if (m_current_char == '.') {
+        else if (m_current_char == '.') {
             advance();
             return Token(TokenType::DOT, ".");
         }
+        else if (m_current_char == ',') {
+            advance();
+            return Token(TokenType::COMMA, ",");
+        }
 
-        error();
+        else {
+            error();
+        }
     }
 
     return Token(TokenType::eEOF, NOVAL);
