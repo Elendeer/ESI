@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-02-25 11:51:26
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-01 17:33:44
+ * @LastEditTime : 2021-03-04 16:39:23
  * @Description  :
 *********************************************/
 
@@ -11,7 +11,7 @@
 
 #include <cmath>
 #include <iostream>
-#include <unordered_map>
+#include <map>
 #include <regex>
 #include <string>
 
@@ -29,7 +29,8 @@ enum class DataType {
     String
 };
 
-const static std::unordered_map<DataType, std::string> typeMap {
+// TODO: To find out why unordered_map can not be used here.
+static const std::map<DataType, std::string> typeMap {
     {DataType::Empty, "empty"},
     {DataType::Bool, "bool"},
     {DataType::Char, "char"},

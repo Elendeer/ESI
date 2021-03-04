@@ -2,34 +2,63 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-01 20:55:14
+ * @LastEditTime : 2021-03-04 17:14:32
 * @Description  : main function
 *********************************************/
-
-#include "../inc/interpreter.hpp"
 
 #include <iostream>
 #include <cstring>
 
+#include "../inc/interpreter.hpp"
+#include "../inc/file_reader.hpp"
 
-int main() {
+
+int main(int num_command_arguments, char * pointer_array_command[]) {
     using namespace std;
     using namespace ESI;
-    cout << "starting ... " << endl;
+    // cout << "starting ... " << endl;
 
 
-    while (true) {
-        string text;
+    // while (true) {
+    //     string text;
 
-        cout << "esi> ";
-        getline(std::cin, text);
+    //     cout << "esi> ";
+    //     getline(std::cin, text);
 
-        if (text.length() == 0) {
-            continue;
-        }
-        if (text == "exit") {
-            break;
-        }
+    //     if (text.length() == 0) {
+    //         continue;
+    //     }
+    //     if (text == "exit") {
+    //         break;
+    //     }
+
+    //     Lexer lexer(text);
+
+    //     try {
+    //         Parser parser(lexer);
+    //         // cout << "parsed" << endl;
+
+    //         Interpreter interpreter(parser);
+
+    //         // There are try-catch blocks inside interpret()
+    //         // to solve problems itself.
+    //         interpreter.interpret();
+
+    //     } catch (std::runtime_error &error) {
+    //         cout << "when parser initing :" << endl;
+    //         cout  << "\t" << error.what() << endl;
+    //         continue;
+    //     }
+    // }
+
+    if (num_command_arguments != 2) {
+        cout << "Invailid command line arguments" << endl;
+    }
+    else {
+        string file_path = pointer_array_command[1];
+
+        FileReader file_reader;
+        string text = file_reader.readFile(file_path);
 
         Lexer lexer(text);
 
@@ -46,10 +75,8 @@ int main() {
         } catch (std::runtime_error &error) {
             cout << "when parser initing :" << endl;
             cout  << "\t" << error.what() << endl;
-            continue;
         }
     }
-
 
 
     return 0;

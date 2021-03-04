@@ -1,4 +1,5 @@
 test
 *.o
+*.d
 *.exe
 struct.md

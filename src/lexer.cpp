@@ -80,11 +80,13 @@ Token Lexer::number() {
         advance();
     }
     if (m_current_char == '.') {
+        advance();
         int power = 10;
 
         while (m_current_char >= '0' && m_current_char <= '9') {
             result = result + (double)(m_current_char - '0') / power;
             power *= 10;
+            advance();
         }
 
         return Token(TokenType::REAL_CONST, result);
@@ -109,7 +111,10 @@ Lexer::~Lexer() {
 Token Lexer::get_next_token() {
     while (m_current_char != NOCHAR) {
 
-        if (m_current_char == ' ') {
+        if (m_current_char == ' ' ||
+            m_current_char == '\t' ||
+            m_current_char == '\n' ) {
+
             skip_whitespace();
             continue;
         }

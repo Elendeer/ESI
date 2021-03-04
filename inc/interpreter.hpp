@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:22:37
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-01 15:42:33
+ * @LastEditTime : 2021-03-04 00:39:31
  * @Description  :
 *********************************************/
 
@@ -61,6 +61,7 @@ public:
 
     void printScope();
 };
+
 } // namespace ESI
 
 #endif

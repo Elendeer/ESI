@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:27:18
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-02-22 17:21:14
+ * @LastEditTime : 2021-03-04 01:13:58
  * @Description  :
 *********************************************/
 
@@ -19,28 +19,17 @@ namespace ESI {
 /*********************************************
 * enum types, reflections & constants
 *********************************************/
-// If use unordered_map <string , Token> will cause a bug.
-static std::unordered_map<std::string, Token>reservedKeywords {
-    {"PROGRAM", Token(TokenType::PROGRAM, "PROGRAM")},
-    {"VAR", Token(TokenType::VAR, "VAR")},
-    {"INTEGER", Token(TokenType::INTEGER, "INTEGER")},
-    {"REAL", Token(TokenType::REAL, "REAL")},
-    {"INTEGER_DIV", Token(TokenType::INTEGER_DIV, "INTEGER_DIV")},
-    {"FLOAT_DIV", Token(TokenType::FLOAT_DIV, "FLOAT_DIV")},
-    {"BEGIN", Token(TokenType::BEGIN, "BEGIN")},
-    {"END", Token(TokenType::END, "END")}
-};
 
-// const static std::unordered_map<std::string, Token&>reservedKeywords {
-//     {"PROGRAM", *(new Token(TokenType::PROGRAM, "PROGRAM"))},
-//     {"VAR", *(new Token(TokenType::VAR, "VAR"))},
-//     {"INTEGER", *(new Token(TokenType::INTEGER, "INTEGER"))},
-//     {"REAL", *(new Token(TokenType::REAL, "REAL"))},
-//     {"INTEGER_DIV", *(new Token(TokenType::INTEGER_DIV, "INTEGER_DIV"))},
-//     {"FLOAT_DIV", *(new Token(TokenType::FLOAT_DIV, "FLOAT_DIV"))},
-//     {"BEGIN", *(new Token(TokenType::BEGIN, "BEGIN"))},
-//     {"END", *(new Token(TokenType::END, "END"))}
-// };
+static const std::unordered_map<std::string, Token>reservedKeywords {
+    {"PROGRAM", Token(TokenType::PROGRAM, (std::string)"PROGRAM")},
+    {"VAR", Token(TokenType::VAR, (std::string)"VAR")},
+    {"INTEGER", Token(TokenType::INTEGER, (std::string)"INTEGER")},
+    {"REAL", Token(TokenType::REAL, (std::string)"REAL")},
+    {"INTEGER_DIV", Token(TokenType::INTEGER_DIV, (std::string)"INTEGER_DIV")},
+    {"FLOAT_DIV", Token(TokenType::FLOAT_DIV, (std::string)"FLOAT_DIV")},
+    {"BEGIN", Token(TokenType::BEGIN, (std::string)"BEGIN")},
+    {"END", Token(TokenType::END, (std::string)"END")}
+};
 
 
 /*********************************************
