@@ -7,6 +7,18 @@ using std::string;
 
 namespace ESI {
 
+const char Lexer::NOCHAR = (char)(-1);
+
+const std::unordered_map<string, Token> Lexer::reservedKeywords {
+    {"PROGRAM", Token(TokenType::PROGRAM, (std::string)"PROGRAM")},
+    {"VAR", Token(TokenType::VAR, (std::string)"VAR")},
+    {"INTEGER", Token(TokenType::INTEGER, (std::string)"INTEGER")},
+    {"REAL", Token(TokenType::REAL, (std::string)"REAL")},
+    {"INTEGER_DIV", Token(TokenType::INTEGER_DIV, (std::string)"INTEGER_DIV")},
+    {"FLOAT_DIV", Token(TokenType::FLOAT_DIV, (std::string)"FLOAT_DIV")},
+    {"BEGIN", Token(TokenType::BEGIN, (std::string)"BEGIN")},
+    {"END", Token(TokenType::END, (std::string)"END")}
+};
 
 Token Lexer::id() {
     std::string result = "";
@@ -186,7 +198,8 @@ Token Lexer::get_next_token() {
         }
     }
 
-    return Token(TokenType::eEOF, NOVAL);
+    // No value inside.
+    return Token(TokenType::eEOF, Any());
 }
 
 } // namespace ESI

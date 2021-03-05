@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-04 00:38:43
+ * @LastEditTime : 2021-03-05 12:20:58
 * @Description  :
 *********************************************/
 
@@ -10,6 +10,7 @@
 #define TOKEN_HPP_
 
 #include <string>
+#include <unordered_map>
 
 #include "../inc/any.hpp"
 
@@ -56,47 +57,6 @@ enum class TokenType {
     COLON,
 };
 
-// String representation of TokenTypes.
-const static std::string TokenTypeString[] = {
-    "NONE",
-
-    // Reserved keywords
-    "BEGIN",
-    "END",
-    "PROGRAM",
-    "VAR",
-
-    // Types, which are also reserved keywords.
-    "INTEGER",
-    "REAL",
-
-    // Values
-    "INTEGER_CONST",
-    "REAL_CONST",
-
-    "MUL",
-    "INTEGER_DIV", // the DIV reserved keyword
-    "FLOAT_DIV",
-    "PLUS",
-    "MINUS",
-    "LPAREN",
-    "RPAREN",
-
-    "eEOF",
-
-    "DOT",
-    "ASSIGN",
-    "SEMI",
-    "COMMA",
-    "ID",
-
-    "COLON",
-};
-
-const static char NOCHAR = (char)(-1);
-const static int NOVAL = -1;
-
-
 /*********************************************
  * Token class
 *********************************************/
@@ -105,6 +65,9 @@ class Token {
 private:
     TokenType m_type;
     Any m_value;
+
+    // String representation of TokenTypes.
+    static const std::unordered_map<TokenType, std::string> map_token_type_string ;
 
 
 public:

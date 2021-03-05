@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-02-25 11:51:26
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-04 16:39:23
+ * @LastEditTime : 2021-03-05 11:57:57
  * @Description  :
 *********************************************/
 
@@ -29,26 +29,22 @@ enum class DataType {
     String
 };
 
-// TODO: To find out why unordered_map can not be used here.
-static const std::map<DataType, std::string> typeMap {
-    {DataType::Empty, "empty"},
-    {DataType::Bool, "bool"},
-    {DataType::Char, "char"},
-    {DataType::Integer, "int"},
-    {DataType::Float, "float"},
-    {DataType::String, "string"},
-};
-
 class TypeInfo {
 private:
     DataType m_type_id;
     std::string m_type_name;
+
+    // TODO: To find out why unordered_map can not be used here.
+    // Map from DataType to corresponding string.
+    static const std::map<DataType, std::string> typeMap;
 
 public:
     TypeInfo(DataType type = DataType::Empty);
 
     std::string getTypeName() const;
     DataType getTypeId() const;
+
+    static bool checkOperand(DataType left, DataType right, std::string op);
 
     bool operator == (const TypeInfo type) const;
     bool operator >= (const TypeInfo type) const;
@@ -127,9 +123,7 @@ static TypeInfo typeFloat = TypeInfo(DataType::Float);
 static TypeInfo typeChar = TypeInfo(DataType::Char);
 static TypeInfo typeString = TypeInfo(DataType::String);
 
-bool checkOperand(DataType left, DataType right, std::string op);
-
-// I don't really understand what this one is for.
+// I don't really understand what this one for.
 template<typename T>
 T (*cast)();
 

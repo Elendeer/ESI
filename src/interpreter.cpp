@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-01 20:01:00
+ * @LastEditTime : 2021-03-05 12:37:45
  * @Description  :
  *********************************************/
 
@@ -75,7 +75,7 @@ Any Interpreter::visit(AST *node) {
 
 void Interpreter::generic_visit(AST *node) {
     throw std::runtime_error(
-        (string) "No " + NodeTypeString[(int)node->getType()] + " type method");
+        (string) "No " + node->getTypeString() + " type method");
 }
 
 Any Interpreter::visit_UnaryOp(AST *node) {

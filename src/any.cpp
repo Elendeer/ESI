@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-02-25 12:08:08
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-01 17:33:55
+ * @LastEditTime : 2021-03-05 11:57:40
  * @Description  :
 *********************************************/
 #include "../inc/any.hpp"
@@ -14,6 +14,15 @@ using std::string;
 namespace ESI {
 
 // ===== Class TypeInfo =====
+
+const map<DataType, string> TypeInfo::typeMap {
+        {DataType::Empty, "empty"},
+        {DataType::Bool, "bool"},
+        {DataType::Char, "char"},
+        {DataType::Integer, "int"},
+        {DataType::Float, "float"},
+        {DataType::String, "string"},
+};
 
 // type = DataType::Empty by default.
 TypeInfo::TypeInfo(DataType type) {
@@ -31,6 +40,18 @@ string TypeInfo::getTypeName() const {
 DataType TypeInfo::getTypeId() const {
     return m_type_id;
 }
+
+bool TypeInfo::checkOperand(DataType left, DataType right, string op) {
+    if (left == DataType::Empty || right == DataType::Empty) {
+        string msg = "unsupported operand type(s) for " +
+            op + ": '" + typeMap.at(left) + "' and '" +
+            typeMap.at(right) + "'";
+
+        throw std::runtime_error(msg);
+    }
+    return true;
+}
+
 
 // ===== Opreator Over loading of class TypeInfo =====
 
@@ -143,7 +164,7 @@ Any Any::operator = (string var) {
 // ===== Operating =====
 
 Any Any::operator + (Any var) {
-    checkOperand(this->getType(), var.getType(), "+");
+    TypeInfo::checkOperand(this->getType(), var.getType(), "+");
 
     if (m_type_info == typeString) {
         return Any(m_string_value + (string)var);
@@ -185,7 +206,7 @@ Any Any::operator + (Any var) {
 }
 
 Any Any::operator - (Any var) {
-    checkOperand(this->getType(), var.getType(), "-");
+    TypeInfo::checkOperand(this->getType(), var.getType(), "-");
 
     if (this->getType() >= var.getType()) {
         if (m_type_info == typeBool) {
@@ -220,7 +241,7 @@ Any Any::operator - (Any var) {
 }
 
 Any Any::operator * (Any var) {
-    checkOperand(this->getType(), var.getType(), "*");
+    TypeInfo::checkOperand(this->getType(), var.getType(), "*");
 
     if (this->getType() >= var.getType()) {
         if (m_type_info == typeBool) {
@@ -255,7 +276,7 @@ Any Any::operator * (Any var) {
 }
 
 Any Any::operator / (Any var) {
-    checkOperand(this->getType(), var.getType(), "/");
+    TypeInfo::checkOperand(this->getType(), var.getType(), "/");
 
     if (this->getType() >= var.getType()) {
         if (m_type_info == typeBool) {
@@ -434,17 +455,6 @@ std::istream & operator >> (std::istream & input, Any & d) {
     }
 
     return input;
-}
-
-bool checkOperand(DataType left, DataType right, string op) {
-    if (left == DataType::Empty || right == DataType::Empty) {
-        string msg = "unsupported operand type(s) for " +
-            op + ": '" + typeMap.at(left) + "' and '" +
-            typeMap.at(right) + "'";
-
-        throw std::runtime_error(msg);
-    }
-    return true;
 }
 
 } // namespace ESI

@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-02-16 13:27:18
+ * @LastEditTime : 2021-03-05 15:44:02
  * @Description  : Abstract syntax tree header
  *********************************************/
 
@@ -11,14 +11,11 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "token.hpp"
 
 namespace ESI {
-
-/*********************************************
- * enum types & reflections
-*********************************************/
 
 // enum type for nodes of abstract syntax tree
 enum class NodeType {
@@ -38,25 +35,6 @@ enum class NodeType {
     TYPE
 };
 
-const static std::string NodeTypeString[] = {
-    "BASE",
-    "NUM",
-    "BINOP",
-    "UNARYOP",
-
-    "COMPOUND",
-    "ASSIGN",
-    "VAR",
-    "NOOP",
-
-    "PROGRAM",
-    "BLOCK",
-    "VAR_DECL",
-    "TYPE"
-};
-/*********************************************
-* classes
-*********************************************/
 
 // Abstract syntax tree (node) base calss
 class AST {
@@ -67,9 +45,13 @@ protected:
     // Holds pointers to children nodes.
     std::vector<AST *> m_children;
 
+    static const std::unordered_map<NodeType, std::string> map_node_type_string;
+
 public:
     AST(NodeType type, Token token);
     virtual ~AST();
+
+    std::string getTypeString() const;
 
     // Return node type of a AST node
     virtual NodeType getType() const;

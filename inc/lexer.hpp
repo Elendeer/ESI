@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:27:18
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-04 01:13:58
+ * @LastEditTime : 2021-03-05 15:48:44
  * @Description  :
 *********************************************/
 
@@ -16,26 +16,7 @@
 
 namespace ESI {
 
-/*********************************************
-* enum types, reflections & constants
-*********************************************/
-
-static const std::unordered_map<std::string, Token>reservedKeywords {
-    {"PROGRAM", Token(TokenType::PROGRAM, (std::string)"PROGRAM")},
-    {"VAR", Token(TokenType::VAR, (std::string)"VAR")},
-    {"INTEGER", Token(TokenType::INTEGER, (std::string)"INTEGER")},
-    {"REAL", Token(TokenType::REAL, (std::string)"REAL")},
-    {"INTEGER_DIV", Token(TokenType::INTEGER_DIV, (std::string)"INTEGER_DIV")},
-    {"FLOAT_DIV", Token(TokenType::FLOAT_DIV, (std::string)"FLOAT_DIV")},
-    {"BEGIN", Token(TokenType::BEGIN, (std::string)"BEGIN")},
-    {"END", Token(TokenType::END, (std::string)"END")}
-};
-
-
-/*********************************************
-* classes & functions
-*********************************************/
-
+// Lexer, AKA token analyzer
 class Lexer {
 private:
     std::string m_text;
@@ -45,6 +26,13 @@ private:
 
     // Token m_current_token;
     char m_current_char;
+
+    // Represent a 'no char' char.
+    const static char NOCHAR;
+
+    const static std::unordered_map<std::string, Token>reservedKeywords ;
+
+    // ===== functions =====
 
     void error();
 
