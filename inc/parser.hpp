@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-02-18 15:05:31
+ * @LastEditTime : 2021-03-09 09:15:42
  * @Description  :
 *********************************************/
 
@@ -25,7 +25,7 @@ private:
     // ===== Functions =====
 
     // Throw a exception of invalid syntex.
-    void error();
+    void error(std::string message);
 
     void eat(TokenType token_type);
 
@@ -57,6 +57,7 @@ public:
 
     // Return a AST node pointor pointing root of AST.
     // May throw exception when Syntax error is met.
+    // Return a nullptr if so.
     AST *parse();
 
     // Return a AST node pointor pointing root of AST.

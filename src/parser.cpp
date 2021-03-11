@@ -3,7 +3,35 @@
  * @Date: 2020-06-05 16:09:33
  * @LastEditors: Elendeer
  * @LastEditTime: 2020-06-05 20:52:53
- * @Description: file content
+ * @Description: Implement of parser.
+ *      为了保证AST构建的过程中不发生内存泄漏，
+ *      本文件内的所有根据语法构建AST的函数应该满足下列标准：
+ *      - 函数内通过new或者函数获得节点之后还有函数可能抛出异常时，
+ *          用try-catch捕获，
+ *          从而将已经new的节点及时delete。
+ *      - 函数内保证异常触发后持续上抛，即使本函数new的节点已经全部被delete。
+ *      - 异常信息推迟到parsing的最上层才显示。
+ *
+ *      程序中的大多数try-catch是依照上述原则设计的，在阅读代码时可以
+ *      根据上述原则来理解它们的作用。
+ *
+ *      To ensure that there are no memory leaks during the AST build
+ *      process,
+ *      all functions in this file that build AST according the grammar
+ *      should meet the following criteria:
+ *      - If there is an exception that may be thrown by the function
+ *          after a node is newed (or gained from another function),
+ *          try-catch is used to delete the node
+ *          that has already been newed.
+ *      - The function guarantees that it will continue to throw
+ *          after the exception is triggered, even if all the nodes
+ *          newed by this function have been deleted.
+ *      -Exception message showing is deferred until the uppermost level
+ *          of the parsing.
+ *
+ *      Most try-catches in this file are designed according to
+ *      these criteria, you can use them to understand what those
+ *      try-catches do when you read the code.
  */
 
 #include "../inc/parser.hpp"
@@ -11,8 +39,14 @@
 #include <iostream>
 #include <stdexcept>
 
+using std::string;
+using std::vector;
+using std::runtime_error;
+using std::exception;
+
 namespace ESI {
 
+// May throw exception when initing.
 Parser::Parser(const Lexer &lexer) :
     m_lexer(lexer), mp_ast_root(nullptr) {
 
@@ -21,8 +55,8 @@ Parser::Parser(const Lexer &lexer) :
 Parser::~Parser() {
 }
 
-void Parser::error() {
-    throw std::runtime_error("Invalid Syntax");
+void Parser::error(string message) {
+    throw runtime_error(message);
 }
 
 //  Compare the current token type with the passed token
@@ -35,8 +69,13 @@ void Parser::error() {
 void Parser::eat(TokenType token_type) {
     if (m_current_token.getType() == token_type) {
         m_current_token = m_lexer.get_next_token();
-    } else {
-        error();
+    }
+    else {
+        string message = "Invailid Syntax : Unexpected token.\n\texpected "
+            + Token::map_token_type_string.at(token_type)
+            + ", met " + Token::map_token_type_string.at(m_current_token.getType());
+
+        error(message);
     }
 }
 
@@ -52,6 +91,7 @@ void Parser::eat(TokenType token_type) {
 //          | REAL_CONST
 //          | LPAREN expr RPAREN
 //          | variable
+// Memmory allocations inside, may thorw exceptions.
 AST *Parser::factor() {
     // For keeping current token.
     // m_current_token will change after function eat() is called.
@@ -79,8 +119,19 @@ AST *Parser::factor() {
     }
     else if (token.getType() == TokenType::LPAREN) {
         eat(TokenType::LPAREN);
-        AST *node = expr();
-        eat(TokenType::RPAREN);
+
+        AST * node = expr();
+
+        try {
+            eat(TokenType::RPAREN);
+        }
+        catch (const runtime_error & error) {
+            if (node != nullptr) {
+                delete node;
+                node = nullptr;
+            }
+            throw error;
+        }
 
         return node;
     }
@@ -96,6 +147,8 @@ AST *Parser::term() {
     // For keeping current token.
     // m_current_token will change after function eat() is called.
     Token token = m_current_token;
+
+    try {
 
     while (m_current_token.getType() == TokenType::MUL
         || m_current_token.getType() == TokenType::INTEGER_DIV
@@ -115,6 +168,12 @@ AST *Parser::term() {
     }
 
     return node;
+
+    } // try
+    catch (const runtime_error & error) {
+        if (node != nullptr) delete node;
+        throw error;
+    }
 }
 
 // expr : term ((PLUS | MINUS) term)*
@@ -124,6 +183,8 @@ AST *Parser::expr() {
     // For keeping current token.
     // m_current_token will change after function eat() is called.
     Token token = m_current_token;
+
+    try {
 
     while (m_current_token.getType() == TokenType::PLUS
         || m_current_token.getType() == TokenType::MINUS) {
@@ -139,6 +200,12 @@ AST *Parser::expr() {
     }
 
     return node;
+
+    } // try
+    catch (const runtime_error & error) {
+        if (node != nullptr) delete node;
+        throw error;
+    }
 }
 
 /*********************************************
@@ -149,20 +216,52 @@ AST *Parser::expr() {
 AST *Parser::program() {
     eat(TokenType::PROGRAM);
     AST * var_node = variable();
-    // TODO: change the way of type changing.
-    std::string program_name = ((Var *)var_node) -> getVal();
-    eat(TokenType::SEMI);
+    std::string program_name = dynamic_cast<Var *>(var_node) -> getVal();
 
-    AST * block_node = block();
-    eat(TokenType::DOT);
+    try {
+        eat(TokenType::SEMI);
+    }
+    catch (const runtime_error & error) {
+        if (var_node != nullptr) delete var_node;
+        throw error;
+    }
+
+    AST * block_node = nullptr;
+    try {
+        block_node = block();
+        eat(TokenType::DOT);
+    }
+    catch (const runtime_error & error) {
+        if (var_node != nullptr) delete var_node;
+        if (block_node != nullptr) delete block_node;
+        throw error;
+    }
+
 
     return new Program(program_name, block_node);
 }
 
 // block : declarations compound_statement
 AST * Parser::block() {
-    std::vector<AST *> declaration_nodes = declarations();
-    return new Block(declaration_nodes, compoundStatement());
+    vector<AST *> declaration_nodes = declarations();
+    AST * compound_statement_node = nullptr;
+
+    try {
+        compound_statement_node = compoundStatement();
+
+        return new Block(declaration_nodes, compound_statement_node);
+    }
+    catch (const runtime_error & error) {
+        if (!declaration_nodes.empty())
+            for (auto p : declaration_nodes)
+                if (p != nullptr)
+                    delete p;
+        if (compound_statement_node != nullptr)
+            delete compound_statement_node;
+
+        throw error;
+    }
+
 }
 
 // declarations : VAR (variable_declaration SEMI)+ | empty
@@ -171,6 +270,9 @@ std::vector<AST *> Parser::declarations() {
 
     if (m_current_token.getType() == TokenType::VAR) {
         eat(TokenType::VAR);
+
+        try {
+
         while (m_current_token.getType() == TokenType::ID) {
             // Pointors pointing to variable nodes(Var).
             std::vector<AST *> var_decl = variableDeclaration();
@@ -180,6 +282,15 @@ std::vector<AST *> Parser::declarations() {
             }
 
             eat(TokenType::SEMI);
+        } // while
+
+        } // try
+        catch (const runtime_error & error) {
+            if (!declarations.empty())
+                for (auto p : declarations)
+                    if (p != nullptr)
+                        delete p;
+            throw error;
         }
     }
 
@@ -187,40 +298,70 @@ std::vector<AST *> Parser::declarations() {
 }
 
 // variable_declaration : ID (COMMA ID)* COLON type_spec
-std::vector<AST *> Parser::variableDeclaration() {
-    std::vector<AST *> var_nodes;
+vector<AST *> Parser::variableDeclaration() {
+    vector<AST *> var_nodes;
 
     // For m_current_token will change after function eat() is called.
     Token tmp_token = m_current_token;
+    AST* p_type_node = nullptr;
 
     eat(TokenType::ID);
     var_nodes.push_back(new Var(tmp_token));
 
-    while (m_current_token.getType() == TokenType::COMMA) {
-        eat(TokenType::COMMA);
-        tmp_token = m_current_token;
-        eat(TokenType::ID);
+    try {
+        while (m_current_token.getType() == TokenType::COMMA) {
+            eat(TokenType::COMMA);
+            tmp_token = m_current_token;
+            eat(TokenType::ID);
 
-        var_nodes.push_back(new Var(tmp_token));
+            var_nodes.push_back(new Var(tmp_token));
+        }
+        eat(TokenType::COLON);
+
+        // There is a memory allocation of a node inside function typeSpec()
+        // and it will return a pointer poiting to that.
+        // Type node may be used more than one time (e.g. a, b : INTEGER),
+        // so this node will be used as a template.
+        // Delete this pointer on time is necessary.
+        p_type_node = typeSpec();
+    } // try
+    catch (const runtime_error & error ) {
+        if (!var_nodes.empty())
+            for (auto p : var_nodes)
+                if (p != nullptr) {
+                    delete p;
+                    p = nullptr;
+                }
+        throw error;
     }
-    eat(TokenType::COLON);
 
-    // There is a memory allocation of a node inside function typeSpec(),
-    // and it will return a pointer poiting to that.
-    // Type node may be used more than one time (e.g. a, b : INTEGER),
-    // so this node will be used as a template.
-    // Delete this pointer on time is necessary.
-    AST* p_type_node = typeSpec();
+    vector<AST *> var_decl;
 
-    std::vector<AST *> var_decl;
-    for (auto p_var_node : var_nodes) {
-        AST * tmp_p_type_node = new Type(p_type_node -> getToken());
-        var_decl.push_back(new VarDecl(p_var_node, tmp_p_type_node));
+    try {
+        for (auto p_var_node : var_nodes) {
+            AST * tmp_p_type_node = new Type(p_type_node -> getToken());
+            var_decl.push_back(new VarDecl(p_var_node, tmp_p_type_node));
+        }
+
+        delete p_type_node;
+        p_type_node = nullptr;
+
+        return var_decl;
+    }// try
+    catch (const runtime_error & error) {
+        if (p_type_node != nullptr) {
+            delete p_type_node;
+            p_type_node = nullptr;
+        }
+        if (!var_decl.empty())
+            for (auto p : var_decl)
+                if (p != nullptr) {
+                    delete p;
+                    p = nullptr;
+                }
+        throw error;
     }
 
-    delete p_type_node;
-
-    return var_decl;
 }
 
 // type_spec : INTERGER | REAL
@@ -235,7 +376,7 @@ AST * Parser::typeSpec() {
         return new Type(token);
     }
     else {
-        error();
+        error("Invailid Syntax : Expected typeSpec token");
     }
 
     // useless.
@@ -248,37 +389,52 @@ AST * Parser::typeSpec() {
 AST *Parser::compoundStatement() {
     eat(TokenType::BEGIN);
     std::vector<AST *> nodes = statementList();
-    eat(TokenType::END);
+    try {
+        eat(TokenType::END);
+        AST *root = new Compound();
 
-    AST *root = new Compound();
+        for (AST *node : nodes) {
+            root->pushChild(node);
+        }
 
-    for (AST *node : nodes) {
-        root->pushChild(node);
+        return root;
     }
-
-    return root;
+    catch (const runtime_error & error) {
+        if (!nodes.empty())
+            for (auto p : nodes)
+                if (p != nullptr) {
+                    delete p;
+                    p = nullptr;
+                }
+        throw error;
+    }
 }
 
 // statement_list : statement
 //                | statement SEMI statement_list
-std::vector<AST *> Parser::statementList() {
+vector<AST *> Parser::statementList() {
     AST *node = statement();
 
-    using std::vector;
     vector<AST *> result;
     result.push_back(node);
 
-    // std::cout << TokenTypeString[(int)m_current_token.getType()] << std::endl;
-    while (m_current_token.getType() == TokenType::SEMI) {
-        eat(TokenType::SEMI);
-        // std::cout << "Eat!" << std::endl;
-        result.push_back(statement());
+    try {
+        while (m_current_token.getType() == TokenType::SEMI) {
+            eat(TokenType::SEMI);
+            // std::cout << "Eat!" << std::endl;
+            result.push_back(statement());
+        }
+    }
+    catch (const runtime_error & error) {
+        if (!result.empty())
+            for (auto p : result)
+                if (p != nullptr) {
+                    delete p;
+                    p = nullptr;
+                }
+        throw error;
     }
 
-    if (m_current_token.getType() == TokenType::ID) {
-        error();
-        // return result;
-    }
 
     return result;
 }
@@ -306,23 +462,51 @@ AST *Parser::assignmentStatement() {
     AST *left = variable();
     Token token = m_current_token;
 
-    eat(TokenType::ASSIGN);
+    try {
+        eat(TokenType::ASSIGN);
+    }
+    catch (const runtime_error & error) {
+        if (left != nullptr) {
+            delete left;
+            left = nullptr;
+        }
+    }
 
-    AST *right = expr();
+    AST *right = nullptr;
+    try {
+        right = expr();
+    }
+    catch (const runtime_error & error) {
+        if (left != nullptr) delete left;
+        throw error;
+    }
 
-    AST *node = new Assign(left, token, right);
-    return node;
+    try {
+        AST *node = new Assign(left, token, right);
+        return node;
+    }
+    catch (const runtime_error & error) {
+        if (left != nullptr) delete left;
+        if (right != nullptr) delete right;
+        throw error;
+    }
 }
 
 // variable : ID
 AST *Parser::variable() {
     AST *node = new Var(m_current_token);
 
-    // TODO: mark for the first new
-    mp_ast_root = node;
-
-    eat(TokenType::ID);
-    return node;
+    try {
+        eat(TokenType::ID);
+        return node;
+    }
+    catch (const runtime_error & error) {
+        if (node != nullptr) {
+            delete node;
+            node = nullptr;
+        }
+        throw error;
+    }
 }
 
 // An empty production.
@@ -330,15 +514,36 @@ AST *Parser::empty() {
     return new NoOp();
 }
 
+
 AST *Parser::parse() {
-    mp_ast_root = program();
+    using std::cout;
+    using std::endl;
 
-    // TODO: exam the necessity.
-    if (m_current_token.getType() != TokenType::eEOF) {
-        error();
+    try {
+        // Start parsing.
+        // May throw exception when parsing.
+        mp_ast_root = program();
+
+        // TODO: exam the necessity.
+        if (m_current_token.getType() != TokenType::eEOF) {
+            error("Parsing error : no EOF token met.");
+        }
+
+        return mp_ast_root;
+
     }
+    catch (const runtime_error &error) {
 
-    return mp_ast_root;
+        cout << "When building AST :" << endl;
+        cout << "\t" << error.what() << endl;
+        // std::cout << m_parser.getAstRoot() << std::endl;
+
+        if (mp_ast_root == nullptr) {
+            cout << "ast root is empty." << endl;
+        }
+
+        return nullptr;
+    }
 }
 
 AST * Parser::getAstRoot() const {

@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-05 12:20:58
+ * @LastEditTime : 2021-03-09 09:21:00
 * @Description  :
 *********************************************/
 
@@ -66,13 +66,10 @@ private:
     TokenType m_type;
     Any m_value;
 
-    // String representation of TokenTypes.
-    static const std::unordered_map<TokenType, std::string> map_token_type_string ;
-
-
 public:
     // Appointment: None type token by default.
     Token();
+    ~Token();
     Token(TokenType type, Any value);
     Token(const Token &obj) = default;
 
@@ -90,7 +87,8 @@ public:
     // Return the value inside token which is Any type.
     Any getVal() const;
 
-    ~Token();
+    // String representation of TokenTypes.
+    static const std::unordered_map<TokenType, std::string> map_token_type_string ;
 };
 
 } // namespace ESI

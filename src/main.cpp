@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-05 12:25:45
+ * @LastEditTime : 2021-03-11 14:37:34
 * @Description  : main function
 *********************************************/
 
@@ -31,17 +31,29 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
 
         try {
             Parser parser(lexer);
-            // cout << "parsed" << endl;
 
-            Interpreter interpreter(parser);
+            // There are try-catch blocks inside parse()
+            // to solve problems itself.
+            AST * ast_root = parser.parse();
+
+            if (ast_root == nullptr) {
+                cout << "Parsing error is met, stop." << endl;
+                return 1;
+            }
+
+            Interpreter interpreter(ast_root);
 
             // There are try-catch blocks inside interpret()
             // to solve problems itself.
             interpreter.interpret();
 
-        } catch (std::runtime_error &error) {
+            if (ast_root != nullptr) delete ast_root;
+        }
+        catch (std::runtime_error &error) {
             cout << "when parser initing :" << endl;
             cout  << "\t" << error.what() << endl;
+
+            return 1;
         }
     }
 

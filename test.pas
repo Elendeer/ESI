@@ -8,7 +8,7 @@ b : REAL;
 
 BEGIN
 
-a := 3;
+a := (1 + 2) * 3f;
 b := a + 0.25;
 
 END.

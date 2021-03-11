@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:27:18
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-05 15:48:44
+ * @LastEditTime : 2021-03-08 21:26:25
  * @Description  :
 *********************************************/
 
@@ -63,6 +63,7 @@ public:
     // Lexical analyzer (also know as scanner or tokenizer)
     // This function is responsible for breaking a sentance
     // apart into tokens. One token at a time.
+    // May throw exception.
     Token get_next_token();
 };
 

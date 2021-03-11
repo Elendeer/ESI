@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-05 12:37:45
+ * @LastEditTime : 2021-03-08 21:31:14
  * @Description  :
  *********************************************/
 
@@ -15,20 +15,8 @@ using std::string;
 
 namespace ESI {
 
-/*********************************************
- * NodeVisitor Class
-*********************************************/
-
-NodeVisitor::NodeVisitor() {}
-
-NodeVisitor::~NodeVisitor() {}
-
-/*********************************************
- * Interpreter Class
-*********************************************/
-
-Interpreter::Interpreter(const Parser &parser)
-    : m_parser(parser) {}
+Interpreter::Interpreter(AST * root)
+    : NodeVisitor(root) {}
 
 Interpreter::~Interpreter() {}
 
@@ -73,10 +61,10 @@ Any Interpreter::visit(AST *node) {
     return -1;
 }
 
-void Interpreter::generic_visit(AST *node) {
-    throw std::runtime_error(
-        (string) "No " + node->getTypeString() + " type method");
-}
+// void Interpreter::generic_visit(AST *node) {
+//     throw std::runtime_error(
+//         (string) "No " + node->getTypeString() + " type method");
+// }
 
 Any Interpreter::visit_UnaryOp(AST *node) {
     TokenType type = node->getToken().getType();
@@ -192,40 +180,21 @@ Any Interpreter::visitType(AST *node) {
 }
 
 void Interpreter::interpret() {
-    AST * ast_root = nullptr;
-    try {
-        ast_root = m_parser.parse();
-    } catch (const std::runtime_error &error) {
-
-        std::cout << "When building AST :" << std::endl;
-        std::cout << "\t" << error.what() << std::endl;
-        // std::cout << m_parser.getAstRoot() << std::endl;
-
-        AST * p = m_parser.getAstRoot();
-        if (p != nullptr) {
-            delete p;
-        }
-        else {
-            std::cout << "ast root is nullptr" << std::endl;
-        }
+    if (m_root == nullptr) {
         return ;
     }
 
     try {
-        Any result = visit(ast_root);
+        Any result = visit(m_root);
 
         // std::cout << "result: " << result << std::endl;
-
         // 'result' is useless in fact.
         this->printScope();
 
-        delete ast_root;
     } catch (const std::runtime_error &error) {
 
         std::cout << "When visiting AST :" << std::endl;
         std::cout << "\t" << error.what() << std::endl;
-
-        delete ast_root;
     }
 }
 

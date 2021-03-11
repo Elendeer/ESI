@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-05 12:39:30
+ * @LastEditTime : 2021-03-11 12:07:42
  * @Description  :
  *********************************************/
 
@@ -44,6 +44,10 @@ AST::AST(NodeType type, Token token) : m_nodeType(type), m_token(token) {
 // Recursively transfer the destruction funtion of the nodes of the
 // substree with the object as its root.
 AST::~AST() {
+    std::cout << "AST node deleted : ";
+    m_token.print_str_repr();
+    std::cout << std::endl;
+
     for (auto p : m_children) {
         if (p != nullptr) {
             delete p;
