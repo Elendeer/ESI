@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-08 21:31:14
+ * @LastEditTime : 2021-03-12 15:31:37
  * @Description  :
  *********************************************/
 
@@ -23,7 +23,7 @@ Interpreter::~Interpreter() {}
 Any Interpreter::visit(AST *node) {
 
     if (node == nullptr) {
-        return 0;
+        return Any();
     }
 
     if (node->getType() == NodeType::PROGRAM) {
@@ -53,26 +53,30 @@ Any Interpreter::visit(AST *node) {
     else if (node->getType() == NodeType::NOOP) {
         visit_NoOp();
     }
-    else {
-        // nothing else
-        // TODO: exception
-        return -1;
+    else if (node->getType() == NodeType::VAR_DECL) {
+        visitVarDecl(node);
     }
-    return -1;
+    else {
+        generic_visit(node);
+    }
+
+    return Any();
 }
 
-// void Interpreter::generic_visit(AST *node) {
-//     throw std::runtime_error(
-//         (string) "No " + node->getTypeString() + " type method");
-// }
+void Interpreter::generic_visit(AST *node) {
+    throw std::runtime_error(
+        (string) "No " + node->getTypeString() + " type method");
+}
 
 Any Interpreter::visit_UnaryOp(AST *node) {
-    TokenType type = node->getToken().getType();
+    UnaryOp * p_unaryop_node = dynamic_cast<UnaryOp *>(node);
+
+    TokenType type = p_unaryop_node->getToken().getType();
     if (type == TokenType::PLUS) {
-        return +visit(node->getRight());
+        return +visit(p_unaryop_node->getExpr());
 
     } else if (type == TokenType::MINUS) {
-        return -visit(node->getRight());
+        return -visit(p_unaryop_node->getExpr());
 
     } else {
         // nothing else
@@ -82,17 +86,19 @@ Any Interpreter::visit_UnaryOp(AST *node) {
 }
 
 Any Interpreter::visit_BinOp(AST *node) {
-    TokenType type = node->getToken().getType();
+    BinOp* bin_node = dynamic_cast<BinOp *>(node);
+
+    TokenType type = bin_node->getToken().getType();
     if (type == TokenType::PLUS) {
-        return visit(node->getLeft()) + visit(node->getRight());
+        return visit(bin_node->getLeft()) + visit(bin_node->getRight());
     } else if (type == TokenType::MINUS) {
-        return visit(node->getLeft()) - visit(node->getRight());
+        return visit(bin_node->getLeft()) - visit(bin_node->getRight());
     } else if (type == TokenType::MUL) {
-        return visit(node->getLeft()) * visit(node->getRight());
+        return visit(bin_node->getLeft()) * visit(bin_node->getRight());
     } else if (type == TokenType::INTEGER_DIV) {
-        return visit(node->getLeft()) / visit(node->getRight());
+        return visit(bin_node->getLeft()) / visit(bin_node->getRight());
     } else if (type == TokenType::FLOAT_DIV) {
-        return visit(node->getLeft()) / visit(node->getRight());
+        return visit(bin_node->getLeft()) / visit(bin_node->getRight());
     } else {
         // nothing else
         // TODO: exception
@@ -103,12 +109,14 @@ Any Interpreter::visit_BinOp(AST *node) {
 Any Interpreter::visit_Num(AST *node) {
     if (node->getToken().getType() == TokenType::INTEGER_CONST) {
         return node->getToken().getVal();
-    } else if (node->getToken().getType() == TokenType::REAL_CONST) {
+    }
+    else if (node->getToken().getType() == TokenType::REAL_CONST) {
         return node->getToken().getVal();
-    } else {
-        // nothing else
-        // TODO: exception
-        return Any();
+    }
+    else {
+        throw std::runtime_error(
+            "Unsupported tokentype met when visiting a Num node"
+        );
     }
 }
 
@@ -117,7 +125,9 @@ Any Interpreter::visit_Num(AST *node) {
  *********************************************/
 
 Any Interpreter::visit_Compound(AST *node) {
-    for (AST *child : node->getChildren()) {
+    Compound * compound_node = dynamic_cast<Compound *>(node);
+
+    for (AST *child : compound_node->getChildren()) {
         visit(child);
     }
     return Any();
@@ -128,17 +138,17 @@ Any Interpreter::visit_NoOp() {
 }
 
 Any Interpreter::visit_Assign(AST *node) {
-    using std::string;
+    Assign* assign_node = dynamic_cast<Assign *>(node);
 
-    string var_name = dynamic_cast<Var *>(node->getLeft())->getVal();
+    string var_name = dynamic_cast<Var *>(assign_node->getLeft())->getVal();
 
-    m_GLOBAL_SCOPE[var_name] = visit(node->getRight());
+    m_GLOBAL_SCOPE[var_name] = visit(assign_node->getRight());
 
     return Any();
 }
 
 Any Interpreter::visit_Var(AST *node) {
-    std::string var_name = dynamic_cast<Var *>(node)->getVal();
+    string var_name = dynamic_cast<Var *>(node)->getVal();
 
     std::map<std::string, Any>::iterator iter = m_GLOBAL_SCOPE.find(var_name);
 
@@ -151,33 +161,37 @@ Any Interpreter::visit_Var(AST *node) {
 }
 
 Any Interpreter::visitProgram(AST *node) {
-    return visit(node->getChildren().front());
+    Program * program_node = dynamic_cast<Program *>(node);
+
+    return visit(program_node->getBlock());
 }
 
 Any Interpreter::visitBlock(AST *node) {
-    for (auto p : node->getChildren()) {
+    Block* block_node = dynamic_cast<Block *>(node);
+
+    for (auto p : block_node->getDeclarations()) {
         visit(p);
     }
+    visit(block_node->getCompoundStatement());
 
     return Any();
 }
 
 Any Interpreter::visitVarDecl(AST *node) {
     // Do nothing.
-    if (node != nullptr) {
-        return Any();
-    }
+    if (node != nullptr) return Any();
     return Any();
 }
 
 Any Interpreter::visitType(AST *node) {
     // Do nothing.
-    if (node != nullptr) {
-        return Any();
-    }
-
+    if (node != nullptr) return Any();
     return Any();
 }
+
+// ===== =====
+// ===== =====
+// ===== =====
 
 void Interpreter::interpret() {
     if (m_root == nullptr) {

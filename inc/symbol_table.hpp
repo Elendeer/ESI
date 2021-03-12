@@ -2,8 +2,13 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 10:12:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-08 15:16:26
+ * @LastEditTime : 2021-03-12 07:49:41
  * @Description  :
+ * Symbol table is a map from string(name of the symble)
+ * to Symbol. The reason that these is a need to build a
+ * SymbolTable class is that Symbol class have some derived
+ * classes, the map need to contain pointers to support the
+ * containment of different derived classes.
 *********************************************/
 #include <unordered_map>
 

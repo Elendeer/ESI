@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:22:37
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-08 21:17:08
+ * @LastEditTime : 2021-03-12 09:22:41
  * @Description  :
 *********************************************/
 
@@ -35,7 +35,7 @@ private:
     Any visitVarDecl(AST * node);
     Any visitType(AST * node);
 
-    // virtual void generic_visit(AST *node);
+    virtual void generic_visit(AST *node);
 
 public:
     Interpreter(AST * root);

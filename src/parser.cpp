@@ -391,12 +391,13 @@ AST *Parser::compoundStatement() {
     std::vector<AST *> nodes = statementList();
     try {
         eat(TokenType::END);
-        AST *root = new Compound();
+        Compound *root = new Compound();
 
         for (AST *node : nodes) {
             root->pushChild(node);
         }
 
+        // Return a AST pointes pointing to a Compound object.
         return root;
     }
     catch (const runtime_error & error) {

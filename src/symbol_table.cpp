@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 10:18:07
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-08 15:37:32
+ * @LastEditTime : 2021-03-12 07:57:57
  * @Description  :
 *********************************************/
 #include <iostream>
@@ -16,8 +16,7 @@ namespace ESI {
 // ===== SymbolTable class =====
 
 SymbolTable::SymbolTable() {
-    m_map[(string)"INTEGER"] = new BuildInTypeSymbol("INTEGER");
-    m_map[(string)"REAL"] = new BuildInTypeSymbol("REAL");
+    m_map.clear();
 }
 SymbolTable::~SymbolTable() {
     if (m_map.empty()) return ;

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-02-25 11:51:26
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-05 11:57:57
+ * @LastEditTime : 2021-03-12 08:00:31
  * @Description  :
 *********************************************/
 
@@ -53,6 +53,7 @@ public:
 
 // ===== Class Any =====
 
+// DataType == DataType::Empty by default.
 class Any {
 private:
     bool m_bool_value;
