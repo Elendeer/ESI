@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 15:31:37
+ * @LastEditTime : 2021-03-12 17:02:25
  * @Description  :
  *********************************************/
 
@@ -207,7 +207,7 @@ void Interpreter::interpret() {
 
     } catch (const std::runtime_error &error) {
 
-        std::cout << "When visiting AST :" << std::endl;
+        std::cout << "When interpreting AST :" << std::endl;
         std::cout << "\t" << error.what() << std::endl;
     }
 }

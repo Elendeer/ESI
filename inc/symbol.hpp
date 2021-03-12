@@ -2,9 +2,12 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-07 11:16:08
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-08 15:02:29
+ * @LastEditTime : 2021-03-12 17:09:45
  * @Description  :
 *********************************************/
+#ifndef INC_SYMBOL_HPP_
+#define INC_SYMBOL_HPP_
+
 #include <string>
 
 namespace ESI {
@@ -62,3 +65,5 @@ public :
 };
 
 } // namespace ESI
+
+#endif

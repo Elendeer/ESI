@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 10:07:39
+ * @LastEditTime : 2021-03-12 17:12:57
  * @Description  :
  *********************************************/
 
@@ -70,11 +70,6 @@ Token AST::getToken() const {
     return m_token;
 }
 
-std::vector<AST *> AST::getChildren() const {
-    return m_children;
-}
-
-
 /*********************************************
  * BinOp node
  *********************************************/
@@ -134,6 +129,10 @@ Compound::Compound() : AST(NodeType::COMPOUND, Token()) {}
 
 Compound::~Compound() {
     // std::cout << "~Compound()" << std::endl;
+}
+
+vector<AST *> Compound::getChildren() const {
+    return m_children;
 }
 
 void Compound::pushChild(AST * node) {
@@ -254,6 +253,10 @@ Type::Type(Token type) : AST(NodeType::TYPE, type) {
     m_value = Any::anyCast<string>(type.getVal());
 }
 Type::~Type() {
+}
+
+string Type::getVal() const {
+    return m_value;
 }
 
 

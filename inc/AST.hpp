@@ -2,10 +2,13 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 10:28:48
+ * @LastEditTime : 2021-03-12 15:58:08
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
+ * For example, type of chlidren of derived classes is different
+ * from one derived classes to another, so base class will not
+ * support specific get function.
  *********************************************/
 
 #ifndef AST_HPP_
@@ -61,9 +64,6 @@ public:
     // Returns the token in current node.
     virtual Token getToken() const;
 
-    // Returns a vector that contains all children of
-    // current node.
-    virtual std::vector<AST *> getChildren() const;
 };
 
 /*********************************************
@@ -112,12 +112,17 @@ public:
 
 // Represents a 'BEGIN ... END' block.
 // No token inside.
-// All children are statements.
+// All children are statements(statement list).
 class Compound : public AST {
 private:
 public:
     Compound();
     virtual ~Compound();
+
+    // Returns a vector that contains all children of
+    // current node, which is a vector of statement.
+    // (statement list)
+    std::vector<AST *> getChildren() const;
 
     void pushChild(AST * node);
 };

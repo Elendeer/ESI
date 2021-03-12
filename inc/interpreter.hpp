@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:22:37
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 09:22:41
+ * @LastEditTime : 2021-03-12 16:59:44
  * @Description  :
 *********************************************/
 
@@ -20,6 +20,10 @@ namespace ESI {
 class Interpreter : public NodeVisitor {
 private:
     std::map<std::string, Any> m_GLOBAL_SCOPE;
+
+    // It will transfer a funtion
+    // to visit a node depends on type of the node.
+    virtual Any visit(AST *node);
 
     Any visit_UnaryOp(AST *node);
     Any visit_BinOp(AST *node);
@@ -40,10 +44,6 @@ private:
 public:
     Interpreter(AST * root);
     virtual ~Interpreter();
-
-    // It will transfer a funtion
-    // to visit a node depends on type of the node.
-    virtual Any visit(AST *node);
 
     void interpret();
 

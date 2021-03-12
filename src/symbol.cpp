@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-07 11:34:16
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-08 15:05:19
+ * @LastEditTime : 2021-03-12 17:16:36
  * @Description  :
 *********************************************/
 
@@ -32,23 +32,26 @@ string Symbol::strRepr() {
     SymbolCategory category = getCategory();
     string category_str;
     if (category == SymbolCategory::SYMBOL) {
-        category_str = "<Symbol>";
+        category_str = "Symbol<";
     }
     else if (category == SymbolCategory::BUILD_IN_TYPE_SYMBOL) {
-        category_str = "<Build-in-type-symbol>";
+        category_str = "Build-in-type-symbol<";
     }
     else if (category == SymbolCategory::VAR_SYMBOL) {
-        category_str = "<variable-symbol>";
+        category_str = "variable-symbol<";
     }
     // ===== =====
     if (m_type == SymbolType::NONE) {
-        return (string)(category_str + "type : NONE, name : " + m_name);
+        return (string)(category_str +
+            "type : NONE, name : " + m_name + ">");
     }
     else if (m_type == SymbolType::INTEGER) {
-        return (string)(category_str + "type : INTEGER, name : " + m_name);
+        return (string)(category_str +
+            "type : INTEGER, name : " + m_name + ">");
     }
     else if (m_type == SymbolType::REAL) {
-        return (string)(category_str + "type : REAL, name : " + m_name);
+        return (string)(category_str +
+        "type : REAL, name : " + m_name + ">");
     }
     else {
         // Nothing else.

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 10:18:07
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 07:57:57
+ * @LastEditTime : 2021-03-12 17:18:22
  * @Description  :
 *********************************************/
 #include <iostream>
@@ -65,8 +65,8 @@ void SymbolTable::print() const {
 
     for (auto i : m_map) {
         if (i.second != nullptr) {
-            cout <<  "key : "<< i.first
-            << "; symbol : " << i.second->strRepr() << endl;
+            cout <<  "["<< i.first
+            << "] : " << i.second->strRepr() << endl;
         }
     }
 }
