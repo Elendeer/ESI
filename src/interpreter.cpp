@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 17:02:25
+ * @LastEditTime : 2021-03-15 22:26:20
  * @Description  :
  *********************************************/
 
@@ -55,6 +55,9 @@ Any Interpreter::visit(AST *node) {
     }
     else if (node->getType() == NodeType::VAR_DECL) {
         visitVarDecl(node);
+    }
+    else if (node->getType() == NodeType::PORCEDURE_DECL) {
+        visitProcedureDecl(node);
     }
     else {
         generic_visit(node);
@@ -186,6 +189,15 @@ Any Interpreter::visitVarDecl(AST *node) {
 Any Interpreter::visitType(AST *node) {
     // Do nothing.
     if (node != nullptr) return Any();
+    return Any();
+}
+
+// ===== =====
+
+Any Interpreter::visitProcedureDecl(AST * node) {
+    std::cout << "procedure_decl visited!" << std::endl;
+    // Do nothing.
+    if (node == nullptr) return Any();
     return Any();
 }
 

@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 17:04:06
+ * @LastEditTime : 2021-03-12 17:21:11
 * @Description  : main function
 *********************************************/
 
@@ -42,14 +42,15 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
                 return 1;
             }
 
-            // Interpreter interpreter(ast_root);
+            SymbolTableBuilder symbol_table_builder(ast_root);
+            symbol_table_builder.build();
+
+            Interpreter interpreter(ast_root);
 
             // There are try-catch blocks inside interpret()
             // to solve problems itself.
-            // interpreter.interpret();
+            interpreter.interpret();
 
-            SymbolTableBuilder symbol_table_builder(ast_root);
-            symbol_table_builder.build();
 
             if (ast_root != nullptr) delete ast_root;
         }

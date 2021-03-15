@@ -264,7 +264,8 @@ AST * Parser::block() {
 
 }
 
-// declarations : VAR (variable_declaration SEMI)+ | empty
+// declarations : VAR (variable_declaration SEMI)+
+// (PROCEDURE ID SEMI block SEMI)* | empty
 std::vector<AST *> Parser::declarations() {
     std::vector<AST *> declarations;
 
@@ -292,6 +293,32 @@ std::vector<AST *> Parser::declarations() {
                         delete p;
             throw error;
         }
+    }
+
+    while (m_current_token.getType() == TokenType::PROCEDURE) {
+        eat(TokenType::PROCEDURE);
+        string name = Any::anyCast<string>(m_current_token.getVal());
+        eat(TokenType::ID);
+        eat(TokenType::SEMI);
+
+        AST * p_block = nullptr;
+        try {
+            p_block = block();
+            eat(TokenType::SEMI);
+            AST * procedure_node = new ProcedureDecl(name, p_block);
+            declarations.push_back(procedure_node);
+        }
+        catch (const runtime_error & error) {
+            if (p_block != nullptr) delete p_block;
+
+            if (!declarations.empty())
+                for (auto p : declarations)
+                    if (p != nullptr)
+                        delete p;
+
+            throw error;
+        }
+
     }
 
     return declarations;

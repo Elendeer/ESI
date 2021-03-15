@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:41:25
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-05 12:20:32
+ * @LastEditTime : 2021-03-14 20:51:45
 * @Description  :
 *********************************************/
 
@@ -22,6 +22,7 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     {TokenType::BEGIN, "BEGIN"},
     {TokenType::END, "END"},
     {TokenType::PROGRAM, "PROGRAM"},
+    {TokenType::PROCEDURE, "PROCEDURE"},
     {TokenType::VAR, "VAR"},
 
     // Types, which are also reserved keywords.

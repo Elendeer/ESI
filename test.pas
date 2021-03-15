@@ -5,6 +5,13 @@ PROGRAM test;
 VAR
 a : INTEGER;
 b : REAL;
+{注释：声明程序}
+PROCEDURE P1;
+VAR
+    A : INTEGER;
+BEGIN
+    A := 666;
+END;
 
 BEGIN
 

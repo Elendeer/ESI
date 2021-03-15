@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 17:05:54
+ * @LastEditTime : 2021-03-15 22:26:33
  * @Description  :
 *********************************************/
 
@@ -65,6 +65,9 @@ Any SymbolTableBuilder::visit(AST *node) {
     }
     else if (node->getType() == NodeType::VAR_DECL) {
         visitVarDecl(node);
+    }
+    else if (node->getType() == NodeType::PORCEDURE_DECL) {
+        visitProcedureDecl(node);
     }
     else {
         generic_visit(node);
@@ -212,6 +215,14 @@ void SymbolTableBuilder::build() {
         std::cout << "When building symbol table from AST :"
             << std::endl << "\t" << error.what() << std::endl;
     }
+}
+
+// ===== =====
+
+Any SymbolTableBuilder::visitProcedureDecl(AST * node) {
+    // Do nothing.
+    if (node == nullptr) return Any();
+    return Any();
 }
 
 } // namespace ESI

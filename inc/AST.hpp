@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 15:58:08
+ * @LastEditTime : 2021-03-15 22:15:31
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -37,7 +37,11 @@ enum class NodeType {
     PROGRAM,
     BLOCK,
     VAR_DECL,
-    TYPE
+    TYPE,
+
+    // ===== =====
+    PORCEDURE_DECL
+
 };
 
 
@@ -59,10 +63,10 @@ public:
     std::string getTypeString() const;
 
     // Return node type of a AST node
-    virtual NodeType getType() const;
+    NodeType getType() const;
 
     // Returns the token in current node.
-    virtual Token getToken() const;
+    Token getToken() const;
 
 };
 
@@ -223,6 +227,25 @@ private:
 public:
     NoOp();
     virtual ~NoOp();
+};
+
+// ===== =====
+// ===== =====
+// ===== =====
+
+// Represent a node of declaration of a procedure.
+class ProcedureDecl : public AST {
+private:
+    std::string m_name;
+    AST * m_block;
+
+public:
+    ProcedureDecl(std::string name, AST * block);
+    virtual ~ProcedureDecl();
+
+    std::string getName() const ;
+    AST * getBlock() const ;
+
 };
 
 } // namespace ESI

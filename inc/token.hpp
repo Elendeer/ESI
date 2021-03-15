@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-09 09:21:00
+ * @LastEditTime : 2021-03-14 20:51:21
 * @Description  :
 *********************************************/
 
@@ -28,6 +28,7 @@ enum class TokenType {
     BEGIN,
     END,
     PROGRAM,
+    PROCEDURE,
     VAR,
 
     // Types, which are also reserved keywords.

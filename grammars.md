@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-11-14 09:06:48
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-02-16 10:06:22
+ * @LastEditTime : 2021-03-15 21:58:59
  * @Description  :
 -->
 
@@ -15,6 +15,7 @@ program : PROGRAM variable SEMI block DOT
 block : declarations compound_statement
 
 declarations : VAR (variable_declaration SEMI)+
+            (PROCEDURE ID SEMI block SEMI)*
             | empty
 
 variable_declaration : ID (COMMA ID)* COLON type_spec

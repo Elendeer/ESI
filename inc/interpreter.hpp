@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:22:37
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 16:59:44
+ * @LastEditTime : 2021-03-15 22:12:12
  * @Description  :
 *********************************************/
 
@@ -38,6 +38,8 @@ private:
     Any visitBlock(AST * node);
     Any visitVarDecl(AST * node);
     Any visitType(AST * node);
+
+    Any visitProcedureDecl(AST * node);
 
     virtual void generic_visit(AST *node);
 

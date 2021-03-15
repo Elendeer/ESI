@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:27:27
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 17:08:57
+ * @LastEditTime : 2021-03-15 22:09:35
  * @Description  :
 *********************************************/
 #ifndef INC_SYMBOL_TABLE_BUILDER_HPP_
@@ -33,6 +33,8 @@ private :
     Any visitBlock(AST * node);
     Any visitVarDecl(AST * node);
     Any visitType(AST * node);
+
+    Any visitProcedureDecl(AST * node);
 
 public :
     SymbolTableBuilder(AST * root);

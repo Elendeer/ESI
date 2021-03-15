@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 17:12:57
+ * @LastEditTime : 2021-03-15 22:23:11
  * @Description  :
  *********************************************/
 
@@ -32,7 +32,9 @@ const unordered_map<NodeType, std::string> AST::map_node_type_string {
     {NodeType::PROGRAM, "PROGRAM"},
     {NodeType::BLOCK, "BLOCK"},
     {NodeType::VAR_DECL, "VAR_DECL"},
-    {NodeType::TYPE, "TYPE"}
+    {NodeType::TYPE, "TYPE"},
+
+    {NodeType::PORCEDURE_DECL, "PORCEDURE_DECL"}
 };
 
 /*********************************************
@@ -268,6 +270,27 @@ NoOp::NoOp() : AST(NodeType::NOOP, Token()) {}
 
 NoOp::~NoOp() {
     // std::cout << "~NoOp()" << std::endl;
+}
+
+// ===== =====
+// ===== =====
+// ===== =====
+
+ProcedureDecl::ProcedureDecl(string name, AST * block)
+    : AST(NodeType::PORCEDURE_DECL, Token()),
+    m_name(name), m_block(block) {
+
+    m_children.push_back(block);
+}
+
+ProcedureDecl::~ProcedureDecl() {}
+
+string ProcedureDecl::getName() const {
+    return m_name;
+}
+
+AST * ProcedureDecl::getBlock() const {
+    return m_block;
 }
 
 } // namespace ESI

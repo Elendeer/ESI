@@ -17,7 +17,9 @@ const std::unordered_map<string, Token> Lexer::reservedKeywords {
     {"INTEGER_DIV", Token(TokenType::INTEGER_DIV, (std::string)"INTEGER_DIV")},
     {"FLOAT_DIV", Token(TokenType::FLOAT_DIV, (std::string)"FLOAT_DIV")},
     {"BEGIN", Token(TokenType::BEGIN, (std::string)"BEGIN")},
-    {"END", Token(TokenType::END, (std::string)"END")}
+    {"END", Token(TokenType::END, (std::string)"END")},
+
+    {"PROCEDURE", Token(TokenType::PROCEDURE, (std::string)"PROCEDURE")},
 };
 
 Token Lexer::id() {
