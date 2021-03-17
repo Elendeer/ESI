@@ -5,6 +5,7 @@ PROGRAM test;
 VAR
 a : INTEGER;
 b : REAL;
+b : REAL;
 {注释：声明程序}
 PROCEDURE P1;
 VAR
@@ -17,5 +18,6 @@ BEGIN
 
 a := (1 + 2) * 3;
 b := a + 0.25;
+c := 1;
 
 END.

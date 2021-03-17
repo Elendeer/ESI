@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 17:21:11
+ * @LastEditTime : 2021-03-17 17:02:12
 * @Description  : main function
 *********************************************/
 
@@ -10,7 +10,7 @@
 #include <cstring>
 
 #include "../inc/interpreter.hpp"
-#include "../inc/symbol_table_builder.hpp"
+#include "../inc/semantic_analyzer.hpp"
 #include "../inc/file_reader.hpp"
 
 
@@ -21,45 +21,62 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
 
     if (num_command_arguments != 2) {
         cout << "Invailid command line arguments" << endl;
+        return 1;
     }
-    else {
-        string file_path = pointer_array_command[1];
 
-        FileReader file_reader;
-        string text = file_reader.readFile(file_path);
+    string file_path = pointer_array_command[1];
 
-        Lexer lexer(text);
+    FileReader file_reader;
+    string text = file_reader.readFile(file_path);
+
+    Lexer lexer(text);
+
+    try {
+        Parser parser(lexer);
+
+        // There are try-catch blocks inside parse()
+        // to solve problems itself.
+        AST * ast_root = parser.parse();
+
+        if (ast_root == nullptr) {
+            cout << "Parsing error is met, stop." << endl;
+            return 1;
+        }
+
+        SemanticAnalyzer semantic_analyzer(ast_root);
 
         try {
-            Parser parser(lexer);
-
-            // There are try-catch blocks inside parse()
-            // to solve problems itself.
-            AST * ast_root = parser.parse();
-
-            if (ast_root == nullptr) {
-                cout << "Parsing error is met, stop." << endl;
-                return 1;
-            }
-
-            SymbolTableBuilder symbol_table_builder(ast_root);
-            symbol_table_builder.build();
-
-            Interpreter interpreter(ast_root);
-
-            // There are try-catch blocks inside interpret()
-            // to solve problems itself.
-            interpreter.interpret();
-
+            semantic_analyzer.analyze();
+        }
+        catch (const std::runtime_error & error) {
+            cout << error.what() << endl;
 
             if (ast_root != nullptr) delete ast_root;
-        }
-        catch (std::runtime_error &error) {
-            cout << "when parser initing :" << endl;
-            cout  << "\t" << error.what() << endl;
 
             return 1;
         }
+
+        Interpreter interpreter(ast_root);
+
+        try {
+            interpreter.interpret();
+        }
+        catch (const std::runtime_error & error) {
+            cout << error.what() << endl;
+
+            if (ast_root != nullptr) delete ast_root;
+
+            return 1;
+        }
+
+
+        if (ast_root != nullptr) delete ast_root;
+    }
+    catch (std::runtime_error &error) {
+        cout << "when parser initing :" << endl;
+        cout  << "\t" << error.what() << endl;
+
+        return 1;
     }
 
 

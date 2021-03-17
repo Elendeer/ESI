@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:27:27
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-15 22:09:35
+ * @LastEditTime : 2021-03-17 16:56:10
  * @Description  :
 *********************************************/
 #ifndef INC_SYMBOL_TABLE_BUILDER_HPP_
@@ -13,7 +13,7 @@
 
 namespace ESI {
 
-class SymbolTableBuilder : public NodeVisitor {
+class SemanticAnalyzer : public NodeVisitor {
 private :
     SymbolTable m_table;
     virtual void generic_visit(AST *node);
@@ -37,10 +37,11 @@ private :
     Any visitProcedureDecl(AST * node);
 
 public :
-    SymbolTableBuilder(AST * root);
-    virtual ~SymbolTableBuilder();
+    SemanticAnalyzer(AST * root);
+    virtual ~SemanticAnalyzer();
 
-    void build();
+    // Run semantic analyze, may throw exception.
+    void analyze();
     void printSymbolTable();
 };
 

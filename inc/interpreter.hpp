@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:22:37
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-15 22:12:12
+ * @LastEditTime : 2021-03-17 16:57:22
  * @Description  :
 *********************************************/
 
@@ -47,6 +47,8 @@ public:
     Interpreter(AST * root);
     virtual ~Interpreter();
 
+    // Interpret the source code by walking through the AST.
+    // May throw exception.
     void interpret();
 
     void printScope();

@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-15 22:26:20
+ * @LastEditTime : 2021-03-17 16:58:28
  * @Description  :
  *********************************************/
 
@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 using std::string;
+using std::runtime_error;
 
 namespace ESI {
 
@@ -217,10 +218,16 @@ void Interpreter::interpret() {
         // 'result' is useless in fact.
         this->printScope();
 
-    } catch (const std::runtime_error &error) {
+    }
+    catch (const runtime_error &error) {
 
         std::cout << "When interpreting AST :" << std::endl;
         std::cout << "\t" << error.what() << std::endl;
+
+        throw runtime_error(
+            "error met when interpreting, stop."
+            );
+
     }
 }
 

@@ -2,18 +2,18 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-15 22:26:33
+ * @LastEditTime : 2021-03-17 16:55:42
  * @Description  :
 *********************************************/
 
-#include "../inc/symbol_table_builder.hpp"
+#include "../inc/semantic_analyzer.hpp"
 
 using std::string;
 using std::runtime_error;
 
 namespace ESI {
 
-SymbolTableBuilder::SymbolTableBuilder(AST * root) :
+SemanticAnalyzer::SemanticAnalyzer(AST * root) :
     NodeVisitor(root) {
 
     // Build-in type symbols
@@ -21,16 +21,16 @@ SymbolTableBuilder::SymbolTableBuilder(AST * root) :
     m_table.define(new Symbol("REAL", SymbolType::REAL));
 }
 
-SymbolTableBuilder::~SymbolTableBuilder() {}
+SemanticAnalyzer::~SemanticAnalyzer() {}
 
-void SymbolTableBuilder::generic_visit(AST *node) {
+void SemanticAnalyzer::generic_visit(AST *node) {
     throw std::runtime_error(
         (string) "No " + node->getTypeString() + " type method");
 }
 
 // ===== =====
 
-Any SymbolTableBuilder::visit(AST *node) {
+Any SemanticAnalyzer::visit(AST *node) {
 
     if (node == nullptr) {
         return Any();
@@ -76,7 +76,7 @@ Any SymbolTableBuilder::visit(AST *node) {
     return Any();
 }
 
-Any SymbolTableBuilder::visit_UnaryOp(AST *node) {
+Any SemanticAnalyzer::visit_UnaryOp(AST *node) {
     UnaryOp * unary_op_node = dynamic_cast<UnaryOp *>(node);
 
     visit(unary_op_node->getExpr());
@@ -84,7 +84,7 @@ Any SymbolTableBuilder::visit_UnaryOp(AST *node) {
     return Any();
 }
 
-Any SymbolTableBuilder::visit_BinOp(AST *node) {
+Any SemanticAnalyzer::visit_BinOp(AST *node) {
     BinOp * bin_op_node = dynamic_cast<BinOp *>(node);
 
     visit(bin_op_node->getLeft());
@@ -92,14 +92,14 @@ Any SymbolTableBuilder::visit_BinOp(AST *node) {
     return Any();
 }
 
-Any SymbolTableBuilder::visit_Num(AST *node) {
+Any SemanticAnalyzer::visit_Num(AST *node) {
     if (node != nullptr) return Any();
     return Any();
 }
 
 // ===== =====
 
-Any SymbolTableBuilder::visit_Compound(AST *node) {
+Any SemanticAnalyzer::visit_Compound(AST *node) {
     Compound * compound_node = dynamic_cast<Compound *>(node);
     for (auto p : compound_node->getChildren()) {
         visit(p);
@@ -107,30 +107,20 @@ Any SymbolTableBuilder::visit_Compound(AST *node) {
     return Any();
 }
 
-Any SymbolTableBuilder::visit_NoOp() {
+Any SemanticAnalyzer::visit_NoOp() {
     return Any();
 }
 
-Any SymbolTableBuilder::visit_Assign(AST *node) {
-    // visit left and right is find to, but less efficient.
-
+Any SemanticAnalyzer::visit_Assign(AST *node) {
     Assign * assign_node = dynamic_cast<Assign *>(node);
 
-    AST * var_node = assign_node->getLeft();
-    string var_name = dynamic_cast<Var *>(var_node)->getVal();
-
-    Symbol * p_symbol = m_table.lookup(var_name);
-
-    if (p_symbol == nullptr) {
-        string message = "Undefinded symobl : "
-            + var_name;
-        throw runtime_error(message);
-    }
+    visit(assign_node->getLeft());
+    visit(assign_node->getRight());
 
     return Any();
 }
 
-Any SymbolTableBuilder::visit_Var(AST *node) {
+Any SemanticAnalyzer::visit_Var(AST *node) {
     Var * var_node = dynamic_cast<Var*>(node);
 
     string name = var_node->getVal();
@@ -138,7 +128,7 @@ Any SymbolTableBuilder::visit_Var(AST *node) {
     Symbol * p_symbol = m_table.lookup(name);
 
     if (p_symbol == nullptr) {
-        string message = "Undefinded symobl : "
+        string message = "Undefinded symobl(identifier) : "
             + name;
         throw runtime_error(message);
     }
@@ -148,7 +138,7 @@ Any SymbolTableBuilder::visit_Var(AST *node) {
 
 // ===== =====
 
-Any SymbolTableBuilder::visitProgram(AST * node) {
+Any SemanticAnalyzer::visitProgram(AST * node) {
     Program * program_node = dynamic_cast<Program * >(node);
 
     visit(program_node->getBlock());
@@ -156,7 +146,7 @@ Any SymbolTableBuilder::visitProgram(AST * node) {
     return Any();
 }
 
-Any SymbolTableBuilder::visitBlock(AST * node) {
+Any SemanticAnalyzer::visitBlock(AST * node) {
     Block * block_node = dynamic_cast<Block * >(node);
 
     for (auto p : block_node->getDeclarations()) {
@@ -167,24 +157,21 @@ Any SymbolTableBuilder::visitBlock(AST * node) {
     return Any();
 }
 
-Any SymbolTableBuilder::visitVarDecl(AST * node) {
+Any SemanticAnalyzer::visitVarDecl(AST * node) {
     VarDecl * var_decl_node = dynamic_cast<VarDecl * >(node);
 
     Var * var_node = dynamic_cast<Var *>(var_decl_node->getVarChild());
-    Type * type_node = dynamic_cast<Type *>(var_decl_node->getTypeChild());
-
     string var_name = var_node->getVal();
-    string var_type_str = type_node->getVal();
-
-    Symbol * var_type_symbol = m_table.lookup(var_type_str);
-
-    // So far, parser ensure that var_type_symbol is impossible
-    // to be nullptr.
-    if (var_type_symbol == nullptr) {
+    if (m_table.lookup(var_name) != nullptr) {
         throw runtime_error(
-            "Undefined symbol : " + var_type_str
+            "Duplicat declaration of symbol(identifier) " + var_name +
+            " found."
         );
     }
+
+    Type * type_node = dynamic_cast<Type *>(var_decl_node->getTypeChild());
+    string var_type_str = type_node->getVal();
+    Symbol * var_type_symbol = m_table.lookup(var_type_str);
 
     SymbolType var_type = var_type_symbol->getType();
 
@@ -193,7 +180,7 @@ Any SymbolTableBuilder::visitVarDecl(AST * node) {
     return Any();
 }
 
-Any SymbolTableBuilder::visitType(AST * node) {
+Any SemanticAnalyzer::visitType(AST * node) {
     if (node != nullptr) return Any();
     return Any();
 }
@@ -202,24 +189,28 @@ Any SymbolTableBuilder::visitType(AST * node) {
 // ===== =====
 // ===== =====
 
-void SymbolTableBuilder::build() {
+void SemanticAnalyzer::analyze() {
     if (m_root == nullptr) return ;
 
     try {
         visit(m_root);
 
-        m_table.print();
+        // m_table.print();
     }
     catch (const runtime_error & error) {
 
         std::cout << "When building symbol table from AST :"
             << std::endl << "\t" << error.what() << std::endl;
+
+        throw runtime_error(
+            "error met when semantic analyzing, stop."
+            );
     }
 }
 
 // ===== =====
 
-Any SymbolTableBuilder::visitProcedureDecl(AST * node) {
+Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
     // Do nothing.
     if (node == nullptr) return Any();
     return Any();
