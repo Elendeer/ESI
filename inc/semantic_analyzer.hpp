@@ -9,13 +9,13 @@
 #define INC_SYMBOL_TABLE_BUILDER_HPP_
 
 #include "node_visitor.hpp"
-#include "symbol_table.hpp"
+#include "scoped_symbol_table.hpp"
 
 namespace ESI {
 
 class SemanticAnalyzer : public NodeVisitor {
 private :
-    SymbolTable m_table;
+    ScopedSymbolTable m_scope;
     virtual void generic_visit(AST *node);
 
     virtual Any visit(AST * node);
