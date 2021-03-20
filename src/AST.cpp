@@ -276,6 +276,10 @@ NoOp::~NoOp() {
 // ===== =====
 // ===== =====
 
+/*********************************************
+ * Procedure declaration node
+*********************************************/
+
 ProcedureDecl::ProcedureDecl(string name, AST * block)
     : AST(NodeType::PORCEDURE_DECL, Token()),
     m_name(name), m_block(block) {
@@ -291,6 +295,24 @@ string ProcedureDecl::getName() const {
 
 AST * ProcedureDecl::getBlock() const {
     return m_block;
+}
+
+/*********************************************
+ * Parameter node
+*********************************************/
+
+Param::Param(AST * var_node, AST * type_node)
+	: AST(NodeType::PARAM, Token()),
+	m_var_node(var_node), m_type_node(type_node) {}
+
+Param::~Param() {}
+
+AST * Param::getVarChild() const {
+	return m_var_node;
+}
+
+AST * Param::getTypeChild() const {
+	return m_type_node;
 }
 
 } // namespace ESI

@@ -47,6 +47,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
 
         try {
             semantic_analyzer.analyze();
+			semantic_analyzer.printSymbolTable();
         }
         catch (const std::runtime_error & error) {
             cout << error.what() << endl;

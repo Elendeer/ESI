@@ -40,7 +40,8 @@ enum class NodeType {
     TYPE,
 
     // ===== =====
-    PORCEDURE_DECL
+    PORCEDURE_DECL,
+	PARAM
 
 };
 
@@ -246,6 +247,21 @@ public:
     std::string getName() const ;
     AST * getBlock() const ;
 
+};
+
+// Parameter node
+// No token inside.
+class Param : public AST {
+private:
+	AST * m_var_node;
+	AST * m_type_node;
+
+public:
+	Param(AST * var_node, AST * type_node);
+	~Param();
+
+	AST * getVarChild() const;
+	AST * getTypeChild() const;
 };
 
 } // namespace ESI

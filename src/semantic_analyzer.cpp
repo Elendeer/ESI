@@ -13,12 +13,12 @@ using std::runtime_error;
 
 namespace ESI {
 
-SemanticAnalyzer::SemanticAnalyzer(AST * root) :
-    NodeVisitor(root) {
+SemanticAnalyzer::SemanticAnalyzer(AST * root)
+	: NodeVisitor(root), m_scope("global", 1) {
 
     // Build-in type symbols
-    m_table.define(new Symbol("INTEGER", SymbolType::INTEGER));
-    m_table.define(new Symbol("REAL", SymbolType::REAL));
+    m_scope.define(new Symbol("INTEGER", SymbolType::INTEGER));
+    m_scope.define(new Symbol("REAL", SymbolType::REAL));
 }
 
 SemanticAnalyzer::~SemanticAnalyzer() {}
@@ -125,7 +125,7 @@ Any SemanticAnalyzer::visit_Var(AST *node) {
 
     string name = var_node->getVal();
 
-    Symbol * p_symbol = m_table.lookup(name);
+    Symbol * p_symbol = m_scope.lookup(name);
 
     if (p_symbol == nullptr) {
         string message = "Undefinded symobl(identifier) : "
@@ -162,7 +162,7 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
 
     Var * var_node = dynamic_cast<Var *>(var_decl_node->getVarChild());
     string var_name = var_node->getVal();
-    if (m_table.lookup(var_name) != nullptr) {
+    if (m_scope.lookup(var_name) != nullptr) {
         throw runtime_error(
             "Duplicat declaration of symbol(identifier) " + var_name +
             " found."
@@ -171,11 +171,11 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
 
     Type * type_node = dynamic_cast<Type *>(var_decl_node->getTypeChild());
     string var_type_str = type_node->getVal();
-    Symbol * var_type_symbol = m_table.lookup(var_type_str);
+    Symbol * var_type_symbol = m_scope.lookup(var_type_str);
 
     SymbolType var_type = var_type_symbol->getType();
 
-    m_table.define(new Symbol(var_name, var_type));
+    m_scope.define(new Symbol(var_name, var_type));
 
     return Any();
 }
@@ -186,7 +186,15 @@ Any SemanticAnalyzer::visitType(AST * node) {
 }
 
 // ===== =====
+
+Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
+    // Do nothing.
+    if (node == nullptr) return Any();
+    return Any();
+}
+
 // ===== =====
+// ===== ===== public
 // ===== =====
 
 void SemanticAnalyzer::analyze() {
@@ -194,8 +202,6 @@ void SemanticAnalyzer::analyze() {
 
     try {
         visit(m_root);
-
-        // m_table.print();
     }
     catch (const runtime_error & error) {
 
@@ -208,12 +214,9 @@ void SemanticAnalyzer::analyze() {
     }
 }
 
-// ===== =====
-
-Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
-    // Do nothing.
-    if (node == nullptr) return Any();
-    return Any();
+void SemanticAnalyzer::printSymbolTable() {
+	m_scope.print();
 }
+
 
 } // namespace ESI
