@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:27:18
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-08 21:26:25
+ * @LastEditTime : 2021-03-20 21:07:32
  * @Description  :
 *********************************************/
 
@@ -44,9 +44,9 @@ private:
     void advance();
 
     // Skip space, tab and '\n'.
-    void skip_whitespace();
+    void skipWhitespace();
 
-    void skip_comment();
+    void skipComment();
 
     // Return a (multidigit) integer consumed from the input.
     Token number();
@@ -64,7 +64,7 @@ public:
     // This function is responsible for breaking a sentance
     // apart into tokens. One token at a time.
     // May throw exception.
-    Token get_next_token();
+    Token getNextToken();
 };
 
 } // namespace ESI

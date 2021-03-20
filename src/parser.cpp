@@ -50,7 +50,7 @@ namespace ESI {
 Parser::Parser(const Lexer &lexer) :
     m_lexer(lexer), mp_ast_root(nullptr) {
 
-    m_current_token = m_lexer.get_next_token();
+    m_current_token = m_lexer.getNextToken();
 }
 Parser::~Parser() {
 }
@@ -68,7 +68,7 @@ void Parser::error(string message) {
 //  Parser::error().
 void Parser::eat(TokenType token_type) {
     if (m_current_token.getType() == token_type) {
-        m_current_token = m_lexer.get_next_token();
+        m_current_token = m_lexer.getNextToken();
     }
     else {
         string message = "Invailid Syntax : Unexpected token.\n\texpected "

@@ -69,7 +69,7 @@ void Lexer::advance() {
     }
 }
 
-void Lexer::skip_whitespace() {
+void Lexer::skipWhitespace() {
     while (m_current_char == ' '
     || m_current_char == '\t'
     || m_current_char == '\n') {
@@ -78,7 +78,7 @@ void Lexer::skip_whitespace() {
     }
 }
 
-void Lexer::skip_comment() {
+void Lexer::skipComment() {
     while (m_current_char != '}') {
         advance();
     }
@@ -122,19 +122,19 @@ Lexer::~Lexer() {
 }
 
 
-Token Lexer::get_next_token() {
+Token Lexer::getNextToken() {
     while (m_current_char != NOCHAR) {
 
         if (m_current_char == ' ' ||
             m_current_char == '\t' ||
             m_current_char == '\n' ) {
 
-            skip_whitespace();
+            skipWhitespace();
             continue;
         }
         else if (m_current_char == '{') {
             advance();
-            skip_comment();
+            skipComment();
             continue;
         }
         // Arithmetic expression about
@@ -144,28 +144,28 @@ Token Lexer::get_next_token() {
 
         else if (m_current_char == '*') {
             advance();
-            return Token(TokenType::MUL, "*");
+            return Token(TokenType::MUL, (string)"*");
         }
         else if (m_current_char == '/') {
             advance();
-            return Token(TokenType::FLOAT_DIV, "/");
+            return Token(TokenType::FLOAT_DIV, (string)"/");
         }
         else if (m_current_char == '+') {
             advance();
-            return Token(TokenType::PLUS, "+");
+            return Token(TokenType::PLUS, (string)"+");
         }
         else if (m_current_char == '-') {
             advance();
-            return Token(TokenType::MINUS, "-");
+            return Token(TokenType::MINUS, (string)"-");
         }
 
         else if (m_current_char == '(') {
             advance();
-            return Token(TokenType::LPAREN, "(");
+            return Token(TokenType::LPAREN, (string)"(");
         }
         else if (m_current_char == ')') {
             advance();
-            return Token(TokenType::RPAREN, ")");
+            return Token(TokenType::RPAREN, (string)")");
         }
         // Symbols about
         else if ((m_current_char >= 'a' && m_current_char <= 'z') || (m_current_char >= 'A' && m_current_char <= 'Z')) {
@@ -175,24 +175,24 @@ Token Lexer::get_next_token() {
         else if (m_current_char == ':' && peek() == '=') {
             advance();
             advance();
-            return Token(TokenType::ASSIGN, ":=");
+            return Token(TokenType::ASSIGN, (string)":=");
         }
         else if (m_current_char == ':') {
             advance();
-            return Token(TokenType::COLON, ":");
+            return Token(TokenType::COLON, (string)":");
         }
 
         else if (m_current_char == ';') {
             advance();
-            return Token(TokenType::SEMI, ";");
+            return Token(TokenType::SEMI, (string)";");
         }
         else if (m_current_char == '.') {
             advance();
-            return Token(TokenType::DOT, ".");
+            return Token(TokenType::DOT, (string)".");
         }
         else if (m_current_char == ',') {
             advance();
-            return Token(TokenType::COMMA, ",");
+            return Token(TokenType::COMMA, (string)",");
         }
 
         else {

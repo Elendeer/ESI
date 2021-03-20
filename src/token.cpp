@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:41:25
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-14 20:51:45
+ * @LastEditTime : 2021-03-20 22:18:48
 * @Description  :
 *********************************************/
 
@@ -82,8 +82,8 @@ void Token::print_str_repr() {
 		Any::anyCast<double>(m_value) << ")";
 	}
 	else {
-		cout << "Token(" + type + ", " <<
-		Any::anyCast<string>(m_value) << ")";
+		cout << "Token(" + type + ", \"" <<
+		Any::anyCast<string>(m_value) << "\")";
 	}
 }
 
