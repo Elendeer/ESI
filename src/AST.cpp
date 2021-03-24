@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-15 22:23:11
+ * @LastEditTime : 2021-03-24 21:42:53
  * @Description  :
  *********************************************/
 
@@ -194,6 +194,7 @@ Block::Block(std::vector<AST*> & declarations, AST* compound_statement) :
     m_children.push_back(compound_statement);
 }
 Block::~Block() {
+    // std::cout << "block deleted" << std::endl;
 }
 
 vector<AST *> Block::getDeclarations() const {
@@ -280,17 +281,30 @@ NoOp::~NoOp() {
  * Procedure declaration node
 *********************************************/
 
-ProcedureDecl::ProcedureDecl(string name, AST * block)
-    : AST(NodeType::PORCEDURE_DECL, Token()),
-    m_name(name), m_block(block) {
+ProcedureDecl::ProcedureDecl(
+    string name,
+    vector<AST *> & parameters,
+    AST * block) :
 
-    m_children.push_back(block);
-}
+    AST(NodeType::PORCEDURE_DECL, Token()),
+    m_name(name),
+    m_block(block) {
+
+        for (auto p : parameters) {
+            m_children.push_back(p);
+            m_parameters.push_back(p);
+        }
+        m_children.push_back(block);
+    }
 
 ProcedureDecl::~ProcedureDecl() {}
 
 string ProcedureDecl::getName() const {
     return m_name;
+}
+
+vector<AST *> ProcedureDecl::getParams() const {
+    return m_parameters;
 }
 
 AST * ProcedureDecl::getBlock() const {
@@ -303,9 +317,15 @@ AST * ProcedureDecl::getBlock() const {
 
 Param::Param(AST * var_node, AST * type_node)
 	: AST(NodeType::PARAM, Token()),
-	m_var_node(var_node), m_type_node(type_node) {}
+	m_var_node(var_node), m_type_node(type_node) {
 
-Param::~Param() {}
+        m_children.push_back(var_node);
+        m_children.push_back(type_node);
+    }
+
+Param::~Param() {
+    // std::cout << "param deleted" << std::endl;
+}
 
 AST * Param::getVarChild() const {
 	return m_var_node;

@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-15 22:15:31
+ * @LastEditTime : 2021-03-24 20:59:08
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -239,14 +239,24 @@ class ProcedureDecl : public AST {
 private:
     std::string m_name;
     AST * m_block;
+    std::vector<AST *> m_parameters;
 
 public:
-    ProcedureDecl(std::string name, AST * block);
+    ProcedureDecl(
+        std::string name,
+        std::vector<AST *> & parameters,
+        AST * block);
+
     virtual ~ProcedureDecl();
 
     std::string getName() const ;
-    AST * getBlock() const ;
 
+    // Get parameters.
+    // Return a vector contains pointers pointing to
+    // parameters.
+    std::vector<AST *> getParams() const;
+
+    AST * getBlock() const ;
 };
 
 // Parameter node

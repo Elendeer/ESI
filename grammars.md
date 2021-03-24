@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-11-14 09:06:48
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-15 21:58:59
+ * @LastEditTime : 2021-03-24 16:54:08
  * @Description  :
 -->
 
@@ -14,9 +14,14 @@ program : PROGRAM variable SEMI block DOT
 
 block : declarations compound_statement
 
-declarations : VAR (variable_declaration SEMI)+
-            (PROCEDURE ID SEMI block SEMI)*
+declarations : (VAR (variable_declaration SEMI)+)*
+            | (PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
             | empty
+
+formal_parameter_list : formal_parameters
+        | formal_parameters SEMI formal_parameter_list
+
+formal_parameters : ID (COMMA ID)* COLON type_spec
 
 variable_declaration : ID (COMMA ID)* COLON type_spec
 

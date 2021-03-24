@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-09 09:15:42
+ * @LastEditTime : 2021-03-24 18:32:07
  * @Description  :
 *********************************************/
 
@@ -48,6 +48,9 @@ private:
     AST *assignmentStatement();
     AST *variable();
     AST *empty();
+
+    std::vector<AST *> formalParameterList();
+    std::vector<AST *> formalParameters();
 
 public:
     // Might throw exception when init.

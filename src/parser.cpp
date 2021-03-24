@@ -71,11 +71,11 @@ void Parser::eat(TokenType token_type) {
         m_current_token = m_lexer.getNextToken();
     }
     else {
-        string message = "Invailid Syntax : Unexpected token.\n\texpected "
+        error(
+            "Invailid Syntax : Unexpected token.\n\texpected "
             + Token::map_token_type_string.at(token_type)
-            + ", met " + Token::map_token_type_string.at(m_current_token.getType());
-
-        error(message);
+            + ", met " + Token::map_token_type_string.at(m_current_token.getType())
+        );
     }
 }
 
@@ -264,15 +264,24 @@ AST * Parser::block() {
 
 }
 
-// declarations : VAR (variable_declaration SEMI)+
-// (PROCEDURE ID SEMI block SEMI)* | empty
-std::vector<AST *> Parser::declarations() {
-    std::vector<AST *> declarations;
+// declarations : (VAR (variable_declaration SEMI)+)*
+//             (PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI
+//               block SEMI)*
+//             | empty
+vector<AST *> Parser::declarations() {
+    vector<AST *> declarations;
+    // Procedure daclarations will use it.
+    AST * p_block = nullptr;
+    // Procedure daclarations will use it.
+    // Empty vector by default.
+    vector<AST *> params;
+    params.clear();
 
-    if (m_current_token.getType() == TokenType::VAR) {
+    try {
+
+    // declarations : (VAR (variable_declaration SEMI)+)*
+    while (m_current_token.getType() == TokenType::VAR) {
         eat(TokenType::VAR);
-
-        try {
 
         while (m_current_token.getType() == TokenType::ID) {
             // Pointors pointing to variable nodes(Var).
@@ -285,41 +294,56 @@ std::vector<AST *> Parser::declarations() {
             eat(TokenType::SEMI);
         } // while
 
-        } // try
-        catch (const runtime_error & error) {
-            if (!declarations.empty())
-                for (auto p : declarations)
-                    if (p != nullptr)
-                        delete p;
-            throw error;
-        }
-    }
+    } // while
 
+    // ===== =====
+
+    // (procedure id (LPAREN formal_parameter_list RPAREN)? SEMI
+    // block SEMI)*
     while (m_current_token.getType() == TokenType::PROCEDURE) {
+        // For every procedure, parameter vector start form empty.
+        params.clear();
+
         eat(TokenType::PROCEDURE);
         string name = Any::anyCast<string>(m_current_token.getVal());
         eat(TokenType::ID);
+
+        if (m_current_token.getType() == TokenType::LPAREN) {
+            eat(TokenType::LPAREN);
+            params = formalParameterList();
+            eat(TokenType::RPAREN);
+        }
+
         eat(TokenType::SEMI);
 
-        AST * p_block = nullptr;
-        try {
-            p_block = block();
-            eat(TokenType::SEMI);
-            AST * procedure_node = new ProcedureDecl(name, p_block);
-            declarations.push_back(procedure_node);
-        }
-        catch (const runtime_error & error) {
-            if (p_block != nullptr) delete p_block;
+        p_block = block();
+        eat(TokenType::SEMI);
+        AST * procedure_node = new ProcedureDecl(name, params, p_block);
 
-            if (!declarations.empty())
-                for (auto p : declarations)
-                    if (p != nullptr)
-                        delete p;
+        // Set to nullptr for next while loop.
+        // If not, will cause a sigment fault of duplicate deleting.
+        // (when error is met).
+        p_block = nullptr;
 
-            throw error;
-        }
-
+        declarations.push_back(procedure_node);
     }
+
+    } // try
+    catch (const runtime_error & error) {
+        if (p_block != nullptr) delete p_block;
+
+        if (!declarations.empty())
+            for (auto p : declarations)
+                if (p != nullptr)
+                    delete p;
+
+        if (!params.empty())
+            for (auto p : params)
+                if (p != nullptr)
+                    delete p;
+        throw error;
+    }
+
 
     return declarations;
 }
@@ -542,6 +566,103 @@ AST *Parser::empty() {
     return new NoOp();
 }
 
+// ===== =====
+
+// formal_parameter_list : formal_parameters
+//         | formal_parameters SEMI formal_parameter_list
+vector<AST *> Parser::formalParameterList() {
+    vector<AST *> params;
+    params.clear();
+    params = formalParameters();
+
+    if (m_current_token.getType() == TokenType::SEMI) {
+        eat(TokenType::SEMI);
+        try {
+            vector<AST *> tmp = formalParameterList();
+            for (auto p : tmp) {
+                params.push_back(p);
+            }
+        }
+        catch (const runtime_error & error) {
+            if (!params.empty())
+                for (auto p : params)
+                    if (p != nullptr) delete p;
+            throw error;
+        }
+    }
+
+    return params;
+}
+
+// formal_parameters : ID (COMMA ID)* COLON type_spec
+vector<AST *> Parser::formalParameters() {
+    vector<AST *> var_nodes;
+
+    // For m_current_token will change after function eat() is called.
+    Token tmp_token = m_current_token;
+    AST* p_type_node = nullptr;
+
+    eat(TokenType::ID);
+    var_nodes.push_back(new Var(tmp_token));
+
+    try {
+        while (m_current_token.getType() == TokenType::COMMA) {
+            eat(TokenType::COMMA);
+            tmp_token = m_current_token;
+            eat(TokenType::ID);
+
+            var_nodes.push_back(new Var(tmp_token));
+        }
+        eat(TokenType::COLON);
+
+        // There is a memory allocation of a node inside function typeSpec()
+        // and it will return a pointer poiting to that.
+        // Type node may be used more than one time (e.g. a, b : INTEGER),
+        // so this node will be used as a template.
+        // Delete this pointer on time is necessary.
+        p_type_node = typeSpec();
+    } // try
+    catch (const runtime_error & error ) {
+        if (!var_nodes.empty())
+            for (auto p : var_nodes)
+                if (p != nullptr) {
+                    delete p;
+                    p = nullptr;
+                }
+        throw error;
+    }
+
+    vector<AST *> param_decl;
+
+    try {
+        for (auto p_var_node : var_nodes) {
+            AST * tmp_p_type_node = new Type(p_type_node -> getToken());
+            param_decl.push_back(new Param(p_var_node, tmp_p_type_node));
+        }
+
+        delete p_type_node;
+        p_type_node = nullptr;
+
+        return param_decl;
+    }// try
+    catch (const runtime_error & error) {
+        if (p_type_node != nullptr) {
+            delete p_type_node;
+            p_type_node = nullptr;
+        }
+        if (!param_decl.empty())
+            for (auto p : param_decl)
+                if (p != nullptr) {
+                    delete p;
+                    p = nullptr;
+                }
+        throw error;
+    }
+}
+
+// ===== =====
+// ===== ===== Public
+// ===== =====
 
 AST *Parser::parse() {
     using std::cout;

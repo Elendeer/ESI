@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:27:27
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-17 16:56:10
+ * @LastEditTime : 2021-03-24 16:31:47
  * @Description  :
 *********************************************/
 #ifndef INC_SYMBOL_TABLE_BUILDER_HPP_
@@ -16,6 +16,9 @@ namespace ESI {
 class SemanticAnalyzer : public NodeVisitor {
 private :
     ScopedSymbolTable m_scope;
+
+    // ===== functions =====
+
     virtual void generic_visit(AST *node);
 
     virtual Any visit(AST * node);
@@ -42,6 +45,7 @@ public :
 
     // Run semantic analyze, may throw exception.
     void analyze();
+
     void printSymbolTable();
 };
 
