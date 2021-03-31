@@ -9,6 +9,9 @@
 #define INC_SYMBOL_HPP_
 
 #include <string>
+#include <vector>
+
+#include "AST.hpp"
 
 namespace ESI {
 
@@ -23,7 +26,9 @@ enum class SymbolType {
 enum class SymbolCategory {
     SYMBOL,
     BUILD_IN_TYPE_SYMBOL,
-    VAR_SYMBOL
+    VAR_SYMBOL,
+
+	PROCEDURE_SYMBOL
 };
 
 // As a base class.
@@ -60,6 +65,20 @@ class VarSymbol : public Symbol {
 public :
     VarSymbol(std::string name, SymbolType type);
     virtual ~VarSymbol();
+
+    virtual SymbolCategory getCategory() const;
+};
+
+// Procedure symbol.
+// If there are no parameters for a procedure node, please enter a 
+// empty vector as 'parameters'.
+class ProcedureSymbol : public Symbol {
+private:
+    std::vector<AST *> m_parameters;
+
+public :
+	ProcedureSymbol(std::string name, std::vector<AST *> & parameters);
+	virtual ~ProcedureSymbol();
 
     virtual SymbolCategory getCategory() const;
 };

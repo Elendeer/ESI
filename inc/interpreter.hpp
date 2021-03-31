@@ -11,6 +11,7 @@
 
 #include "parser.hpp"
 #include "node_visitor.hpp"
+#include "scoped_symbol_table.hpp"
 
 #include <map>
 
@@ -19,7 +20,13 @@ namespace ESI {
 // Interpreter is a node-visitor
 class Interpreter : public NodeVisitor {
 private:
-    std::map<std::string, Any> m_GLOBAL_SCOPE;
+    ScopedSymbolTable m_global_scope;
+    // TODO : to test.
+    ScopedSymbolTable * m_p_current_scope;
+
+    // TODO : to test.
+    ScopedSymbolTable m_build_in_type_scope;
+
 
     // It will transfer a funtion
     // to visit a node depends on type of the node.

@@ -14,10 +14,21 @@
 using std::string;
 using std::runtime_error;
 
+using std::cout;
+using std::endl;
+
 namespace ESI {
 
 Interpreter::Interpreter(AST * root)
-    : NodeVisitor(root) {}
+    : NodeVisitor(root) {
+        m_global_scope = ScopedSymbolTable("global", 1);
+        m_p_current_scope = & m_global_scope;
+        m_build_in_type_scope = ScopedSymbolTable("build-in types", 0);
+
+        // Build-in type symbols
+        m_build_in_type_scope.define(new Symbol("INTEGER", SymbolType::INTEGER));
+        m_build_in_type_scope.define(new Symbol("REAL", SymbolType::REAL));
+    }
 
 Interpreter::~Interpreter() {}
 
@@ -146,7 +157,7 @@ Any Interpreter::visit_Assign(AST *node) {
 
     string var_name = dynamic_cast<Var *>(assign_node->getLeft())->getVal();
 
-    m_GLOBAL_SCOPE[var_name] = visit(assign_node->getRight());
+    m_global_scope[var_name] = visit(assign_node->getRight());
 
     return Any();
 }
@@ -154,9 +165,9 @@ Any Interpreter::visit_Assign(AST *node) {
 Any Interpreter::visit_Var(AST *node) {
     string var_name = dynamic_cast<Var *>(node)->getVal();
 
-    std::map<std::string, Any>::iterator iter = m_GLOBAL_SCOPE.find(var_name);
+    std::map<std::string, Any>::iterator iter = m_global_scope.find(var_name);
 
-    if (iter == m_GLOBAL_SCOPE.end()) {
+    if (iter == m_global_scope.end()) {
         throw(std::runtime_error(
             "interpreter: Undefined Symble: " + var_name));
     }
@@ -165,9 +176,14 @@ Any Interpreter::visit_Var(AST *node) {
 }
 
 Any Interpreter::visitProgram(AST *node) {
+    cout << "ENTER scope : global" << endl;
+
     Program * program_node = dynamic_cast<Program *>(node);
 
-    return visit(program_node->getBlock());
+    visit(program_node->getBlock());
+
+    cout << "LEAVE scope : global" << endl;
+    return Any();
 }
 
 Any Interpreter::visitBlock(AST *node) {
@@ -196,9 +212,26 @@ Any Interpreter::visitType(AST *node) {
 // ===== =====
 
 Any Interpreter::visitProcedureDecl(AST * node) {
-    std::cout << "procedure_decl visited!" << std::endl;
-    // Do nothing.
-    if (node == nullptr) return Any();
+    ProcedureDecl * procedure_node = dynamic_cast<ProcedureDecl *>(node);
+    string procedure_name = procedure_node->getName();
+
+    // params just for take the place.
+    std::vector<AST *> params;
+    ProcedureSymbol * proc_symbol = new ProcedureSymbol(procedure_name, params);
+
+    m_p_current_scope->define(proc_symbol);
+
+    cout << "ENTER scope : " << procedure_name << endl;
+    ScopedSymbolTable procedure_scope = ScopedSymbolTable(procedure_name, 2);
+    m_p_current_scope = & procedure_scope;
+
+    for (auto p : procedure_node->getParams()) {
+        Symbol * param_type = m_build_in_type_scope.lookup(p->getTypeString());
+        // TODO: to finish.
+    }
+
+
+    m_p_current_scope = nullptr;
     return Any();
 }
 
@@ -232,16 +265,7 @@ void Interpreter::interpret() {
 }
 
 void Interpreter::printScope() {
-    using std::cout;
-    using std::endl;
-
-    cout << "----- Globle Scope -----" << endl;
-    cout << "Var\tVal" << endl;
-    if (!m_GLOBAL_SCOPE.empty()) {
-        for (auto i = m_GLOBAL_SCOPE.begin(); i != m_GLOBAL_SCOPE.end(); ++i) {
-            cout << i -> first << "\t" << i -> second << endl;
-        }
-    }
+    m_global_scope.print();
 }
 
 } // namespace ESI

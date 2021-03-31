@@ -29,7 +29,7 @@ private :
     std::unordered_map<std::string, Symbol *> m_map;
 
 public :
-    ScopedSymbolTable(std::string scope_name, int scope_level);
+    ScopedSymbolTable(std::string scope_name = "none", int scope_level = -1);
     ~ScopedSymbolTable();
     ScopedSymbolTable(const ScopedSymbolTable & obj);
 

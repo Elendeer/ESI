@@ -42,7 +42,6 @@
 using std::string;
 using std::vector;
 using std::runtime_error;
-using std::exception;
 
 namespace ESI {
 

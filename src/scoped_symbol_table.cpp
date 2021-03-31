@@ -34,8 +34,8 @@ ScopedSymbolTable::~ScopedSymbolTable() {
 ScopedSymbolTable::ScopedSymbolTable(const ScopedSymbolTable & obj) {
     if (obj.m_map.empty()) return ;
 
-	m_scope_name = obj.getScopeName();
-	m_scope_level = obj.getScopeLevel();
+    m_scope_name = obj.getScopeName();
+    m_scope_level = obj.getScopeLevel();
 
     // i is an iterator pointing a pair<string, Symbol * >.
     for (auto i : obj.m_map) {
@@ -63,11 +63,11 @@ ScopedSymbolTable::ScopedSymbolTable(const ScopedSymbolTable & obj) {
 }
 
 string ScopedSymbolTable::getScopeName() const {
-	return m_scope_name;
+    return m_scope_name;
 }
 
 int ScopedSymbolTable::getScopeLevel() const {
-	return m_scope_level;
+    return m_scope_level;
 }
 
 
@@ -75,8 +75,8 @@ void ScopedSymbolTable::print() const {
     using std::cout;
     using std::endl;
 
-	cout << "scope: " << m_scope_name << "; level: " << m_scope_level << endl;
-	cout << "===== ===== ===== =====" << endl;
+    cout << "scope: " << m_scope_name << "; level: " << m_scope_level << endl;
+    cout << "===== ===== ===== =====" << endl;
 
     if (m_map.empty()) return ;
 
@@ -87,7 +87,7 @@ void ScopedSymbolTable::print() const {
         }
     }
 
-	cout << "----- ----- ----- -----" << endl;
+    cout << "----- ----- ----- -----" << endl;
 }
 
 void ScopedSymbolTable::define(Symbol * symbol) {

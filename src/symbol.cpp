@@ -10,7 +10,7 @@
 #include "../inc/symbol.hpp"
 
 using std::string;
-using std::cout;
+using std::vector;
 
 namespace ESI {
 
@@ -40,6 +40,10 @@ string Symbol::strRepr() {
     else if (category == SymbolCategory::VAR_SYMBOL) {
         category_str = "variable-symbol<";
     }
+    else if (category == SymbolCategory::PROCEDURE_SYMBOL) {
+        category_str = "procedure-symbol<";
+    }
+
     // ===== =====
     if (m_type == SymbolType::NONE) {
         return (string)(category_str +
@@ -83,6 +87,17 @@ VarSymbol::~VarSymbol() {}
 
 SymbolCategory VarSymbol::getCategory() const {
     return SymbolCategory::VAR_SYMBOL;
+}
+
+// ===== ProcedureSymbol Class =====
+
+ProcedureSymbol::ProcedureSymbol(string name, vector<AST *> & parameters):
+    Symbol(name), m_parameters(parameters) {}
+
+ProcedureSymbol::~ProcedureSymbol() {}
+
+SymbolCategory ProcedureSymbol::getCategory() const {
+    return SymbolCategory::PROCEDURE_SYMBOL;
 }
 
 } // namespace ESI
