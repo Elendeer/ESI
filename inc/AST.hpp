@@ -61,6 +61,7 @@ public:
     AST(NodeType type, Token token);
     virtual ~AST();
 
+    // Return the string representation of m_nodeType.
     std::string getTypeString() const;
 
     // Return node type of a AST node

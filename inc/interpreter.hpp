@@ -20,12 +20,7 @@ namespace ESI {
 // Interpreter is a node-visitor
 class Interpreter : public NodeVisitor {
 private:
-    ScopedSymbolTable m_global_scope;
-    // TODO : to test.
-    ScopedSymbolTable * m_p_current_scope;
-
-    // TODO : to test.
-    ScopedSymbolTable m_build_in_type_scope;
+    std::map<std::string, Any> m_global_scope;
 
 
     // It will transfer a funtion

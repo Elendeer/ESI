@@ -21,13 +21,6 @@ namespace ESI {
 
 Interpreter::Interpreter(AST * root)
     : NodeVisitor(root) {
-        m_global_scope = ScopedSymbolTable("global", 1);
-        m_p_current_scope = & m_global_scope;
-        m_build_in_type_scope = ScopedSymbolTable("build-in types", 0);
-
-        // Build-in type symbols
-        m_build_in_type_scope.define(new Symbol("INTEGER", SymbolType::INTEGER));
-        m_build_in_type_scope.define(new Symbol("REAL", SymbolType::REAL));
     }
 
 Interpreter::~Interpreter() {}
@@ -176,13 +169,9 @@ Any Interpreter::visit_Var(AST *node) {
 }
 
 Any Interpreter::visitProgram(AST *node) {
-    cout << "ENTER scope : global" << endl;
-
     Program * program_node = dynamic_cast<Program *>(node);
 
     visit(program_node->getBlock());
-
-    cout << "LEAVE scope : global" << endl;
     return Any();
 }
 
@@ -212,26 +201,10 @@ Any Interpreter::visitType(AST *node) {
 // ===== =====
 
 Any Interpreter::visitProcedureDecl(AST * node) {
+    // Do nothing.
     ProcedureDecl * procedure_node = dynamic_cast<ProcedureDecl *>(node);
     string procedure_name = procedure_node->getName();
 
-    // params just for take the place.
-    std::vector<AST *> params;
-    ProcedureSymbol * proc_symbol = new ProcedureSymbol(procedure_name, params);
-
-    m_p_current_scope->define(proc_symbol);
-
-    cout << "ENTER scope : " << procedure_name << endl;
-    ScopedSymbolTable procedure_scope = ScopedSymbolTable(procedure_name, 2);
-    m_p_current_scope = & procedure_scope;
-
-    for (auto p : procedure_node->getParams()) {
-        Symbol * param_type = m_build_in_type_scope.lookup(p->getTypeString());
-        // TODO: to finish.
-    }
-
-
-    m_p_current_scope = nullptr;
     return Any();
 }
 
@@ -265,7 +238,15 @@ void Interpreter::interpret() {
 }
 
 void Interpreter::printScope() {
-    m_global_scope.print();
+    using std::cout;
+    using std::endl;
+
+    cout << "===== global scope =====" << endl;
+    cout << "Variable\tValue" << endl;
+    for (auto item : m_global_scope) {
+        cout << item.first << "\t" << item.second << endl;
+    }
+    cout << "===== ===== =====" << endl;
 }
 
 } // namespace ESI

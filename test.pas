@@ -19,8 +19,6 @@ PROCEDURE P2(a, b : REAL; c : INTEGER);
 BEGIN
 END;
 
-
-
 BEGIN
 
 a := (1 + 2) * 3;

@@ -5,21 +5,39 @@
  * @LastEditTime : 2021-03-17 16:55:42
  * @Description  :
 *********************************************/
+//
+// 1. When visiting the node in AST, we first print what scope we’re entering.
+// 2. We create a separate scoped symbol table to represent the global scope.
+// When we construct an instance of ScopedSymbolTable,
+// we explicitly pass the scope name and scope level arguments
+// to the class constructor.
+// 3. We assign the newly created scope to the instance variable current_scope.
+// Other visitor methods that insert and look up symbols
+// in scoped symbol tables will use the m_p_current_scope.
+// 4. We visit a subtree. This is the old part.
+// 5. Before leaving the global scope
+// we print the contents of the global scope (scoped symbol table)
+// 6. We also print the message that we’re leaving the global scope
+
 
 #include "../inc/semantic_analyzer.hpp"
 
 using std::string;
 using std::runtime_error;
 
+using std::cout;
+using std::endl;
+
 namespace ESI {
 
 SemanticAnalyzer::SemanticAnalyzer(AST * root)
-	: NodeVisitor(root), m_scope("global", 1) {
-
-    // Build-in type symbols
-    m_scope.define(new Symbol("INTEGER", SymbolType::INTEGER));
-    m_scope.define(new Symbol("REAL", SymbolType::REAL));
-}
+	: NodeVisitor(root),
+    m_build_in_type_scope("build-in tyep", -1),
+    m_p_current_scope(nullptr) {
+        // Build-in type symbols
+        m_build_in_type_scope.define(new Symbol("INTEGER", SymbolType::INTEGER));
+        m_build_in_type_scope.define(new Symbol("REAL", SymbolType::REAL));
+    }
 
 SemanticAnalyzer::~SemanticAnalyzer() {}
 
@@ -40,28 +58,28 @@ Any SemanticAnalyzer::visit(AST *node) {
         return visitProgram(node);
     }
     else if (node->getType() == NodeType::NUM) {
-        return visit_Num(node);
+        return visitNum(node);
     }
     else if (node->getType() == NodeType::BINOP) {
-        return visit_BinOp(node);
+        return visitBinOp(node);
     }
     else if (node->getType() == NodeType::BLOCK) {
         return visitBlock(node);
     }
     else if (node->getType() == NodeType::UNARYOP) {
-        return visit_UnaryOp(node);
+        return visitUnaryOp(node);
     }
     else if (node->getType() == NodeType::ASSIGN) {
-        visit_Assign(node);
+        visitAssign(node);
     }
     else if (node->getType() == NodeType::VAR) {
-        return visit_Var(node);
+        return visitVar(node);
     }
     else if (node->getType() == NodeType::COMPOUND) {
-        visit_Compound(node);
+        visitCompound(node);
     }
     else if (node->getType() == NodeType::NOOP) {
-        visit_NoOp();
+        visitNoOp();
     }
     else if (node->getType() == NodeType::VAR_DECL) {
         visitVarDecl(node);
@@ -76,7 +94,7 @@ Any SemanticAnalyzer::visit(AST *node) {
     return Any();
 }
 
-Any SemanticAnalyzer::visit_UnaryOp(AST *node) {
+Any SemanticAnalyzer::visitUnaryOp(AST *node) {
     UnaryOp * unary_op_node = dynamic_cast<UnaryOp *>(node);
 
     visit(unary_op_node->getExpr());
@@ -84,7 +102,7 @@ Any SemanticAnalyzer::visit_UnaryOp(AST *node) {
     return Any();
 }
 
-Any SemanticAnalyzer::visit_BinOp(AST *node) {
+Any SemanticAnalyzer::visitBinOp(AST *node) {
     BinOp * bin_op_node = dynamic_cast<BinOp *>(node);
 
     visit(bin_op_node->getLeft());
@@ -92,14 +110,14 @@ Any SemanticAnalyzer::visit_BinOp(AST *node) {
     return Any();
 }
 
-Any SemanticAnalyzer::visit_Num(AST *node) {
+Any SemanticAnalyzer::visitNum(AST *node) {
     if (node != nullptr) return Any();
     return Any();
 }
 
 // ===== =====
 
-Any SemanticAnalyzer::visit_Compound(AST *node) {
+Any SemanticAnalyzer::visitCompound(AST *node) {
     Compound * compound_node = dynamic_cast<Compound *>(node);
     for (auto p : compound_node->getChildren()) {
         visit(p);
@@ -107,11 +125,11 @@ Any SemanticAnalyzer::visit_Compound(AST *node) {
     return Any();
 }
 
-Any SemanticAnalyzer::visit_NoOp() {
+Any SemanticAnalyzer::visitNoOp() {
     return Any();
 }
 
-Any SemanticAnalyzer::visit_Assign(AST *node) {
+Any SemanticAnalyzer::visitAssign(AST *node) {
     Assign * assign_node = dynamic_cast<Assign *>(node);
 
     visit(assign_node->getLeft());
@@ -120,12 +138,12 @@ Any SemanticAnalyzer::visit_Assign(AST *node) {
     return Any();
 }
 
-Any SemanticAnalyzer::visit_Var(AST *node) {
+Any SemanticAnalyzer::visitVar(AST *node) {
     Var * var_node = dynamic_cast<Var*>(node);
 
     string name = var_node->getVal();
 
-    Symbol * p_symbol = m_scope.lookup(name);
+    Symbol * p_symbol = m_p_current_scope->lookup(name);
 
     if (p_symbol == nullptr) {
         string message = "Undefinded symobl(identifier) : "
@@ -141,7 +159,15 @@ Any SemanticAnalyzer::visit_Var(AST *node) {
 Any SemanticAnalyzer::visitProgram(AST * node) {
     Program * program_node = dynamic_cast<Program * >(node);
 
+    cout << "ENTER global scope" << endl;
+
+    ScopedSymbolTable global_scope = ScopedSymbolTable("global", 1);
+    m_p_current_scope = & global_scope;
+
     visit(program_node->getBlock());
+
+    global_scope.print();
+    cout << "LEAVE global scope" << endl;
 
     return Any();
 }
@@ -149,7 +175,7 @@ Any SemanticAnalyzer::visitProgram(AST * node) {
 Any SemanticAnalyzer::visitBlock(AST * node) {
     Block * block_node = dynamic_cast<Block * >(node);
 
-    for (auto p : block_node->getDeclarations()) {
+    for (AST * p : block_node->getDeclarations()) {
         visit(p);
     }
     visit(block_node->getCompoundStatement());
@@ -161,21 +187,25 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
     VarDecl * var_decl_node = dynamic_cast<VarDecl * >(node);
 
     Var * var_node = dynamic_cast<Var *>(var_decl_node->getVarChild());
+    // Get variable name string.
     string var_name = var_node->getVal();
-    if (m_scope.lookup(var_name) != nullptr) {
+
+    // Dumplicat declaration checking.
+    if (m_p_current_scope->lookup(var_name) != nullptr) {
         throw runtime_error(
-            "Duplicat declaration of symbol(identifier) " + var_name +
-            " found."
+            "Dumplicat declaration of symbol(identifier) " + var_name +
+            " found in scope: " +
+            m_p_current_scope->getScopeName()
         );
     }
 
     Type * type_node = dynamic_cast<Type *>(var_decl_node->getTypeChild());
     string var_type_str = type_node->getVal();
-    Symbol * var_type_symbol = m_scope.lookup(var_type_str);
-
+    Symbol * var_type_symbol = m_build_in_type_scope.lookup(var_type_str);
+    // Get variable symble type .
     SymbolType var_type = var_type_symbol->getType();
 
-    m_scope.define(new Symbol(var_name, var_type));
+    m_p_current_scope->define(new Symbol(var_name, var_type));
 
     return Any();
 }
@@ -188,8 +218,50 @@ Any SemanticAnalyzer::visitType(AST * node) {
 // ===== =====
 
 Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
-    // Do nothing.
-    if (node == nullptr) return Any();
+    ProcedureDecl * procedure_node = dynamic_cast<ProcedureDecl *>(node);
+    string proc_name = procedure_node->getName();
+
+    // Symbol creating
+    ProcedureSymbol * proc_symbol = new ProcedureSymbol(proc_name);
+    m_p_current_scope->define(proc_symbol);
+
+    cout << "ENTER scope: " << proc_name << endl;
+    ScopedSymbolTable procedure_scope = ScopedSymbolTable(proc_name, 2);
+
+    // Save tmp for reset in the end of this function.
+    ScopedSymbolTable * tmp = m_p_current_scope;
+    m_p_current_scope = & procedure_scope;
+
+    // Put parameter symbols into procedure scope and procedure symbol.
+    for (AST * node : procedure_node->getParams()) {
+        Param * param_node = dynamic_cast<Param *>(node);
+
+        Type * type_node = dynamic_cast<Type *>(param_node->getTypeChild());
+        Symbol * p_type_symbol = m_build_in_type_scope.lookup(
+                type_node->getVal());
+        // get parameter type.
+        SymbolType param_type = p_type_symbol->getType();
+
+        Var * var_node = dynamic_cast<Var *>(param_node->getVarChild());
+        // get parameter name.
+        string param_name = var_node->getVal();
+
+        VarSymbol * var_symbol = new VarSymbol(param_name, param_type);
+        m_p_current_scope->define(var_symbol);
+        proc_symbol->pushParameter(var_symbol);
+    }
+
+    visitBlock(procedure_node->getBlock());
+
+    procedure_scope.print();
+
+    cout << "LEAVE scope: " << proc_name << endl;
+    // this scope is local, will be delete after this function ended.
+    // m_p_current_scope will pointing to nothing after that.
+    // And we will reset this pointer to tmp.
+    m_p_current_scope = tmp;
+
+
     return Any();
 }
 
@@ -215,7 +287,7 @@ void SemanticAnalyzer::analyze() {
 }
 
 void SemanticAnalyzer::printSymbolTable() {
-	m_scope.print();
+	m_build_in_type_scope.print();
 }
 
 

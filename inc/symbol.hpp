@@ -32,6 +32,8 @@ enum class SymbolCategory {
 };
 
 // As a base class.
+// name : name of the symbol;
+// type : if this symbol is a variable, it will have a type.
 class Symbol {
 protected :
     std::string m_name;
@@ -70,17 +72,18 @@ public :
 };
 
 // Procedure symbol.
-// If there are no parameters for a procedure node, please enter a 
-// empty vector as 'parameters'.
 class ProcedureSymbol : public Symbol {
 private:
-    std::vector<AST *> m_parameters;
+    std::vector<Symbol *> m_parameters;
 
 public :
-	ProcedureSymbol(std::string name, std::vector<AST *> & parameters);
+    ProcedureSymbol(std::string name);
+	ProcedureSymbol(std::string name, std::vector<Symbol *> & parameters);
 	virtual ~ProcedureSymbol();
 
     virtual SymbolCategory getCategory() const;
+
+    void pushParameter(Symbol * param_node);
 };
 
 } // namespace ESI

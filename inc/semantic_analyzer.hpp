@@ -15,7 +15,8 @@ namespace ESI {
 
 class SemanticAnalyzer : public NodeVisitor {
 private :
-    ScopedSymbolTable m_scope;
+    ScopedSymbolTable m_build_in_type_scope;
+    ScopedSymbolTable * m_p_current_scope;
 
     // ===== functions =====
 
@@ -23,14 +24,14 @@ private :
 
     virtual Any visit(AST * node);
 
-    Any visit_UnaryOp(AST *node);
-    Any visit_BinOp(AST *node);
-    Any visit_Num(AST *node);
+    Any visitUnaryOp(AST *node);
+    Any visitBinOp(AST *node);
+    Any visitNum(AST *node);
 
-    Any visit_Compound(AST *node);
-    Any visit_NoOp();
-    Any visit_Assign(AST *node);
-    Any visit_Var(AST *node);
+    Any visitCompound(AST *node);
+    Any visitNoOp();
+    Any visitAssign(AST *node);
+    Any visitVar(AST *node);
 
     Any visitProgram(AST * node);
     Any visitBlock(AST * node);

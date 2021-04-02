@@ -46,8 +46,10 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
         SemanticAnalyzer semantic_analyzer(ast_root);
 
         try {
+            cout << "Semantic analyzing ..." << endl;
             semantic_analyzer.analyze();
 			semantic_analyzer.printSymbolTable();
+            cout << "Semantic analyze finish." << endl << endl;
         }
         catch (const std::runtime_error & error) {
             cout << error.what() << endl;
@@ -60,6 +62,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
         Interpreter interpreter(ast_root);
 
         try {
+            cout << "Interpreting ..." << endl;
             interpreter.interpret();
         }
         catch (const std::runtime_error & error) {

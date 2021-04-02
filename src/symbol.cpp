@@ -91,13 +91,29 @@ SymbolCategory VarSymbol::getCategory() const {
 
 // ===== ProcedureSymbol Class =====
 
-ProcedureSymbol::ProcedureSymbol(string name, vector<AST *> & parameters):
+ProcedureSymbol::ProcedureSymbol(string name):
+    Symbol(name) {
+        m_parameters.clear();
+    }
+
+ProcedureSymbol::ProcedureSymbol(string name, vector<Symbol *> & parameters):
     Symbol(name), m_parameters(parameters) {}
 
-ProcedureSymbol::~ProcedureSymbol() {}
+ProcedureSymbol::~ProcedureSymbol() {
+    for (Symbol * p : m_parameters) {
+        if (p != nullptr) {
+            delete p;
+            p = nullptr;
+        }
+    }
+}
 
 SymbolCategory ProcedureSymbol::getCategory() const {
     return SymbolCategory::PROCEDURE_SYMBOL;
+}
+
+void ProcedureSymbol::pushParameter(Symbol * param_node) {
+    m_parameters.push_back(param_node);
 }
 
 } // namespace ESI
