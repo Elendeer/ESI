@@ -116,4 +116,8 @@ void ProcedureSymbol::pushParameter(Symbol * param_node) {
     m_parameters.push_back(param_node);
 }
 
+vector<Symbol *> ProcedureSymbol::getParams() {
+    return m_parameters;
+}
+
 } // namespace ESI

@@ -84,6 +84,8 @@ public :
     virtual SymbolCategory getCategory() const;
 
     void pushParameter(Symbol * param_node);
+
+    std::vector<Symbol *> getParams();
 };
 
 } // namespace ESI
