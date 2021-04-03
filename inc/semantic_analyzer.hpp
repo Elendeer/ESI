@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:27:27
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-24 16:31:47
+ * @LastEditTime : 2021-04-03 09:13:05
  * @Description  :
 *********************************************/
 #ifndef INC_SYMBOL_TABLE_BUILDER_HPP_
@@ -33,6 +33,7 @@ private :
     Any visitAssign(AST *node);
     Any visitVar(AST *node);
 
+    // S
     Any visitProgram(AST * node);
     Any visitBlock(AST * node);
     Any visitVarDecl(AST * node);

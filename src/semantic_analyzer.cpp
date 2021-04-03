@@ -2,16 +2,19 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-17 16:55:42
+ * @LastEditTime : 2021-04-03 10:17:12
  * @Description  :
 *********************************************/
 //
-// 1. When visiting the node in AST, we first print what scope we’re entering.
-// 2. We create a separate scoped symbol table to represent the global scope.
+// 1. When visiting the node in AST, we first print
+// what scope we’re entering.
+// 2. We create a separate scoped symbol table
+// to represent the global scope.
 // When we construct an instance of ScopedSymbolTable,
 // we explicitly pass the scope name and scope level arguments
 // to the class constructor.
-// 3. We assign the newly created scope to the instance variable current_scope.
+// 3. We assign the address of the newly created scope
+// to the instance variable m_p_current_scope.
 // Other visitor methods that insert and look up symbols
 // in scoped symbol tables will use the m_p_current_scope.
 // 4. We visit a subtree. This is the old part.
@@ -161,6 +164,7 @@ Any SemanticAnalyzer::visitProgram(AST * node) {
 
     cout << "ENTER global scope" << endl;
 
+    // Global scope have no enclosing scope.
     ScopedSymbolTable global_scope = ScopedSymbolTable("global", 1);
     m_p_current_scope = & global_scope;
 
@@ -168,6 +172,9 @@ Any SemanticAnalyzer::visitProgram(AST * node) {
 
     global_scope.print();
     cout << "LEAVE global scope" << endl;
+
+    // nullptr after all.
+    m_p_current_scope = m_p_current_scope->getEnclosingScope();
 
     return Any();
 }
@@ -191,7 +198,7 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
     string var_name = var_node->getVal();
 
     // Dumplicat declaration checking.
-    if (m_p_current_scope->lookup(var_name) != nullptr) {
+    if (m_p_current_scope->lookup(var_name, true) != nullptr) {
         throw runtime_error(
             "Dumplicat declaration of symbol(identifier) " + var_name +
             " found in scope: " +
@@ -226,10 +233,12 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
     m_p_current_scope->define(proc_symbol);
 
     cout << "ENTER scope: " << proc_name << endl;
-    ScopedSymbolTable procedure_scope = ScopedSymbolTable(proc_name, 2);
+    // Create scope for this procedure.
+    ScopedSymbolTable procedure_scope = ScopedSymbolTable(
+        proc_name,
+        m_p_current_scope->getScopeLevel() + 1,
+        m_p_current_scope);
 
-    // Save tmp for reset in the end of this function.
-    ScopedSymbolTable * tmp = m_p_current_scope;
     m_p_current_scope = & procedure_scope;
 
     // Put parameter symbols into procedure scope and procedure symbol.
@@ -259,7 +268,7 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
     // this scope is local, will be delete after this function ended.
     // m_p_current_scope will pointing to nothing after that.
     // And we will reset this pointer to tmp.
-    m_p_current_scope = tmp;
+    m_p_current_scope = m_p_current_scope->getEnclosingScope();
 
 
     return Any();

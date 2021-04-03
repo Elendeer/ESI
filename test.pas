@@ -10,12 +10,14 @@ b : REAL;
 {注释：声明程序}
 PROCEDURE P1;
 VAR
-    A : INTEGER;
+    a : INTEGER;
 BEGIN
-    A := 666;
+    a := 666;
 END;
 
 PROCEDURE P2(a, b : REAL; c : INTEGER);
+VAR
+    a : INTEGER; {dumplicat declaration here, will throw a sementic error.}
 BEGIN
 END;
 
