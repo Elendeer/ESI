@@ -2,15 +2,17 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-03 10:50:49
+ * @LastEditTime : 2021-04-03 11:07:22
  * @Description  :
 -->
 
 # Extremely Simple Interpreter
 
+[中文版reademe文档](./readme_cn.md)
+
 ## Introduce
 
-ESI is a project that I started for learning complier theory.
+ESI is a project that I started for learning compiler theory.
 
 My friend [Chipen](https://github.com/zsiothsu) and
 [Ruslan's Blog](https://ruslanspivak.com/lsbasi-part1/) inspire me.
@@ -33,7 +35,7 @@ PROGRAM test;
 
 { variable declaration supported. }
 VAR
-{ have only tow build-in types so far. }
+{ have only two build-in types so far. }
 a : INTEGER;
 b : REAL;
 
@@ -61,7 +63,7 @@ b := a + 0.25;
 
 END.
 
-{ semantic analyzing is more complete then interpreting so far. }
+{ semantic analysis is more complete then interpreting so far. }
 ```
 
 If you remove the duplicate declaration of variable `a` in procedure `P2`
@@ -117,7 +119,7 @@ b       9.25
 
 Make sure you get *git* installed.
 
-Open a new folder in a shell you like. In windows, you can right click in
+Open a new folder in a shell you like. In Windows, you can right click in
 any folder with *shift* pressed to get PowerShell opened in current folder.
 
 Use `git clone https://github.com/Elendeer/ESI` to clone this repository.
@@ -131,7 +133,7 @@ Executable file is *./ESI*. In windows, it will have a `exe` postfix.
 
 Write down your code in a file.
 
-Open a shell in diretory of ESI, run
+Open a shell in directory of ESI, run
 
 ```shell
 ./ESI [absolute path of your code file] | [relative path of your code file]
