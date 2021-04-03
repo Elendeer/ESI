@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-11 16:47:56
+ * @LastEditTime : 2021-04-03 10:40:07
  * @Description  :
 -->
 
@@ -20,8 +20,98 @@ until the project is more complete before writing more details.
 
 ## What's been implement
 
-You can cheack the `./test.pas` file to see my newest test, normally it
-shows all features I have implement.
+> You can cheack the `./test.pas` file to see my newest test, normally it
+> shows all features I have implement.
+
+An Example (form `./test.pas`):
+
+```pascal
+{ comment supported. }
+{ program name : test }
+{ key words should be all uppercase. }
+PROGRAM test;
+
+{ variable declaration supported. }
+VAR
+{ have only tow build-in types so far. }
+a : INTEGER;
+b : REAL;
+
+{ procedure declaration supported. }
+PROCEDURE P1;
+VAR
+    a : INTEGER;
+BEGIN
+    a := 666;
+END;
+
+{ procedure declaration with parameters supported. }
+PROCEDURE P2(a, b : REAL; c : INTEGER);
+VAR
+    a : INTEGER; {duplicat declaration here, will throw a sementic error.}
+    {that is, name solution and nested scope supported. }
+BEGIN
+END;
+
+BEGIN
+
+{ arithmetic expression & assign statement supported. }
+a := (1 + 2) * 3;
+b := a + 0.25;
+
+END.
+
+{ sementic analyzing is more complete then interpreting so far. }
+```
+
+If you remove the duplicate declaration of variable `a` in procedure `P2`
+then run `./ESI ./test.pas` in your shell, you will get output like:
+
+```shell
+Semantic analyzing ...
+ENTER global scope
+ENTER scope: P1
+scope name: P1
+level: 2
+enclosing scope: global
+===== ===== ===== =====
+[a] : Symbol<type : INTEGER, name : a>
+----- ----- ----- -----
+LEAVE scope: P1
+ENTER scope: P2
+scope name: P2
+level: 2
+enclosing scope: global
+===== ===== ===== =====
+[c] : variable-symbol<type : INTEGER, name : c>
+[a] : variable-symbol<type : REAL, name : a>
+[b] : variable-symbol<type : REAL, name : b>
+----- ----- ----- -----
+LEAVE scope: P2
+scope name: global
+level: 1
+enclosing scope: NONE
+===== ===== ===== =====
+[b] : Symbol<type : REAL, name : b>
+[a] : Symbol<type : INTEGER, name : a>
+----- ----- ----- -----
+LEAVE global scope
+scope name: build-in tyep
+level: -1
+enclosing scope: NONE
+===== ===== ===== =====
+[REAL] : Symbol<type : REAL, name : REAL>
+[INTEGER] : Symbol<type : INTEGER, name : INTEGER>
+----- ----- ----- -----
+Semantic analyze finish.
+
+Interpreting ...
+===== global scope =====
+Variable        Value
+a       9
+b       9.25
+===== ===== =====
+```
 
 ## Build
 

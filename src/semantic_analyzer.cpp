@@ -200,7 +200,7 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
     // Dumplicat declaration checking.
     if (m_p_current_scope->lookup(var_name, true) != nullptr) {
         throw runtime_error(
-            "Dumplicat declaration of symbol(identifier) " + var_name +
+            "Duplicat declaration of symbol(identifier) " + var_name +
             " found in scope: " +
             m_p_current_scope->getScopeName()
         );
