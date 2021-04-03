@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-03 10:40:07
+ * @LastEditTime : 2021-04-03 10:50:49
  * @Description  :
 -->
 
@@ -48,7 +48,7 @@ END;
 { procedure declaration with parameters supported. }
 PROCEDURE P2(a, b : REAL; c : INTEGER);
 VAR
-    a : INTEGER; {duplicat declaration here, will throw a sementic error.}
+    a : INTEGER; {duplicat declaration here, will throw a semantic error.}
     {that is, name solution and nested scope supported. }
 BEGIN
 END;
@@ -61,7 +61,7 @@ b := a + 0.25;
 
 END.
 
-{ sementic analyzing is more complete then interpreting so far. }
+{ semantic analyzing is more complete then interpreting so far. }
 ```
 
 If you remove the duplicate declaration of variable `a` in procedure `P2`
@@ -103,7 +103,7 @@ enclosing scope: NONE
 [REAL] : Symbol<type : REAL, name : REAL>
 [INTEGER] : Symbol<type : INTEGER, name : INTEGER>
 ----- ----- ----- -----
-Semantic analyze finish.
+Semantic analysis finished.
 
 Interpreting ...
 ===== global scope =====

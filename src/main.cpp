@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-17 17:02:12
+ * @LastEditTime : 2021-04-03 10:49:31
 * @Description  : main function
 *********************************************/
 
@@ -49,7 +49,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
             cout << "Semantic analyzing ..." << endl;
             semantic_analyzer.analyze();
 			semantic_analyzer.printSymbolTable();
-            cout << "Semantic analyze finish." << endl << endl;
+            cout << "Semantic analysis finished." << endl << endl;
         }
         catch (const std::runtime_error & error) {
             cout << error.what() << endl;
