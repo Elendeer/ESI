@@ -10,6 +10,7 @@
 
 #include "node_visitor.hpp"
 #include "scoped_symbol_table.hpp"
+#include "exception.hpp"
 
 namespace ESI {
 
@@ -50,6 +51,18 @@ public :
 
     void printSymbolTable();
 };
+
+// Error thrown by SemanticAnalyzer.
+class SemanticError : public Exception {
+private :
+
+public : 
+    SemanticError(const std::string & message);
+    virtual ~SemanticError();
+
+    virtual const std::string what() const ;
+};
+
 
 } // namespace ESI
 

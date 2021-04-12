@@ -51,7 +51,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
 			semantic_analyzer.printSymbolTable();
             cout << "Semantic analysis finished." << endl << endl;
         }
-        catch (const std::runtime_error & error) {
+        catch (const Exception & error) {
             cout << error.what() << endl;
 
             if (ast_root != nullptr) delete ast_root;
@@ -65,7 +65,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
             cout << "Interpreting ..." << endl;
             interpreter.interpret();
         }
-        catch (const std::runtime_error & error) {
+        catch (const Exception & error) {
             cout << error.what() << endl;
 
             if (ast_root != nullptr) delete ast_root;
@@ -76,7 +76,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
 
         if (ast_root != nullptr) delete ast_root;
     }
-    catch (std::runtime_error &error) {
+    catch (const Exception & error) {
         cout << "when parser initing :" << endl;
         cout  << "\t" << error.what() << endl;
 

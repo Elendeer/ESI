@@ -1,7 +1,7 @@
-#include "../inc/lexer.hpp"
-
-#include <stdexcept> // std::runtime error
 #include <iostream>
+#include <cstring>
+
+#include "../inc/lexer.hpp"
 
 using std::string;
 
@@ -47,7 +47,7 @@ Token Lexer::id() {
 
 
 void Lexer::error() {
-    throw std::runtime_error("Lexer : Invalid Syntax");
+    throw LexerError("Lexer : Invalid Syntax");
 }
 
 char Lexer::peek() {
@@ -61,11 +61,17 @@ char Lexer::peek() {
 }
 
 void Lexer::advance() {
+    if (m_current_char == '\n') {
+        ++ m_line_no;
+        m_column = 0;
+    }
+
     ++m_pos;
     if ((long long unsigned)m_pos > m_text.length() - 1) {
         m_current_char = NOCHAR; // indicates end of input
     } else {
         m_current_char = m_text[m_pos];
+        ++ m_column;
     }
 }
 
@@ -110,12 +116,17 @@ Token Lexer::number() {
     }
 }
 
+// ===== public =====
+
 
 // Constructor.
-Lexer::Lexer(const string & text)
-    : m_text(text), m_pos(0), m_current_char(m_text[m_pos]) {
-    // text : client string input, e.g. "3+5"
-}
+// text : client string input, e.g. "3+5"
+Lexer::Lexer(const string & text) :
+    m_text(text),
+    m_pos(0),
+    m_current_char(m_text[m_pos]),
+    m_line_no(1),
+    m_column(1) {}
 
 Lexer::~Lexer() {
 
@@ -168,7 +179,8 @@ Token Lexer::getNextToken() {
             return Token(TokenType::RPAREN, (string)")");
         }
         // Symbols about
-        else if ((m_current_char >= 'a' && m_current_char <= 'z') || (m_current_char >= 'A' && m_current_char <= 'Z')) {
+        else if ((m_current_char >= 'a' && m_current_char <= 'z')
+                || (m_current_char >= 'A' && m_current_char <= 'Z')) {
             return id();
         }
 
@@ -203,5 +215,20 @@ Token Lexer::getNextToken() {
     // No value inside.
     return Token(TokenType::eEOF, Any());
 }
+
+
+// ===== =====
+// ===== ===== LexerError
+// ===== =====
+
+LexerError::LexerError(const string & message) :
+    Exception(message) {}
+
+LexerError::~LexerError() {}
+
+const string LexerError::what() const {
+    return m_msg;
+}
+
 
 } // namespace ESI

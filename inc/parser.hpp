@@ -11,6 +11,7 @@
 
 #include "AST.hpp"
 #include "lexer.hpp"
+#include "exception.hpp"
 
 namespace ESI {
 
@@ -66,6 +67,17 @@ public:
     // Return a AST node pointor pointing root of AST.
     // Used by interpreter only when parsing error is met.
     AST * getAstRoot() const ;
+};
+
+// Error thrown by Parser.
+class ParserError : public Exception {
+private :
+
+public :
+    ParserError(const std::string & message);
+    virtual ~ParserError();
+
+    virtual const std::string what() const;
 };
 
 } // namespace ESI

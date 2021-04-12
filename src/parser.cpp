@@ -41,7 +41,6 @@
 
 using std::string;
 using std::vector;
-using std::runtime_error;
 
 namespace ESI {
 
@@ -55,7 +54,7 @@ Parser::~Parser() {
 }
 
 void Parser::error(string message) {
-    throw runtime_error(message);
+    throw ParserError(message);
 }
 
 //  Compare the current token type with the passed token
@@ -124,7 +123,7 @@ AST *Parser::factor() {
         try {
             eat(TokenType::RPAREN);
         }
-        catch (const runtime_error & error) {
+        catch (const Exception & error) {
             if (node != nullptr) {
                 delete node;
                 node = nullptr;
@@ -169,7 +168,7 @@ AST *Parser::term() {
     return node;
 
     } // try
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (node != nullptr) delete node;
         throw error;
     }
@@ -201,7 +200,7 @@ AST *Parser::expr() {
     return node;
 
     } // try
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (node != nullptr) delete node;
         throw error;
     }
@@ -220,7 +219,7 @@ AST *Parser::program() {
     try {
         eat(TokenType::SEMI);
     }
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (var_node != nullptr) delete var_node;
         throw error;
     }
@@ -230,7 +229,7 @@ AST *Parser::program() {
         block_node = block();
         eat(TokenType::DOT);
     }
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (var_node != nullptr) delete var_node;
         if (block_node != nullptr) delete block_node;
         throw error;
@@ -250,7 +249,7 @@ AST * Parser::block() {
 
         return new Block(declaration_nodes, compound_statement_node);
     }
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (!declaration_nodes.empty())
             for (auto p : declaration_nodes)
                 if (p != nullptr)
@@ -328,7 +327,7 @@ vector<AST *> Parser::declarations() {
     }
 
     } // try
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (p_block != nullptr) delete p_block;
 
         if (!declarations.empty())
@@ -375,7 +374,7 @@ vector<AST *> Parser::variableDeclaration() {
         // Delete this pointer on time is necessary.
         p_type_node = typeSpec();
     } // try
-    catch (const runtime_error & error ) {
+    catch (const Exception & error ) {
         if (!var_nodes.empty())
             for (auto p : var_nodes)
                 if (p != nullptr) {
@@ -398,7 +397,7 @@ vector<AST *> Parser::variableDeclaration() {
 
         return var_decl;
     }// try
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (p_type_node != nullptr) {
             delete p_type_node;
             p_type_node = nullptr;
@@ -450,7 +449,7 @@ AST *Parser::compoundStatement() {
         // Return a AST pointes pointing to a Compound object.
         return root;
     }
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (!nodes.empty())
             for (auto p : nodes)
                 if (p != nullptr) {
@@ -476,7 +475,7 @@ vector<AST *> Parser::statementList() {
             result.push_back(statement());
         }
     }
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (!result.empty())
             for (auto p : result)
                 if (p != nullptr) {
@@ -516,7 +515,7 @@ AST *Parser::assignmentStatement() {
     try {
         eat(TokenType::ASSIGN);
     }
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (left != nullptr) {
             delete left;
             left = nullptr;
@@ -527,7 +526,7 @@ AST *Parser::assignmentStatement() {
     try {
         right = expr();
     }
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (left != nullptr) delete left;
         throw error;
     }
@@ -536,7 +535,7 @@ AST *Parser::assignmentStatement() {
         AST *node = new Assign(left, token, right);
         return node;
     }
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (left != nullptr) delete left;
         if (right != nullptr) delete right;
         throw error;
@@ -551,7 +550,7 @@ AST *Parser::variable() {
         eat(TokenType::ID);
         return node;
     }
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (node != nullptr) {
             delete node;
             node = nullptr;
@@ -582,7 +581,7 @@ vector<AST *> Parser::formalParameterList() {
                 params.push_back(p);
             }
         }
-        catch (const runtime_error & error) {
+        catch (const Exception & error) {
             if (!params.empty())
                 for (auto p : params)
                     if (p != nullptr) delete p;
@@ -621,7 +620,7 @@ vector<AST *> Parser::formalParameters() {
         // Delete this pointer on time is necessary.
         p_type_node = typeSpec();
     } // try
-    catch (const runtime_error & error ) {
+    catch (const Exception & error ) {
         if (!var_nodes.empty())
             for (auto p : var_nodes)
                 if (p != nullptr) {
@@ -644,7 +643,7 @@ vector<AST *> Parser::formalParameters() {
 
         return param_decl;
     }// try
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
         if (p_type_node != nullptr) {
             delete p_type_node;
             p_type_node = nullptr;
@@ -680,7 +679,7 @@ AST *Parser::parse() {
         return mp_ast_root;
 
     }
-    catch (const runtime_error &error) {
+    catch (const Exception &error) {
 
         cout << "When building AST :" << endl;
         cout << "\t" << error.what() << endl;
@@ -696,6 +695,20 @@ AST *Parser::parse() {
 
 AST * Parser::getAstRoot() const {
     return mp_ast_root;
+}
+
+
+// ===== =====
+// ===== ===== ParserError
+// ===== =====
+
+ParserError::ParserError(const string & message) :
+    Exception(message) {}
+
+ParserError::~ParserError() {}
+
+const string ParserError::what() const {
+    return m_msg;
 }
 
 } // namespace ESI

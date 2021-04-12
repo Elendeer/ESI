@@ -26,7 +26,6 @@
 #include "../inc/semantic_analyzer.hpp"
 
 using std::string;
-using std::runtime_error;
 
 using std::cout;
 using std::endl;
@@ -151,7 +150,7 @@ Any SemanticAnalyzer::visitVar(AST *node) {
     if (p_symbol == nullptr) {
         string message = "Undefinded symobl(identifier) : "
             + name;
-        throw runtime_error(message);
+        throw SemanticError(message);
     }
 
     return Any();
@@ -199,7 +198,7 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
 
     // Dumplicat declaration checking.
     if (m_p_current_scope->lookup(var_name, true) != nullptr) {
-        throw runtime_error(
+        throw SemanticError(
             "Duplicat declaration of symbol(identifier) " + var_name +
             " found in scope: " +
             m_p_current_scope->getScopeName()
@@ -284,12 +283,12 @@ void SemanticAnalyzer::analyze() {
     try {
         visit(m_root);
     }
-    catch (const runtime_error & error) {
+    catch (const Exception & error) {
 
         std::cout << "When building symbol table from AST :"
             << std::endl << "\t" << error.what() << std::endl;
 
-        throw runtime_error(
+        throw SemanticError(
             "error met when semantic analyzing, stop."
             );
     }
@@ -299,5 +298,16 @@ void SemanticAnalyzer::printSymbolTable() {
 	m_build_in_type_scope.print();
 }
 
+// ===== =====
+// ===== ===== SemanticError
+// ===== =====
 
+SemanticError::SemanticError(const string & message) :
+    Exception(message) {}
+
+SemanticError::~SemanticError() {}
+
+const string SemanticError::what() const {
+    return m_msg;
+}
 } // namespace ESI

@@ -12,7 +12,6 @@
 #include <stdexcept>
 
 using std::string;
-using std::runtime_error;
 
 using std::cout;
 using std::endl;
@@ -209,7 +208,7 @@ Any Interpreter::visitProcedureDecl(AST * node) {
 }
 
 // ===== =====
-// ===== =====
+// ===== ===== public
 // ===== =====
 
 void Interpreter::interpret() {
@@ -225,12 +224,12 @@ void Interpreter::interpret() {
         this->printScope();
 
     }
-    catch (const runtime_error &error) {
+    catch (const Exception &error) {
 
         std::cout << "When interpreting AST :" << std::endl;
         std::cout << "\t" << error.what() << std::endl;
 
-        throw runtime_error(
+        throw InterpreterError(
             "error met when interpreting, stop."
             );
 
@@ -247,6 +246,19 @@ void Interpreter::printScope() {
         cout << item.first << "\t" << item.second << endl;
     }
     cout << "===== ===== =====" << endl;
+}
+
+// ===== =====
+// ===== ===== InterpreterError
+// ===== =====
+
+InterpreterError::InterpreterError(const string & message) :
+    Exception(message) {}
+
+InterpreterError::~InterpreterError() {}
+
+const string InterpreterError::what() const {
+    return m_msg;
 }
 
 } // namespace ESI

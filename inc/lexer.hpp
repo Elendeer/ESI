@@ -11,8 +11,10 @@
 
 #include <string>
 #include <unordered_map>
+#include <exception>
 
 #include "token.hpp"
+#include "exception.hpp"
 
 namespace ESI {
 
@@ -27,9 +29,17 @@ private:
     // Token m_current_token;
     char m_current_char;
 
+    // Current analizing line number of source code.
+    int m_line_no;
+    // Current analizing column of source code.
+    int m_column;
+
+    // ===== static members =====
+
     // Represent a 'no char' char.
     const static char NOCHAR;
 
+    // Map of reserved key words.
     const static std::unordered_map<std::string, Token>reservedKeywords ;
 
     // ===== functions =====
@@ -65,6 +75,16 @@ public:
     // apart into tokens. One token at a time.
     // May throw exception.
     Token getNextToken();
+};
+
+// Error thrown by Lexer.
+class LexerError : public Exception {
+
+public :
+    LexerError(const std::string & message);
+    ~LexerError();
+
+    virtual const std::string what() const;
 };
 
 } // namespace ESI

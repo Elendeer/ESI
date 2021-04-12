@@ -56,6 +56,17 @@ public:
     void printScope();
 };
 
+// Error throw by Interpreter.
+class InterpreterError : public Exception {
+private :
+
+public:
+    InterpreterError(const std::string & message);
+    virtual ~InterpreterError();
+
+    virtual const std::string what() const ;
+};
+
 } // namespace ESI
 
 #endif
