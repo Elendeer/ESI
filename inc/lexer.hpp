@@ -44,7 +44,7 @@ private:
 
     // ===== functions =====
 
-    void error();
+    void error(std::string message);
 
     // Peek a char from input buffer without actually consuming the
     // next char.
@@ -79,6 +79,7 @@ public:
 
 // Error thrown by Lexer.
 class LexerError : public Exception {
+private:
 
 public :
     LexerError(const std::string & message);

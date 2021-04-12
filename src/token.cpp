@@ -62,29 +62,36 @@ Token::Token() : m_type(TokenType::NONE) {
     m_value = Any((string)"NONE");
 }
 
-Token::Token(TokenType type, Any value)
-    : m_type(type), m_value(value) {}
+Token::Token(TokenType type, Any value, int line_no, int column)
+    : m_type(type), m_value(value), m_line_no(line_no), m_column(column) {}
 
 Token::~Token() {
 }
 
 
-void Token::print_str_repr() {
-    using std::cout;
+string Token::getStringRepr() {
+    using std::to_string;
 
     string type = map_token_type_string.at(m_type);
 	if (m_type == TokenType::INTEGER_CONST) {
-		cout << "Token(" + type + ", " <<
-		Any::anyCast<int>(m_value) << ")";
+		return "Token(" + type + ", "
+            + to_string(Any::anyCast<int>(m_value)) + ")"
+            + "line: " + to_string(m_line_no)
+            + "column: " + to_string(m_column);
 	}
 	else if (m_type == TokenType::REAL_CONST) {
-		cout << "Token(" + type + ", " <<
-		Any::anyCast<double>(m_value) << ")";
+		return "Token(" + type + ", "
+		    + to_string(Any::anyCast<double>(m_value)) + ")"
+            + "line: " + to_string(m_line_no)
+            + "column: " + to_string(m_column);
 	}
 	else {
-		cout << "Token(" + type + ", \"" <<
-		Any::anyCast<string>(m_value) << "\")";
+		return "Token(" + type + ", \""
+            + Any::anyCast<string>(m_value) + "\")"
+            + "line: " + to_string(m_line_no)
+            + "column: " + to_string(m_column);
 	}
+
 }
 
 TokenType Token::getType() const {

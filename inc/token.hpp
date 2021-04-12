@@ -67,18 +67,21 @@ private:
     TokenType m_type;
     Any m_value;
 
+    // Represent the position of the token.
+    int m_line_no, m_column;
+
 public:
     // Appointment: None type token by default.
     Token();
     ~Token();
-    Token(TokenType type, Any value);
+    Token(TokenType type, Any value, int line_no = -1, int column = -1);
     Token(const Token &obj) = default;
 
-    // String representation of the class instance.
+    // Return string representation of the class instance.
     // Examples:
     // Token(INTEGER, 3)
     // Token(MUL, '+')
-    void print_str_repr();
+    std::string getStringRepr();
 
     // Return the type of the token.
     // The type of token will be a TokenType type

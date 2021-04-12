@@ -1,5 +1,5 @@
 {注释：程序名}
-@PROGRAM test;
+PROGRAM test;
 
 {注释：声明变量}
 VAR
@@ -17,7 +17,7 @@ END;
 
 PROCEDURE P2(a, b : REAL; c : INTEGER);
 VAR
-    {a : INTEGER; duplicat declaration here, will throw a sementic error.}
+    a : INTEGER; duplicat declaration here, will throw a sementic error.}
 BEGIN
 END;
 

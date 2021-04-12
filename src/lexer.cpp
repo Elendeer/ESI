@@ -46,8 +46,10 @@ Token Lexer::id() {
 }
 
 
-void Lexer::error() {
-    throw LexerError("Lexer : Invalid Syntax");
+void Lexer::error(string message) {
+    throw LexerError(message
+            + "\tAt: line " + std::to_string(m_line_no)
+            + ", column " + std::to_string(m_column) + ".");
 }
 
 char Lexer::peek() {
@@ -208,7 +210,7 @@ Token Lexer::getNextToken() {
         }
 
         else {
-            error();
+            error("Invailid Character met.");
         }
     }
 
@@ -227,7 +229,7 @@ LexerError::LexerError(const string & message) :
 LexerError::~LexerError() {}
 
 const string LexerError::what() const {
-    return m_msg;
+    return "LexerError met: " + m_msg;
 }
 
 

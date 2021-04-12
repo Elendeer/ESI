@@ -12,13 +12,17 @@ public :
     E(const string & str);
     virtual ~E();
 
-    virtual string what() const = 0;
+    virtual string what() const;
 };
 
 E::E(const string & str) :
     _str(str) {}
 
 E::~E() {}
+
+string E::what() const {
+    return "base";
+}
 
 class Error : public E {
 private :
@@ -41,7 +45,12 @@ string Error::what() const {
 
 int main () {
     try {
-        throw Error("error test.");
+        try {
+            throw Error("error test.");
+        }
+        catch (const E & e) {
+            throw e;
+        }
     }
     catch (const E & e) {
         cout << e.what() << endl;

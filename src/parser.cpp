@@ -708,7 +708,7 @@ ParserError::ParserError(const string & message) :
 ParserError::~ParserError() {}
 
 const string ParserError::what() const {
-    return m_msg;
+    return "ParserError met: " + m_msg;
 }
 
 } // namespace ESI
