@@ -19,22 +19,25 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     {TokenType::NONE, "NONE"},
 
     // Reserved keywords
-    {TokenType::BEGIN, "BEGIN"},
-    {TokenType::END, "END"},
     {TokenType::PROGRAM, "PROGRAM"},
-    {TokenType::PROCEDURE, "PROCEDURE"},
-    {TokenType::VAR, "VAR"},
-
     // Types, which are also reserved keywords.
     {TokenType::INTEGER, "INTEGER"},
     {TokenType::REAL, "REAL"},
 
-    // Values
+    {TokenType::INTEGER_DIV, "DIV"}, // the DIV reserved keyword
+
+    {TokenType::BEGIN, "BEGIN"},
+    {TokenType::PROCEDURE, "PROCEDURE"},
+    {TokenType::VAR, "VAR"},
+
+    // End of reserved keywords
+    {TokenType::END, "END"},
+
+
     {TokenType::INTEGER_CONST, "INTEGER_CONST"},
     {TokenType::REAL_CONST, "REAL_CONST"},
 
     {TokenType::MUL, "MUL"},
-    {TokenType::INTEGER_DIV, "INTEGER_DIV"}, // the DIV reserved keyword
     {TokenType::FLOAT_DIV, "FLOAT_DIV"},
     {TokenType::PLUS, "PLUS"},
     {TokenType::MINUS, "MINUS"},
@@ -58,9 +61,12 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
 * input value (int / string).
 *********************************************/
 
-Token::Token() : m_type(TokenType::NONE) {
-    m_value = Any((string)"NONE");
-}
+Token::Token(int line_no, int column) :
+    m_type(TokenType::NONE),
+    m_line_no(line_no),
+    m_column(column) {
+        m_value = Any((string)"NONE");
+    }
 
 Token::Token(TokenType type, Any value, int line_no, int column)
     : m_type(type), m_value(value), m_line_no(line_no), m_column(column) {}

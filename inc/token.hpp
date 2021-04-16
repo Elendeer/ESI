@@ -25,22 +25,25 @@ enum class TokenType {
     NONE,
 
     // Reserved keywords
-    BEGIN,
-    END,
     PROGRAM,
-    PROCEDURE,
-    VAR,
-
     // Types, which are also reserved keywords.
     INTEGER,
     REAL,
 
-    // Values
+    INTEGER_DIV, // the DIV reserved keyword
+
+    BEGIN,
+    PROCEDURE,
+    VAR,
+
+    // End of reserved keywords
+    END,
+
+
     INTEGER_CONST,
     REAL_CONST,
 
     MUL,
-    INTEGER_DIV, // the DIV reserved keyword
     FLOAT_DIV,
     PLUS,
     MINUS,
@@ -72,10 +75,11 @@ private:
 
 public:
     // Appointment: None type token by default.
-    Token();
-    ~Token();
+    Token(int line_no = -1, int column = -1);
     Token(TokenType type, Any value, int line_no = -1, int column = -1);
     Token(const Token &obj) = default;
+
+    ~Token();
 
     // Return string representation of the class instance.
     // Examples:

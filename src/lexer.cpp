@@ -7,49 +7,27 @@ using std::string;
 
 namespace ESI {
 
+// ===== =====
+// ===== ===== Lexer, private
+// ===== =====
+
 const char Lexer::NOCHAR = (char)(-1);
 
-const std::unordered_map<string, Token> Lexer::reservedKeywords {
-    {"PROGRAM", Token(TokenType::PROGRAM, (std::string)"PROGRAM")},
-    {"VAR", Token(TokenType::VAR, (std::string)"VAR")},
-    {"INTEGER", Token(TokenType::INTEGER, (std::string)"INTEGER")},
-    {"REAL", Token(TokenType::REAL, (std::string)"REAL")},
-    {"INTEGER_DIV", Token(TokenType::INTEGER_DIV, (std::string)"INTEGER_DIV")},
-    {"FLOAT_DIV", Token(TokenType::FLOAT_DIV, (std::string)"FLOAT_DIV")},
-    {"BEGIN", Token(TokenType::BEGIN, (std::string)"BEGIN")},
-    {"END", Token(TokenType::END, (std::string)"END")},
-
-    {"PROCEDURE", Token(TokenType::PROCEDURE, (std::string)"PROCEDURE")},
-};
-
-Token Lexer::id() {
-    std::string result = "";
-
-    while (
-        m_current_char != NOCHAR
-        && ((m_current_char >= '0' && m_current_char <= '9')
-        || (m_current_char >= 'a' && m_current_char <= 'z')
-        || (m_current_char >= 'A' && m_current_char <= 'Z'))) {
-
-        result += m_current_char;
-        advance();
+void Lexer::buildReservedKeywordMap() {
+    // Enum class TokenType will make all reserved words between
+    // TokenType::PROGRAM and TokenType::END.
+    for (int i = (int)TokenType::PROGRAM; i <= (int)TokenType::END; ++ i ) {
+        string token_str = Token::map_token_type_string.at((TokenType)i);
+        m_reserved_keyword_map[token_str] = Token((TokenType)i, token_str);
     }
-
-    // If it's a reserved word
-    if (reservedKeywords.find(result) != reservedKeywords.end()) {
-        // Using operator [] may change the map,
-        // which is a const here.
-        return Token(reservedKeywords.at(result));
-    }
-
-    return Token(TokenType::ID, result);
 }
 
-
-void Lexer::error(string message) {
-    throw LexerError(message
+void Lexer::error(string message, ErrorCode error_code) {
+    string msg = message
             + "\tAt: line " + std::to_string(m_line_no)
-            + ", column " + std::to_string(m_column) + ".");
+            + ", column " + std::to_string(m_column) + ".";
+
+    throw LexerError(msg, error_code);
 }
 
 char Lexer::peek() {
@@ -118,7 +96,33 @@ Token Lexer::number() {
     }
 }
 
-// ===== public =====
+Token Lexer::id() {
+    std::string result = "";
+
+    while (
+        m_current_char != NOCHAR
+        && ((m_current_char >= '0' && m_current_char <= '9')
+        || (m_current_char >= 'a' && m_current_char <= 'z')
+        || (m_current_char >= 'A' && m_current_char <= 'Z'))) {
+
+        result += m_current_char;
+        advance();
+    }
+
+    // If it's a reserved word
+    if (m_reserved_keyword_map.find(result) != m_reserved_keyword_map.end()) {
+        // Using operator [] may change the map,
+        // which is a const here.
+        return Token(m_reserved_keyword_map.at(result));
+    }
+
+    return Token(TokenType::ID, result);
+}
+
+
+// ===== =====
+// ===== ===== public
+// ===== =====
 
 
 // Constructor.
@@ -128,7 +132,9 @@ Lexer::Lexer(const string & text) :
     m_pos(0),
     m_current_char(m_text[m_pos]),
     m_line_no(1),
-    m_column(1) {}
+    m_column(1) {
+        buildReservedKeywordMap();
+    }
 
 Lexer::~Lexer() {
 
@@ -157,28 +163,52 @@ Token Lexer::getNextToken() {
 
         else if (m_current_char == '*') {
             advance();
-            return Token(TokenType::MUL, (string)"*");
+            return Token(
+                    TokenType::MUL,
+                    "*",
+                    m_line_no,
+                    m_column);
         }
         else if (m_current_char == '/') {
             advance();
-            return Token(TokenType::FLOAT_DIV, (string)"/");
+            return Token(
+                    TokenType::FLOAT_DIV,
+                    "/",
+                    m_line_no,
+                    m_column);
         }
         else if (m_current_char == '+') {
             advance();
-            return Token(TokenType::PLUS, (string)"+");
+            return Token(
+                    TokenType::PLUS,
+                    "+",
+                    m_line_no,
+                    m_column);
         }
         else if (m_current_char == '-') {
             advance();
-            return Token(TokenType::MINUS, (string)"-");
+            return Token(
+                    TokenType::MINUS,
+                    "-",
+                    m_line_no,
+                    m_column);
         }
 
         else if (m_current_char == '(') {
             advance();
-            return Token(TokenType::LPAREN, (string)"(");
+            return Token(
+                    TokenType::LPAREN,
+                    "(",
+                    m_line_no,
+                    m_column);
         }
         else if (m_current_char == ')') {
             advance();
-            return Token(TokenType::RPAREN, (string)")");
+            return Token(
+                    TokenType::RPAREN,
+                    ")",
+                    m_line_no,
+                    m_column);
         }
         // Symbols about
         else if ((m_current_char >= 'a' && m_current_char <= 'z')
@@ -189,28 +219,48 @@ Token Lexer::getNextToken() {
         else if (m_current_char == ':' && peek() == '=') {
             advance();
             advance();
-            return Token(TokenType::ASSIGN, (string)":=");
+            return Token(
+                    TokenType::ASSIGN,
+                    ":=",
+                    m_line_no,
+                    m_column);
         }
         else if (m_current_char == ':') {
             advance();
-            return Token(TokenType::COLON, (string)":");
+            return Token(
+                    TokenType::COLON,
+                    ":",
+                    m_line_no,
+                    m_column);
         }
 
         else if (m_current_char == ';') {
             advance();
-            return Token(TokenType::SEMI, (string)";");
+            return Token(
+                    TokenType::SEMI,
+                    ";",
+                    m_line_no,
+                    m_column);
         }
         else if (m_current_char == '.') {
             advance();
-            return Token(TokenType::DOT, (string)".");
+            return Token(
+                    TokenType::DOT,
+                    ".",
+                    m_line_no,
+                    m_column);
         }
         else if (m_current_char == ',') {
             advance();
-            return Token(TokenType::COMMA, (string)",");
+            return Token(
+                    TokenType::COMMA,
+                    ",",
+                    m_line_no,
+                    m_column);
         }
 
         else {
-            error("Invailid Character met.");
+            error("Invailid Character met.", ErrorCode::NONE);
         }
     }
 
@@ -223,13 +273,16 @@ Token Lexer::getNextToken() {
 // ===== ===== LexerError
 // ===== =====
 
-LexerError::LexerError(const string & message) :
-    Exception(message) {}
+LexerError::LexerError(
+        const std::string & message,
+        ErrorCode error_code,
+        Token token) :
+        Exception(message, error_code, token) {}
 
 LexerError::~LexerError() {}
 
 const string LexerError::what() const {
-    return "LexerError met: " + m_msg;
+    return "LexerError met: <<" + m_msg + ">>";
 }
 
 

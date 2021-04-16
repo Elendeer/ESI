@@ -34,17 +34,21 @@ private:
     // Current analizing column of source code.
     int m_column;
 
+    // Map of reserved key words.
+    std::unordered_map<std::string, Token>m_reserved_keyword_map ;
+
+
     // ===== static members =====
 
     // Represent a 'no char' char.
     const static char NOCHAR;
 
-    // Map of reserved key words.
-    const static std::unordered_map<std::string, Token>reservedKeywords ;
-
     // ===== functions =====
 
-    void error(std::string message);
+    // Build reserved keywords according to enum class TokenType.
+    void buildReservedKeywordMap();
+
+    void error(std::string message, ErrorCode error_code);
 
     // Peek a char from input buffer without actually consuming the
     // next char.
@@ -82,7 +86,11 @@ class LexerError : public Exception {
 private:
 
 public :
-    LexerError(const std::string & message);
+    LexerError(
+        const std::string & message,
+        ErrorCode error_code = ErrorCode::NONE,
+        Token token = Token());
+
     ~LexerError();
 
     virtual const std::string what() const;

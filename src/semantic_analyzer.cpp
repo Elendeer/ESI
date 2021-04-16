@@ -308,6 +308,6 @@ SemanticError::SemanticError(const string & message) :
 SemanticError::~SemanticError() {}
 
 const string SemanticError::what() const {
-    return "SemanticError met: " + m_msg;
+    return "SemanticError met: <<" + m_msg + ">>";
 }
 } // namespace ESI

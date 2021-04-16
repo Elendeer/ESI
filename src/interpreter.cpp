@@ -258,7 +258,7 @@ InterpreterError::InterpreterError(const string & message) :
 InterpreterError::~InterpreterError() {}
 
 const string InterpreterError::what() const {
-    return "InterpreterError met: " + m_msg;
+    return "InterpreterError met: <<" + m_msg + ">>";
 }
 
 } // namespace ESI
