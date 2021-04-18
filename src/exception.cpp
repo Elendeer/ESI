@@ -12,17 +12,19 @@ Exception::Exception(
     m_token(token),
     m_error_code(error_code) {
         if (error_code == ErrorCode::NONE) {
-            m_msg = "ErrorCode: None; \t" + message;
+            m_msg = message + "\tErrorCode: None; ";
         }
         else if (error_code == ErrorCode::UNEXPECTED_TOKEN) {
-            m_msg = "ErrorCode: Unexpected token; \t" + message;
+            m_msg = message + "\tErrorCode: Unexpected token; ";
         }
         else if (error_code == ErrorCode::ID_NOT_FOUND) {
-            m_msg = "ErrorCode: ID not found; \t" + message;
+            m_msg = message + "\tErrorCode: ID not found; ";
         }
         else if (error_code == ErrorCode::DUPLICATE_ID) {
-            m_msg = "ErrorCode: Duplicat ID; \t" + message;
+            m_msg = message + "\tErrorCode: Duplicat ID; ";
         }
+
+        m_msg = m_msg + "When scanning token: " + token.getStringRepr();
     }
 
 Exception::~Exception() {}

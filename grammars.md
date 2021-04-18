@@ -14,16 +14,17 @@ program : PROGRAM variable SEMI block DOT
 
 block : declarations compound_statement
 
-declarations : (VAR (variable_declaration SEMI)+)*
-            | (PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI)*
-            | empty
+declarations : (VAR (variable_declaration SEMI)+)? procedure_declaration*
+
+variable_declaration : ID (COMMA ID)* COLON type_spec
 
 formal_parameter_list : formal_parameters
         | formal_parameters SEMI formal_parameter_list
 
 formal_parameters : ID (COMMA ID)* COLON type_spec
 
-variable_declaration : ID (COMMA ID)* COLON type_spec
+procedure_declaration :
+    PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI
 
 type_spec : INTEGER | REAL
 

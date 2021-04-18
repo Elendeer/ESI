@@ -79,6 +79,10 @@ public:
     Token(TokenType type, Any value, int line_no = -1, int column = -1);
     Token(const Token &obj) = default;
 
+    // For reset the line no and column when copy a token.
+    // Used when scanning a reserved word.
+    Token(const Token &obj, int line_no, int column);
+
     ~Token();
 
     // Return string representation of the class instance.

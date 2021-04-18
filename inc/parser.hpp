@@ -26,7 +26,10 @@ private:
     // ===== Functions =====
 
     // Throw a exception of invalid syntex.
-    void error(std::string message);
+    void error(
+            std::string message,
+            ErrorCode error_code = ErrorCode::NONE,
+            Token token = Token());
 
     void eat(TokenType token_type);
 
@@ -41,6 +44,7 @@ private:
     AST *block();
     std::vector<AST *> declarations();
     std::vector<AST *> variableDeclaration();
+    std::vector<AST *> procedureDeclaration();
     AST * typeSpec();
 
     AST *compoundStatement();
@@ -74,7 +78,11 @@ class ParserError : public Exception {
 private :
 
 public :
-    ParserError(const std::string & message);
+    ParserError(
+        const std::string & message,
+        ErrorCode error_code = ErrorCode::NONE,
+        Token token = Token());
+
     virtual ~ParserError();
 
     virtual const std::string what() const;

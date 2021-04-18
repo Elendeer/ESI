@@ -112,6 +112,13 @@ DataType Any::getType() const {
     return m_type_info.getTypeId();
 }
 
+// ===== =====
+
+bool Any::empty() const {
+    if (m_type_info.getTypeId() == DataType::Empty) return true;
+    else return false;
+}
+
 // ===== Overloading =====
 
 // ===== Assign =====

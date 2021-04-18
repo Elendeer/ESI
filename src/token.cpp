@@ -71,6 +71,14 @@ Token::Token(int line_no, int column) :
 Token::Token(TokenType type, Any value, int line_no, int column)
     : m_type(type), m_value(value), m_line_no(line_no), m_column(column) {}
 
+Token::Token(const Token & obj, int line_no, int column) {
+    m_type = obj.m_type;
+    m_value = obj.m_value;
+
+    m_line_no = line_no;
+    m_column = column;
+}
+
 Token::~Token() {
 }
 
@@ -78,26 +86,28 @@ Token::~Token() {
 string Token::getStringRepr() {
     using std::to_string;
 
+    string position_str = "";
+    if (m_line_no != -1 && m_column != -1) {
+        position_str = "[line: " + to_string(m_line_no)
+            + ", column: " + to_string(m_column) + "]";
+    }
+
     string type = map_token_type_string.at(m_type);
 	if (m_type == TokenType::INTEGER_CONST) {
 		return "Token(" + type + ", "
             + to_string(Any::anyCast<int>(m_value)) + ")"
-            + "line: " + to_string(m_line_no)
-            + "column: " + to_string(m_column);
+            + position_str;
 	}
 	else if (m_type == TokenType::REAL_CONST) {
 		return "Token(" + type + ", "
 		    + to_string(Any::anyCast<double>(m_value)) + ")"
-            + "line: " + to_string(m_line_no)
-            + "column: " + to_string(m_column);
+            + position_str;
 	}
 	else {
 		return "Token(" + type + ", \""
             + Any::anyCast<string>(m_value) + "\")"
-            + "line: " + to_string(m_line_no)
-            + "column: " + to_string(m_column);
+            + position_str;
 	}
-
 }
 
 TokenType Token::getType() const {

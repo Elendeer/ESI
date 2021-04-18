@@ -75,6 +75,7 @@ public:
     ~Any();
 
     DataType getType() const;
+    bool empty() const;
 
     template<typename T>
     T anyCast();

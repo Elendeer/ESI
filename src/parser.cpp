@@ -53,9 +53,13 @@ Parser::Parser(const Lexer &lexer) :
 Parser::~Parser() {
 }
 
-void Parser::error(string message) {
-    throw ParserError(message);
-}
+void Parser::error(
+        string message,
+        ErrorCode error_code,
+        Token token) {
+
+            throw ParserError(message, error_code, token);
+        }
 
 //  Compare the current token type with the passed token
 //  type and if they match then "eat" the current token
@@ -70,9 +74,13 @@ void Parser::eat(TokenType token_type) {
     }
     else {
         error(
-            "Invailid Syntax : Unexpected token.\n\texpected "
+            "Invailid Syntax : Unexpected token.\texpected "
             + Token::map_token_type_string.at(token_type)
-            + ", met " + Token::map_token_type_string.at(m_current_token.getType())
+            + ", met "
+            + Token::map_token_type_string.at(m_current_token.getType())
+            + ". ",
+            ErrorCode::UNEXPECTED_TOKEN,
+            m_current_token
         );
     }
 }
@@ -262,23 +270,16 @@ AST * Parser::block() {
 
 }
 
-// declarations : (VAR (variable_declaration SEMI)+)*
-//             (PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI
-//               block SEMI)*
-//             | empty
+// declarations : (VAR (variable_declaration SEMI)+)?
+//             procedure_declaration*
 vector<AST *> Parser::declarations() {
     vector<AST *> declarations;
-    // Procedure daclarations will use it.
-    AST * p_block = nullptr;
-    // Procedure daclarations will use it.
-    // Empty vector by default.
-    vector<AST *> params;
-    params.clear();
 
     try {
 
-    // declarations : (VAR (variable_declaration SEMI)+)*
-    while (m_current_token.getType() == TokenType::VAR) {
+    // declarations : (VAR (variable_declaration SEMI)+)?
+    // ? for one time or none.
+    if (m_current_token.getType() == TokenType::VAR) {
         eat(TokenType::VAR);
 
         while (m_current_token.getType() == TokenType::ID) {
@@ -294,51 +295,23 @@ vector<AST *> Parser::declarations() {
 
     } // while
 
-    // ===== =====
-
-    // (procedure id (LPAREN formal_parameter_list RPAREN)? SEMI
-    // block SEMI)*
+    // procedure_declaration*
     while (m_current_token.getType() == TokenType::PROCEDURE) {
-        // For every procedure, parameter vector start form empty.
-        params.clear();
-
-        eat(TokenType::PROCEDURE);
-        string name = Any::anyCast<string>(m_current_token.getVal());
-        eat(TokenType::ID);
-
-        if (m_current_token.getType() == TokenType::LPAREN) {
-            eat(TokenType::LPAREN);
-            params = formalParameterList();
-            eat(TokenType::RPAREN);
+        vector<AST *> procedures = procedureDeclaration();
+        for (AST * p : procedures) {
+            declarations.push_back(p);
         }
+    } // while
 
-        eat(TokenType::SEMI);
-
-        p_block = block();
-        eat(TokenType::SEMI);
-        AST * procedure_node = new ProcedureDecl(name, params, p_block);
-
-        // Set to nullptr for next while loop.
-        // If not, will cause a sigment fault of duplicate deleting.
-        // (when error is met).
-        p_block = nullptr;
-
-        declarations.push_back(procedure_node);
-    }
 
     } // try
     catch (const ParserError & error) {
-        if (p_block != nullptr) delete p_block;
 
         if (!declarations.empty())
             for (auto p : declarations)
                 if (p != nullptr)
                     delete p;
 
-        if (!params.empty())
-            for (auto p : params)
-                if (p != nullptr)
-                    delete p;
         throw error;
     }
 
@@ -411,6 +384,71 @@ vector<AST *> Parser::variableDeclaration() {
         throw error;
     }
 
+}
+
+// procedure_declaration:
+// PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI
+vector<AST *> Parser::procedureDeclaration() {
+    vector<AST *> procedures;
+
+    // Procedure daclarations will use it.
+    AST * p_block = nullptr;
+    // Procedure daclarations will use it.
+    // Empty vector by default.
+    vector<AST *> params;
+    params.clear();
+
+    try {
+
+        // For every procedure, parameter vector start form empty.
+        params.clear();
+
+        eat(TokenType::PROCEDURE);
+        string name = Any::anyCast<string>(m_current_token.getVal());
+        eat(TokenType::ID);
+
+        if (m_current_token.getType() == TokenType::LPAREN) {
+            eat(TokenType::LPAREN);
+            params = formalParameterList();
+            eat(TokenType::RPAREN);
+        }
+
+        eat(TokenType::SEMI);
+
+        p_block = block();
+        eat(TokenType::SEMI);
+        AST * procedure_node = new ProcedureDecl(name, params, p_block);
+
+        // Set to nullptr for next while loop.
+        // If not, will cause a sigment fault of duplicate deleting.
+        // (when error is met).
+        p_block = nullptr;
+
+        procedures.push_back(procedure_node);
+
+    } // try
+    catch (const ParserError & error) {
+        if (p_block != nullptr) {
+            delete p_block;
+            p_block = nullptr;
+        }
+
+        if (!params.empty())
+            for (auto p : params)
+                if (p != nullptr) {
+                    delete p;
+                    p = nullptr;
+                }
+
+        if (!procedures.empty())
+            for (AST * p : procedures)
+                if (p != nullptr) {
+                    delete p;
+                    p = nullptr;
+                }
+    }
+
+    return procedures;
 }
 
 // type_spec : INTERGER | REAL
@@ -702,8 +740,11 @@ AST * Parser::getAstRoot() const {
 // ===== ===== ParserError
 // ===== =====
 
-ParserError::ParserError(const string & message) :
-    Exception(message) {}
+ParserError::ParserError(
+        const string & message,
+        ErrorCode error_code,
+        Token token) :
+        Exception(message, error_code, token) {}
 
 ParserError::~ParserError() {}
 

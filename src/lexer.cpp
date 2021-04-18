@@ -24,7 +24,7 @@ void Lexer::buildReservedKeywordMap() {
 
 void Lexer::error(string message, ErrorCode error_code) {
     string msg = message
-            + "\tAt: line " + std::to_string(m_line_no)
+            + " At: line " + std::to_string(m_line_no)
             + ", column " + std::to_string(m_column) + ".";
 
     throw LexerError(msg, error_code);
@@ -89,10 +89,16 @@ Token Lexer::number() {
             advance();
         }
 
-        return Token(TokenType::REAL_CONST, result);
+        return Token(TokenType::REAL_CONST,
+                result,
+                m_line_no,
+                m_column);
     }
     else {
-        return Token(TokenType::INTEGER_CONST, (int)result);
+        return Token(TokenType::INTEGER_CONST,
+                (int)result,
+                m_line_no,
+                m_column);
     }
 }
 
@@ -111,12 +117,17 @@ Token Lexer::id() {
 
     // If it's a reserved word
     if (m_reserved_keyword_map.find(result) != m_reserved_keyword_map.end()) {
-        // Using operator [] may change the map,
-        // which is a const here.
-        return Token(m_reserved_keyword_map.at(result));
+        return Token(
+                m_reserved_keyword_map.at(result),
+                m_line_no,
+                m_column);
     }
 
-    return Token(TokenType::ID, result);
+    return Token(
+            TokenType::ID,
+            result,
+            m_line_no,
+            m_column);
 }
 
 
@@ -265,7 +276,10 @@ Token Lexer::getNextToken() {
     }
 
     // No value inside.
-    return Token(TokenType::eEOF, Any());
+    return Token(TokenType::eEOF,
+            Any(),
+            m_line_no,
+            m_column);
 }
 
 
