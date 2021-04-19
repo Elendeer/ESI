@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-03 10:49:31
+ * @LastEditTime : 2021-04-19 22:26:02
 * @Description  : main function
 *********************************************/
 
@@ -43,16 +43,18 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
             return 1;
         }
 
-        SemanticAnalyzer semantic_analyzer(ast_root);
+        SemanticAnalyzer semantic_analyzer(ast_root, true);
 
         try {
             cout << "Semantic analyzing ..." << endl;
             semantic_analyzer.analyze();
-			semantic_analyzer.printSymbolTable();
+			semantic_analyzer.printBuildInTypeSymbolTable();
             cout << "Semantic analysis finished." << endl << endl;
         }
         catch (const Exception & error) {
+            cout << "When building symbol table from AST :" << endl;
             cout << error.what() << endl;
+            cout << "error met when semantic analyzing, stop." << endl;
 
             if (ast_root != nullptr) delete ast_root;
 

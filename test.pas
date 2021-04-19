@@ -13,6 +13,7 @@ VAR
     a : INTEGER;
 BEGIN
     a := 666;
+    c := 3;
 END;
 
 PROCEDURE P2(a, b : REAL; c : INTEGER);

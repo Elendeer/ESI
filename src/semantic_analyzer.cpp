@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-03 10:17:12
+ * @LastEditTime : 2021-04-19 22:26:17
  * @Description  :
 *********************************************/
 //
@@ -32,10 +32,11 @@ using std::endl;
 
 namespace ESI {
 
-SemanticAnalyzer::SemanticAnalyzer(AST * root)
+SemanticAnalyzer::SemanticAnalyzer(AST * root, bool if_print)
 	: NodeVisitor(root),
     m_build_in_type_scope("build-in tyep", -1),
-    m_p_current_scope(nullptr) {
+    m_p_current_scope(nullptr),
+    m_if_print(if_print) {
         // Build-in type symbols
         m_build_in_type_scope.define(new Symbol("INTEGER", SymbolType::INTEGER));
         m_build_in_type_scope.define(new Symbol("REAL", SymbolType::REAL));
@@ -43,10 +44,19 @@ SemanticAnalyzer::SemanticAnalyzer(AST * root)
 
 SemanticAnalyzer::~SemanticAnalyzer() {}
 
+// ===== =====
+
 void SemanticAnalyzer::generic_visit(AST *node) {
-    throw std::runtime_error(
-        (string) "No " + node->getTypeString() + " type method");
+    throw SemanticError(
+        "No " + node->getTypeString() + " type method");
 }
+
+void SemanticAnalyzer::error(
+    string message,
+    ErrorCode error_code,
+    Token token) {
+        throw SemanticError(message, error_code, token);
+    }
 
 // ===== =====
 
@@ -148,9 +158,12 @@ Any SemanticAnalyzer::visitVar(AST *node) {
     Symbol * p_symbol = m_p_current_scope->lookup(name);
 
     if (p_symbol == nullptr) {
-        string message = "Undefinded symobl(identifier) : "
-            + name;
-        throw SemanticError(message);
+        string message =
+            "Undefinded symobl(identifier) : " + name;
+
+        error(message,
+            ErrorCode::ID_NOT_FOUND,
+            var_node->getToken());
     }
 
     return Any();
@@ -161,7 +174,9 @@ Any SemanticAnalyzer::visitVar(AST *node) {
 Any SemanticAnalyzer::visitProgram(AST * node) {
     Program * program_node = dynamic_cast<Program * >(node);
 
-    cout << "ENTER global scope" << endl;
+    if (m_if_print) {
+        cout << "ENTER global scope" << endl;
+    }
 
     // Global scope have no enclosing scope.
     ScopedSymbolTable global_scope = ScopedSymbolTable("global", 1);
@@ -169,8 +184,10 @@ Any SemanticAnalyzer::visitProgram(AST * node) {
 
     visit(program_node->getBlock());
 
-    global_scope.print();
-    cout << "LEAVE global scope" << endl;
+    if (m_if_print) {
+        global_scope.print();
+        cout << "LEAVE global scope" << endl;
+    }
 
     // nullptr after all.
     m_p_current_scope = m_p_current_scope->getEnclosingScope();
@@ -198,10 +215,12 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
 
     // Dumplicat declaration checking.
     if (m_p_current_scope->lookup(var_name, true) != nullptr) {
-        throw SemanticError(
+        error(
             "Duplicat declaration of symbol(identifier) " + var_name +
             " found in scope: " +
-            m_p_current_scope->getScopeName()
+            m_p_current_scope->getScopeName(),
+            ErrorCode::DUPLICATE_ID,
+            var_node->getToken()
         );
     }
 
@@ -231,7 +250,10 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
     ProcedureSymbol * proc_symbol = new ProcedureSymbol(proc_name);
     m_p_current_scope->define(proc_symbol);
 
-    cout << "ENTER scope: " << proc_name << endl;
+
+    if (m_if_print) {
+        cout << "ENTER scope: " << proc_name << endl;
+    }
     // Create scope for this procedure.
     ScopedSymbolTable procedure_scope = ScopedSymbolTable(
         proc_name,
@@ -261,9 +283,11 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
 
     visitBlock(procedure_node->getBlock());
 
-    procedure_scope.print();
+    if (m_if_print) {
+        procedure_scope.print();
+        cout << "LEAVE scope: " << proc_name << endl;
+    }
 
-    cout << "LEAVE scope: " << proc_name << endl;
     // this scope is local, will be delete after this function ended.
     // m_p_current_scope will pointing to nothing after that.
     // And we will reset this pointer to tmp.
@@ -280,21 +304,10 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
 void SemanticAnalyzer::analyze() {
     if (m_root == nullptr) return ;
 
-    try {
-        visit(m_root);
-    }
-    catch (const Exception & error) {
-
-        std::cout << "When building symbol table from AST :"
-            << std::endl << "\t" << error.what() << std::endl;
-
-        throw SemanticError(
-            "error met when semantic analyzing, stop."
-            );
-    }
+    visit(m_root);
 }
 
-void SemanticAnalyzer::printSymbolTable() {
+void SemanticAnalyzer::printBuildInTypeSymbolTable() {
 	m_build_in_type_scope.print();
 }
 
@@ -302,8 +315,11 @@ void SemanticAnalyzer::printSymbolTable() {
 // ===== ===== SemanticError
 // ===== =====
 
-SemanticError::SemanticError(const string & message) :
-    Exception(message) {}
+SemanticError::SemanticError(
+    const string & message,
+    ErrorCode error_code,
+    Token token) :
+    Exception(message, error_code, token) {}
 
 SemanticError::~SemanticError() {}
 
