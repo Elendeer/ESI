@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:22:37
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-17 16:57:22
+ * @LastEditTime : 2021-04-21 14:14:25
  * @Description  :
 *********************************************/
 
@@ -27,14 +27,14 @@ private:
     // to visit a node depends on type of the node.
     virtual Any visit(AST *node);
 
-    Any visit_UnaryOp(AST *node);
-    Any visit_BinOp(AST *node);
-    Any visit_Num(AST *node);
+    Any visitUnaryOp(AST *node);
+    Any visitBinOp(AST *node);
+    Any visitNum(AST *node);
 
-    Any visit_Compound(AST *node);
-    Any visit_NoOp();
-    Any visit_Assign(AST *node);
-    Any visit_Var(AST *node);
+    Any visitCompound(AST *node);
+    Any visitNoOp();
+    Any visitAssign(AST *node);
+    Any visitVar(AST *node);
 
     Any visitProgram(AST * node);
     Any visitBlock(AST * node);

@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-17 16:58:28
+ * @LastEditTime : 2021-04-21 14:12:33
  * @Description  :
  *********************************************/
 
@@ -34,33 +34,33 @@ Any Interpreter::visit(AST *node) {
         return visitProgram(node);
     }
     else if (node->getType() == NodeType::NUM) {
-        return visit_Num(node);
+        return visitNum(node);
     }
     else if (node->getType() == NodeType::BINOP) {
-        return visit_BinOp(node);
+        return visitBinOp(node);
     }
     else if (node->getType() == NodeType::BLOCK) {
         return visitBlock(node);
     }
     else if (node->getType() == NodeType::UNARYOP) {
-        return visit_UnaryOp(node);
+        return visitUnaryOp(node);
     }
     else if (node->getType() == NodeType::ASSIGN) {
-        visit_Assign(node);
+        visitAssign(node);
     }
     else if (node->getType() == NodeType::VAR) {
-        return visit_Var(node);
+        return visitVar(node);
     }
     else if (node->getType() == NodeType::COMPOUND) {
-        visit_Compound(node);
+        visitCompound(node);
     }
     else if (node->getType() == NodeType::NOOP) {
-        visit_NoOp();
+        visitNoOp();
     }
     else if (node->getType() == NodeType::VAR_DECL) {
         visitVarDecl(node);
     }
-    else if (node->getType() == NodeType::PORCEDURE_DECL) {
+    else if (node->getType() == NodeType::PROCEDURE_DECL) {
         visitProcedureDecl(node);
     }
     else {
@@ -75,7 +75,7 @@ void Interpreter::generic_visit(AST *node) {
         (string) "No " + node->getTypeString() + " type method");
 }
 
-Any Interpreter::visit_UnaryOp(AST *node) {
+Any Interpreter::visitUnaryOp(AST *node) {
     UnaryOp * p_unaryop_node = dynamic_cast<UnaryOp *>(node);
 
     TokenType type = p_unaryop_node->getToken().getType();
@@ -92,7 +92,7 @@ Any Interpreter::visit_UnaryOp(AST *node) {
     }
 }
 
-Any Interpreter::visit_BinOp(AST *node) {
+Any Interpreter::visitBinOp(AST *node) {
     BinOp* bin_node = dynamic_cast<BinOp *>(node);
 
     TokenType type = bin_node->getToken().getType();
@@ -113,7 +113,7 @@ Any Interpreter::visit_BinOp(AST *node) {
     }
 }
 
-Any Interpreter::visit_Num(AST *node) {
+Any Interpreter::visitNum(AST *node) {
     if (node->getToken().getType() == TokenType::INTEGER_CONST) {
         return node->getToken().getVal();
     }
@@ -131,7 +131,7 @@ Any Interpreter::visit_Num(AST *node) {
  * Program about
  *********************************************/
 
-Any Interpreter::visit_Compound(AST *node) {
+Any Interpreter::visitCompound(AST *node) {
     Compound * compound_node = dynamic_cast<Compound *>(node);
 
     for (AST *child : compound_node->getChildren()) {
@@ -140,11 +140,11 @@ Any Interpreter::visit_Compound(AST *node) {
     return Any();
 }
 
-Any Interpreter::visit_NoOp() {
+Any Interpreter::visitNoOp() {
     return Any();
 }
 
-Any Interpreter::visit_Assign(AST *node) {
+Any Interpreter::visitAssign(AST *node) {
     Assign* assign_node = dynamic_cast<Assign *>(node);
 
     string var_name = dynamic_cast<Var *>(assign_node->getLeft())->getVal();
@@ -154,15 +154,10 @@ Any Interpreter::visit_Assign(AST *node) {
     return Any();
 }
 
-Any Interpreter::visit_Var(AST *node) {
+Any Interpreter::visitVar(AST *node) {
     string var_name = dynamic_cast<Var *>(node)->getVal();
 
     std::map<std::string, Any>::iterator iter = m_global_scope.find(var_name);
-
-    if (iter == m_global_scope.end()) {
-        throw(std::runtime_error(
-            "interpreter: Undefined Symble: " + var_name));
-    }
 
     return iter->second;
 }

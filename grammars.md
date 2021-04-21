@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-11-14 09:06:48
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-24 16:54:08
+ * @LastEditTime : 2021-04-21 14:49:44
  * @Description  :
 -->
 
@@ -51,5 +51,8 @@ factor : PLUS factor
 term : factor((MUL | INTEGER_DIV | FLOAT_DIV) factor)*
 
 expr : term ((PLUS | MINUS) term)*
+
+procedure_call_statement :
+    ID LPAREN (expr(COMMA expr)*)? RPAREN
 
 ```

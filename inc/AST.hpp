@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-24 20:59:08
+ * @LastEditTime : 2021-04-21 14:31:48
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -11,8 +11,8 @@
  * support specific get function.
  *********************************************/
 
-#ifndef AST_HPP_
-#define AST_HPP_
+#ifndef INC_AST_HPP_
+#define INC_AST_HPP_
 
 #include <string>
 #include <vector>
@@ -40,8 +40,9 @@ enum class NodeType {
     TYPE,
 
     // ===== =====
-    PORCEDURE_DECL,
-	PARAM
+    PROCEDURE_DECL,
+	PARAM,
+    PROCEDURE_CALL
 
 };
 
@@ -269,10 +270,27 @@ private:
 
 public:
 	Param(AST * var_node, AST * type_node);
-	~Param();
+	virtual ~Param();
 
 	AST * getVarChild() const;
 	AST * getTypeChild() const;
+};
+
+class ProcedureCall : public AST {
+private :
+    // procedure name
+    std::string m_proc_name;
+    // actual parameters
+    std::vector<AST *> m_actual_param;
+
+public :
+    ProcedureCall(
+        std::string procedure_name,
+        std::vector<AST *> & actual_parameters,
+        Token token);
+
+    virtual ~ProcedureCall();
+
 };
 
 } // namespace ESI

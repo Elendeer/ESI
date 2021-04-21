@@ -696,6 +696,51 @@ vector<AST *> Parser::formalParameters() {
     }
 }
 
+
+// procedure_call_statement :
+//     ID LPAREN (expr(COMMA expr)*)? RPAREN
+AST * Parser::procedureCallStatement() {
+    // This token will put into ProcedureCall node.
+    // It's the token of id of procedure name.
+    Token token = m_current_token;
+    string proceudure_name = m_current_token.getVal();
+
+    eat(TokenType::ID);
+    eat(TokenType::LPAREN);
+
+    vector<AST *> actual_parameters;
+
+    try {
+        if (m_current_token.getType() != TokenType::RPAREN) {
+            AST * tmp_actual_param = expr();
+            actual_parameters.push_back(tmp_actual_param);
+        }
+
+        while (m_current_token.getType() == TokenType::COMMA) {
+            eat(TokenType::COMMA);
+            AST * tmp_actual_param = expr();
+            actual_parameters.push_back(tmp_actual_param);
+        }
+
+        eat(TokenType::RPAREN);
+
+        return new ProcedureCall(
+            proceudure_name,
+            actual_parameters,
+            token);
+    }
+    catch (ParserError & error) {
+        for (AST * p : actual_parameters) {
+            if (p != nullptr) {
+                delete p;
+                p = nullptr;
+            }
+        }
+
+        throw error;
+    }
+}
+
 // ===== =====
 // ===== ===== Public
 // ===== =====

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-19 22:26:17
+ * @LastEditTime : 2021-04-21 14:22:46
  * @Description  :
 *********************************************/
 //
@@ -96,7 +96,7 @@ Any SemanticAnalyzer::visit(AST *node) {
     else if (node->getType() == NodeType::VAR_DECL) {
         visitVarDecl(node);
     }
-    else if (node->getType() == NodeType::PORCEDURE_DECL) {
+    else if (node->getType() == NodeType::PROCEDURE_DECL) {
         visitProcedureDecl(node);
     }
     else {

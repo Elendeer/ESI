@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-24 18:32:07
+ * @LastEditTime : 2021-04-21 14:50:46
  * @Description  :
 *********************************************/
 
@@ -56,6 +56,7 @@ private:
 
     std::vector<AST *> formalParameterList();
     std::vector<AST *> formalParameters();
+    AST * procedureCallStatement();
 
 public:
     // Might throw exception when init.

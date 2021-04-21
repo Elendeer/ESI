@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-24 21:42:53
+ * @LastEditTime : 2021-04-21 14:32:04
  * @Description  :
  *********************************************/
 
@@ -34,7 +34,7 @@ const unordered_map<NodeType, std::string> AST::map_node_type_string {
     {NodeType::VAR_DECL, "VAR_DECL"},
     {NodeType::TYPE, "TYPE"},
 
-    {NodeType::PORCEDURE_DECL, "PORCEDURE_DECL"}
+    {NodeType::PROCEDURE_DECL, "PORCEDURE_DECL"}
 };
 
 /*********************************************
@@ -286,7 +286,7 @@ ProcedureDecl::ProcedureDecl(
     vector<AST *> & parameters,
     AST * block) :
 
-    AST(NodeType::PORCEDURE_DECL, Token()),
+    AST(NodeType::PROCEDURE_DECL, Token()),
     m_name(name),
     m_block(block) {
 
@@ -334,5 +334,24 @@ AST * Param::getVarChild() const {
 AST * Param::getTypeChild() const {
 	return m_type_node;
 }
+
+/*********************************************
+ * ProcedureCall node
+*********************************************/
+
+ProcedureCall::ProcedureCall(
+    string procedure_name,
+    std::vector<AST *> & actual_parameters,
+    Token token) :
+    AST(NodeType::PROCEDURE_CALL, token),
+    m_proc_name(procedure_name) {
+        for (AST * p : actual_parameters) {
+            m_actual_param.push_back(p);
+            m_children.push_back(p);
+        }
+    }
+ProcedureCall::~ProcedureCall() {}
+
+
 
 } // namespace ESI
