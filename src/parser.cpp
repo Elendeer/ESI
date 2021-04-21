@@ -529,16 +529,21 @@ vector<AST *> Parser::statementList() {
 
 // statement : compound_statement
 //          | assignment_statement
+//          | procedure_call_statement
 //          | empty
 AST *Parser::statement() {
     AST *node = nullptr;
     if (m_current_token.getType() == TokenType::BEGIN) {
         node = compoundStatement();
-
-    } else if (m_current_token.getType() == TokenType::ID) {
+    }
+    else if (m_current_token.getType() == TokenType::ID
+            && m_lexer.getCurrentChar() == '(') {
+        node = procedureCallStatement();
+    }
+    else if (m_current_token.getType() == TokenType::ID) {
         node = assignmentStatement();
-
-    } else {
+    }
+    else {
         node = empty();
     }
 

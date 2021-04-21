@@ -42,6 +42,7 @@ private:
     Any visitType(AST * node);
 
     Any visitProcedureDecl(AST * node);
+    Any visitProcedureCall(AST * node);
 
     virtual void generic_visit(AST *node);
 

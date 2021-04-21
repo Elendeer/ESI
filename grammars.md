@@ -35,6 +35,7 @@ statement_list : statement
 
 statement : compound_statement
          | assignment_statement
+         | procedure_call_statement
          | empty
 
 assignment_statement : variable ASSIGN expr

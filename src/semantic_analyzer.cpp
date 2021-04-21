@@ -29,6 +29,7 @@ using std::string;
 
 using std::cout;
 using std::endl;
+using std::vector;
 
 namespace ESI {
 
@@ -98,6 +99,9 @@ Any SemanticAnalyzer::visit(AST *node) {
     }
     else if (node->getType() == NodeType::PROCEDURE_DECL) {
         visitProcedureDecl(node);
+    }
+    else if (node->getType() == NodeType::PROCEDURE_CALL) {
+        visitProcedureCall(node);
     }
     else {
         generic_visit(node);
@@ -293,6 +297,22 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
     // And we will reset this pointer to tmp.
     m_p_current_scope = m_p_current_scope->getEnclosingScope();
 
+
+    return Any();
+}
+
+Any SemanticAnalyzer::visitProcedureCall(AST * node) {
+    ProcedureCall * procedure_call_node = dynamic_cast<ProcedureCall *>(node);
+
+    vector<AST *> actual_parameters =
+        procedure_call_node -> getActualParameters();
+
+    for (AST * p : actual_parameters) {
+        visit(p);
+    }
+
+    cout << endl << "SemanticAnalyzer : procedure call node visited." << endl;
+    cout << endl;
 
     return Any();
 }

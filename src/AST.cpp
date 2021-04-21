@@ -352,6 +352,9 @@ ProcedureCall::ProcedureCall(
     }
 ProcedureCall::~ProcedureCall() {}
 
+vector<AST *> ProcedureCall::getActualParameters() const {
+    return m_actual_param;
+}
 
 
 } // namespace ESI

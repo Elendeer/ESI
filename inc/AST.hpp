@@ -281,6 +281,7 @@ private :
     // procedure name
     std::string m_proc_name;
     // actual parameters
+    // All actual parameters are child (node).
     std::vector<AST *> m_actual_param;
 
 public :
@@ -290,6 +291,8 @@ public :
         Token token);
 
     virtual ~ProcedureCall();
+
+    std::vector<AST *> getActualParameters() const;
 
 };
 

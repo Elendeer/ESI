@@ -79,6 +79,8 @@ public:
     // apart into tokens. One token at a time.
     // May throw exception.
     Token getNextToken();
+
+    char getCurrentChar() const;
 };
 
 // Error thrown by Lexer.

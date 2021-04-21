@@ -63,6 +63,9 @@ Any Interpreter::visit(AST *node) {
     else if (node->getType() == NodeType::PROCEDURE_DECL) {
         visitProcedureDecl(node);
     }
+    else if (node->getType() == NodeType::PROCEDURE_CALL) {
+        visitProcedureCall(node);
+    }
     else {
         generic_visit(node);
     }
@@ -98,15 +101,20 @@ Any Interpreter::visitBinOp(AST *node) {
     TokenType type = bin_node->getToken().getType();
     if (type == TokenType::PLUS) {
         return visit(bin_node->getLeft()) + visit(bin_node->getRight());
-    } else if (type == TokenType::MINUS) {
+    }
+    else if (type == TokenType::MINUS) {
         return visit(bin_node->getLeft()) - visit(bin_node->getRight());
-    } else if (type == TokenType::MUL) {
+    }
+    else if (type == TokenType::MUL) {
         return visit(bin_node->getLeft()) * visit(bin_node->getRight());
-    } else if (type == TokenType::INTEGER_DIV) {
+    }
+    else if (type == TokenType::INTEGER_DIV) {
         return visit(bin_node->getLeft()) / visit(bin_node->getRight());
-    } else if (type == TokenType::FLOAT_DIV) {
+    }
+    else if (type == TokenType::FLOAT_DIV) {
         return visit(bin_node->getLeft()) / visit(bin_node->getRight());
-    } else {
+    }
+    else {
         // nothing else
         // TODO: exception
         return Any();
@@ -199,6 +207,15 @@ Any Interpreter::visitProcedureDecl(AST * node) {
     ProcedureDecl * procedure_node = dynamic_cast<ProcedureDecl *>(node);
     string procedure_name = procedure_node->getName();
 
+    return Any();
+}
+
+Any Interpreter::visitProcedureCall(AST * node) {
+    cout << endl << "Interpreter : procedure call node visited." << endl;
+    cout << endl;
+
+    // Do nothing.
+    if (node != nullptr) return Any();
     return Any();
 }
 

@@ -282,6 +282,10 @@ Token Lexer::getNextToken() {
             m_column);
 }
 
+char Lexer::getCurrentChar() const {
+    return m_current_char;
+}
+
 
 // ===== =====
 // ===== ===== LexerError

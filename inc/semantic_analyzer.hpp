@@ -49,6 +49,7 @@ private :
     Any visitType(AST * node);
 
     Any visitProcedureDecl(AST * node);
+    Any visitProcedureCall(AST * node);
 
 public :
     SemanticAnalyzer(AST * root, bool if_print);
