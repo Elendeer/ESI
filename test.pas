@@ -1,5 +1,5 @@
 {注释：程序名}
-PROGRAM test;
+program test;
 
 {注释：声明变量}
 VAR

@@ -1,9 +1,11 @@
-#include <iostream>
-#include <cstring>
-
 #include "../inc/lexer.hpp"
 
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+
 using std::string;
+using std::transform;
 
 namespace ESI {
 
@@ -18,7 +20,19 @@ void Lexer::buildReservedKeywordMap() {
     // TokenType::PROGRAM and TokenType::END.
     for (int i = (int)TokenType::PROGRAM; i <= (int)TokenType::END; ++ i ) {
         string token_str = Token::map_token_type_string.at((TokenType)i);
-        m_reserved_keyword_map[token_str] = Token((TokenType)i, token_str);
+        m_reserved_keyword_map[token_str] =
+            Token((TokenType)i, token_str);
+
+        // Lower case version keywords is available too.
+
+        string lower_token_str;
+        lower_token_str.resize(token_str.size());
+
+        transform(token_str.begin(), token_str.end(),
+            lower_token_str.begin(), tolower);
+
+        m_reserved_keyword_map[lower_token_str] =
+            Token((TokenType)i, token_str);
     }
 }
 
