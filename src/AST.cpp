@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-21 14:32:04
+ * @LastEditTime : 2021-04-23 09:19:19
  * @Description  :
  *********************************************/
 
@@ -351,6 +351,10 @@ ProcedureCall::ProcedureCall(
         }
     }
 ProcedureCall::~ProcedureCall() {}
+
+string ProcedureCall::getProcedureName() const {
+    return m_proc_name;
+}
 
 vector<AST *> ProcedureCall::getActualParameters() const {
     return m_actual_param;

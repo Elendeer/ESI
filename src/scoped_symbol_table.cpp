@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 10:18:07
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-03 10:15:36
+ * @LastEditTime : 2021-04-23 09:55:49
  * @Description  :
 *********************************************/
 #include <iostream>
@@ -123,6 +123,9 @@ void ScopedSymbolTable::define(Symbol * symbol) {
     }
     else if (category == SymbolCategory::VAR_SYMBOL) {
         m_map[name] = new VarSymbol(name, type);
+    }
+    else if (category == SymbolCategory::PROCEDURE_SYMBOL) {
+        m_map[name] = new ProcedureSymbol(name);
     }
     else {
         // Nothing else.

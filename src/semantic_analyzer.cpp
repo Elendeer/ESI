@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-21 14:22:46
+ * @LastEditTime : 2021-04-23 12:51:17
  * @Description  :
 *********************************************/
 //
@@ -302,17 +302,50 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
 }
 
 Any SemanticAnalyzer::visitProcedureCall(AST * node) {
-    ProcedureCall * procedure_call_node = dynamic_cast<ProcedureCall *>(node);
+    ProcedureCall * procedure_call_node =
+        dynamic_cast<ProcedureCall *>(node);
+
+    string procedure_name =
+        procedure_call_node -> getProcedureName();
+
+    // try to get symbol.
+    Symbol * p_symbol = m_p_current_scope -> lookup(procedure_name);
+    if (p_symbol == nullptr) {
+        error(
+            "Procedure call no matched: Undefined procedure name.",
+            ErrorCode::ID_NOT_FOUND,
+            procedure_call_node -> getToken());
+    }
+
+    ProcedureSymbol * p_procedure_symbol =
+        dynamic_cast<ProcedureSymbol *>(p_symbol);
+
+    // To get formal parameter symbol vector
+    // from symbol table
+    // and actual parameter AST vector from AST node.
+    // Try to compare the number of formal parameters and
+    // actual parameters.
+
+    vector<Symbol *> formal_parameters =
+        p_procedure_symbol -> getParams();
 
     vector<AST *> actual_parameters =
         procedure_call_node -> getActualParameters();
 
+
+    // parameter number no matched
+    if (formal_parameters.size() != actual_parameters.size()) {
+        error(
+            "Procedure call not matched: Wrong number of parameters.",
+            ErrorCode::WRONG_PARAMS_NUM,
+            procedure_call_node -> getToken());
+    }
+
+    // parameter number matched
+
     for (AST * p : actual_parameters) {
         visit(p);
     }
-
-    cout << endl << "SemanticAnalyzer : procedure call node visited." << endl;
-    cout << endl;
 
     return Any();
 }

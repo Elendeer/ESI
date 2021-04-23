@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-21 14:31:48
+ * @LastEditTime : 2021-04-23 09:36:13
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -276,6 +276,7 @@ public:
 	AST * getTypeChild() const;
 };
 
+// Token inside should be token of id of procedure name.
 class ProcedureCall : public AST {
 private :
     // procedure name
@@ -292,6 +293,7 @@ public :
 
     virtual ~ProcedureCall();
 
+    std::string getProcedureName() const;
     std::vector<AST *> getActualParameters() const;
 
 };

@@ -23,6 +23,12 @@ Exception::Exception(
         else if (error_code == ErrorCode::DUPLICATE_ID) {
             m_msg = message + "\tErrorCode: Duplicat ID; ";
         }
+        else if (error_code == ErrorCode::WRONG_PARAMS_NUM) {
+            m_msg = message + "\tErrorCode: Wrong parameter number; ";
+        }
+        else {
+            m_msg = message + "\tError code not found;";
+        }
 
         m_msg = m_msg + "When scanning token: " + token.getStringRepr();
     }

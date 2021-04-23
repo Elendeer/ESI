@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-21 14:12:33
+ * @LastEditTime : 2021-04-23 09:38:51
  * @Description  :
  *********************************************/
 
@@ -236,7 +236,7 @@ void Interpreter::interpret() {
         this->printScope();
 
     }
-    catch (const Exception &error) {
+    catch (const InterpreterError &error) {
 
         std::cout << "When interpreting AST :" << std::endl;
         std::cout << "\t" << error.what() << std::endl;
