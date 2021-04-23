@@ -17,6 +17,7 @@ enum class ARType {
 // for maintaining information about the currently executing invocation
 // of a procedure or function, and also the program itself.
 // AKA stack frames.
+// Just like symbol table for interpreter.
 class ActivationRecord {
 private:
     std::string m_name;
@@ -32,6 +33,27 @@ public:
 
     ~ActivationRecord();
 
+    void setItem(std::string key, Any value);
+    Any getItem(std::string key) const;
+
+    void print() const;
+};
+
+class CallStack {
+private:
+    std::vector<ActivationRecord> m_records;
+
+public:
+    CallStack();
+    ~CallStack();
+
+    void push(ActivationRecord record);
+    void pop();
+
+    // Return the top activation record of the stack.
+    ActivationRecord peek() const;
+
+    void print() const;
 };
 
 } // namespace ESI
