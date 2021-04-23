@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-03 11:07:22
+ * @LastEditTime : 2021-04-23 13:05:13
  * @Description  :
 -->
 
@@ -25,12 +25,12 @@ until the project is more complete before writing more details.
 > You can cheack the `./test.pas` file to see my newest test, normally it
 > shows all features I have implement.
 
-An Example (form `./test.pas`):
+An Example (from `./test.pas`):
 
 ```pascal
 { comment supported. }
 { program name : test }
-{ key words should be all uppercase. }
+{ key words should be all upper case or lower case. }
 PROGRAM test;
 
 { variable declaration supported. }
