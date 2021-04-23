@@ -211,9 +211,6 @@ Any Interpreter::visitProcedureDecl(AST * node) {
 }
 
 Any Interpreter::visitProcedureCall(AST * node) {
-    cout << endl << "Interpreter : procedure call node visited." << endl;
-    cout << endl;
-
     // Do nothing.
     if (node != nullptr) return Any();
     return Any();

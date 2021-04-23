@@ -190,7 +190,7 @@ Any SemanticAnalyzer::visitProgram(AST * node) {
 
     if (m_if_print) {
         global_scope.print();
-        cout << "LEAVE global scope" << endl;
+        cout << "LEAVE global scope" << endl << endl;
     }
 
     // nullptr after all.
@@ -289,7 +289,7 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
 
     if (m_if_print) {
         procedure_scope.print();
-        cout << "LEAVE scope: " << proc_name << endl;
+        cout << "LEAVE scope: " << proc_name << endl << endl;
     }
 
     // this scope is local, will be delete after this function ended.

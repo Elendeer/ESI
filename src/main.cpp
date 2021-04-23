@@ -43,12 +43,12 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
             return 1;
         }
 
-        SemanticAnalyzer semantic_analyzer(ast_root, true);
+        SemanticAnalyzer semantic_analyzer(ast_root, false);
 
         try {
             cout << "Semantic analyzing ..." << endl;
             semantic_analyzer.analyze();
-			semantic_analyzer.printBuildInTypeSymbolTable();
+			// semantic_analyzer.printBuildInTypeSymbolTable();
             cout << "Semantic analysis finished." << endl << endl;
         }
         catch (const SemanticError & error) {
