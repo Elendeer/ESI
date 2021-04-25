@@ -31,14 +31,23 @@ public:
             ARType type,
             int nesting_level);
 
+    ActivationRecord(const ActivationRecord & obj) = default;
+
     ~ActivationRecord();
 
-    void setItem(std::string key, Any value);
-    Any getItem(std::string key) const;
-
     void print() const;
+
+    Any at(std::string key) const;
+
+    // Return m_members_map[key].
+    Any & operator[] (std::string key);
 };
 
+
+// ===== =====
+
+// A stack datastructure that
+// used to track what procedure/function call is being currently executed.
 class CallStack {
 private:
     std::vector<ActivationRecord> m_records;
@@ -50,8 +59,8 @@ public:
     void push(ActivationRecord record);
     void pop();
 
-    // Return the top activation record of the stack.
-    ActivationRecord peek() const;
+    // Return the reference activation record in the top of the stack.
+    ActivationRecord & peek();
 
     void print() const;
 };

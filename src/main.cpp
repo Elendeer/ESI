@@ -64,7 +64,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
             return 1;
         }
 
-        Interpreter interpreter(ast_root);
+        Interpreter interpreter(ast_root, true);
 
         try {
             cout << "Interpreting ..." << endl;

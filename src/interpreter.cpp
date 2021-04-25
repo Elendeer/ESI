@@ -18,8 +18,8 @@ using std::endl;
 
 namespace ESI {
 
-Interpreter::Interpreter(AST * root)
-    : NodeVisitor(root) {
+Interpreter::Interpreter(AST * root, bool if_print_stack)
+    : NodeVisitor(root), m_if_print_stack(if_print_stack) {
     }
 
 Interpreter::~Interpreter() {}
@@ -156,8 +156,10 @@ Any Interpreter::visitAssign(AST *node) {
     Assign* assign_node = dynamic_cast<Assign *>(node);
 
     string var_name = dynamic_cast<Var *>(assign_node->getLeft())->getVal();
+    Any var_value = visit(assign_node->getRight());
 
-    m_global_scope[var_name] = visit(assign_node->getRight());
+    ActivationRecord & ar = m_call_stack.peek();
+    ar[var_name] = var_value;
 
     return Any();
 }
@@ -165,15 +167,38 @@ Any Interpreter::visitAssign(AST *node) {
 Any Interpreter::visitVar(AST *node) {
     string var_name = dynamic_cast<Var *>(node)->getVal();
 
-    std::map<std::string, Any>::iterator iter = m_global_scope.find(var_name);
+    ActivationRecord & ar = m_call_stack.peek();
+    Any var_value = ar.at(var_name);
 
-    return iter->second;
+    return var_value;
 }
 
 Any Interpreter::visitProgram(AST *node) {
     Program * program_node = dynamic_cast<Program *>(node);
 
+    string program_name = program_node->getName();
+
+    ActivationRecord ar = ActivationRecord(
+            program_name,
+            ARType::PROGRAM,
+            1);
+
+    m_call_stack.push(ar);
+
+    if (m_if_print_stack) {
+        cout << "ENTER PROGRAM: " << program_name << endl;
+        printStack();
+    }
+
     visit(program_node->getBlock());
+
+    if (m_if_print_stack) {
+        cout << "LEAVE PROGRAM: " << program_name << endl;
+        printStack();
+    }
+
+    m_call_stack.pop();
+
     return Any();
 }
 
@@ -227,11 +252,6 @@ void Interpreter::interpret() {
 
     try {
         Any result = visit(m_root);
-
-        // std::cout << "result: " << result << std::endl;
-        // 'result' is useless in fact.
-        this->printScope();
-
     }
     catch (const InterpreterError &error) {
 
@@ -245,16 +265,8 @@ void Interpreter::interpret() {
     }
 }
 
-void Interpreter::printScope() {
-    using std::cout;
-    using std::endl;
-
-    cout << "===== global scope =====" << endl;
-    cout << "Variable\tValue" << endl;
-    for (auto item : m_global_scope) {
-        cout << item.first << "\t" << item.second << endl;
-    }
-    cout << "===== ===== =====" << endl;
+void Interpreter::printStack() {
+    m_call_stack.print();
 }
 
 // ===== =====

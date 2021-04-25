@@ -12,6 +12,7 @@
 #include "parser.hpp"
 #include "node_visitor.hpp"
 #include "scoped_symbol_table.hpp"
+#include "call_stack.hpp"
 
 #include <map>
 
@@ -20,7 +21,8 @@ namespace ESI {
 // Interpreter is a node-visitor
 class Interpreter : public NodeVisitor {
 private:
-    std::map<std::string, Any> m_global_scope;
+    CallStack m_call_stack;
+    bool m_if_print_stack;
 
 
     // It will transfer a funtion
@@ -47,14 +49,14 @@ private:
     virtual void generic_visit(AST *node);
 
 public:
-    Interpreter(AST * root);
+    Interpreter(AST * root, bool if_print_stack);
     virtual ~Interpreter();
 
     // Interpret the source code by walking through the AST.
     // May throw exception.
     void interpret();
 
-    void printScope();
+    void printStack();
 };
 
 // Error throw by Interpreter.

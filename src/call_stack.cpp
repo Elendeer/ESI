@@ -1,7 +1,10 @@
 #include "../inc/call_stack.hpp"
 
+
+#include <iostream>
+
 using std::string;
-using std::unordered_map;
+// using std::unordered_map;
 
 using std::cout;
 using std::endl;
@@ -12,35 +15,41 @@ ActivationRecord::ActivationRecord(
     string name, ARType type, int nesting_level):
     m_name(name), m_type(type), m_nesting_level(nesting_level) {}
 
-void ActivationRecord::setItem(string key, Any value) {
-    m_members_map[key] = value;
-}
-
-Any ActivationRecord::getItem(string key) const {
-    return m_members_map.at(key);
-}
+ActivationRecord::~ActivationRecord() {}
 
 void ActivationRecord::print() const {
     string AR_type_str;
     if (m_type == ARType::PROGRAM) {
-        AR_type_str == "program";
+        AR_type_str = "PROGRAM";
     }
     else {
-        AR_type_str == "not found";
+        AR_type_str = "NOT FOUND";
     }
 
     cout << m_nesting_level << ": "<< AR_type_str << " " << m_name << endl;
 
     for (auto p : m_members_map) {
-        cout << p.first << ": " << p.second << endl;
+        cout << " " << p.first << "\t: " << p.second << endl;
     }
+}
+
+Any ActivationRecord::at(string key) const {
+    return m_members_map.at(key);
+}
+
+// ===== over load =====
+
+Any & ActivationRecord::operator[] (string key) {
+    return m_members_map[key];
 }
 
 // ===== =====
 // ===== ===== CallStack class
 // ===== =====
 
-CallStack::CallStack() {}
+CallStack::CallStack() {
+    m_records.clear();
+}
 CallStack::~CallStack() {}
 
 void CallStack::push(ActivationRecord record) {
@@ -51,14 +60,12 @@ void CallStack::pop() {
     m_records.pop_back();
 }
 
-ActivationRecord CallStack::peek() const {
+ActivationRecord & CallStack::peek() {
     return m_records.back();
 }
 
 void CallStack::print() const {
-    cout << endl;
-
-    for (auto i = m_records.end(); i >= m_records.begin(); -- i ) {
+    for (auto i = m_records.rbegin(); i != m_records.rend(); ++ i ) {
         i->print();
     }
 }
