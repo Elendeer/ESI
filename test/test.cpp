@@ -8,22 +8,21 @@
 
 #include <iostream>
 
-#include "../inc/lexer.hpp"
+#include "../inc/call_stack.hpp"
 
 using namespace std;
 using namespace ESI;
 
 int main() {
-    string str;
-    getline(cin, str);
-    Lexer lexer(str);
+    ActivationRecord ar1("program1", ARType::PROGRAM, 1);
+    // ar1.print();
 
-    Token token = lexer.getNextToken();
-    while (token.getType() != TokenType::eEOF) {
-        token.print_str_repr();
-        cout << endl;
-        token = lexer.getNextToken();
-    }
+    ar1["y"] = 1;
+
+    CallStack call_stack;
+    call_stack.push(ar1);
+
+    call_stack.print();
 
     return 0;
 }
