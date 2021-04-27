@@ -247,12 +247,16 @@ Any SemanticAnalyzer::visitType(AST * node) {
 // ===== =====
 
 Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
-    ProcedureDecl * procedure_node = dynamic_cast<ProcedureDecl *>(node);
-    string proc_name = procedure_node->getName();
+    ProcedureDecl * procedure_decl_node = dynamic_cast<ProcedureDecl *>(node);
+    string proc_name = procedure_decl_node->getName();
 
     // Symbol creating
-    ProcedureSymbol * proc_symbol = new ProcedureSymbol(proc_name);
-    m_p_current_scope->define(proc_symbol);
+    // Must define the symbol first than take the pointer out,
+    // because these two pointer is pointing to different object.
+    m_p_current_scope->define(new ProcedureSymbol(proc_name));
+    ProcedureSymbol * proc_symbol = 
+        dynamic_cast<ProcedureSymbol * >(
+                m_p_current_scope->lookup(proc_name));
 
 
     if (m_if_print) {
@@ -267,7 +271,7 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
     m_p_current_scope = & procedure_scope;
 
     // Put parameter symbols into procedure scope and procedure symbol.
-    for (AST * node : procedure_node->getParams()) {
+    for (AST * node : procedure_decl_node->getParams()) {
         Param * param_node = dynamic_cast<Param *>(node);
 
         Type * type_node = dynamic_cast<Type *>(param_node->getTypeChild());
@@ -285,7 +289,9 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
         proc_symbol->pushParameter(var_symbol);
     }
 
-    visitBlock(procedure_node->getBlock());
+    // cout << proc_name << ": " << proc_symbol->getParams().size() << endl;
+
+    visitBlock(procedure_decl_node->getBlock());
 
     if (m_if_print) {
         procedure_scope.print();
@@ -326,7 +332,7 @@ Any SemanticAnalyzer::visitProcedureCall(AST * node) {
     // Try to compare the number of formal parameters and
     // actual parameters.
 
-    vector<Symbol *> formal_parameters =
+    vector<VarSymbol *> formal_parameters =
         p_procedure_symbol -> getParams();
 
     vector<AST *> actual_parameters =
@@ -335,6 +341,7 @@ Any SemanticAnalyzer::visitProcedureCall(AST * node) {
 
     // parameter number no matched
     if (formal_parameters.size() != actual_parameters.size()) {
+        cout << formal_parameters.size() << endl << actual_parameters.size() << endl;
         error(
             "Procedure call not matched: Wrong number of parameters.",
             ErrorCode::WRONG_PARAMS_NUM,
@@ -346,6 +353,9 @@ Any SemanticAnalyzer::visitProcedureCall(AST * node) {
     for (AST * p : actual_parameters) {
         visit(p);
     }
+
+    // put Procedure Symbol into ProcedureCall node
+    procedure_call_node->setProcedureSymbol(*p_procedure_symbol);
 
     return Any();
 }

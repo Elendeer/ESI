@@ -22,6 +22,9 @@ void ActivationRecord::print() const {
     if (m_type == ARType::PROGRAM) {
         AR_type_str = "PROGRAM";
     }
+    else if (m_type == ARType::PROCEDURE) {
+        AR_type_str = "PROCECURE";
+    }
     else {
         AR_type_str = "NOT FOUND";
     }
@@ -65,9 +68,11 @@ ActivationRecord & CallStack::peek() {
 }
 
 void CallStack::print() const {
+    cout << "CALL STACK" << endl;
     for (auto i = m_records.rbegin(); i != m_records.rend(); ++ i ) {
         i->print();
     }
+    cout << endl;
 }
 
 } // namespace ESI

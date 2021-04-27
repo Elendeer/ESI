@@ -19,6 +19,7 @@
 #include <unordered_map>
 
 #include "token.hpp"
+#include "symbol.hpp"
 
 namespace ESI {
 
@@ -236,6 +237,21 @@ public:
 // ===== =====
 // ===== =====
 
+// Parameter node
+// No token inside.
+class Param : public AST {
+private:
+	AST * m_var_node;
+	AST * m_type_node;
+
+public:
+	Param(AST * var_node, AST * type_node);
+	virtual ~Param();
+
+	AST * getVarChild() const;
+	AST * getTypeChild() const;
+};
+
 // Represent a node of declaration of a procedure.
 class ProcedureDecl : public AST {
 private:
@@ -261,40 +277,33 @@ public:
     AST * getBlock() const ;
 };
 
-// Parameter node
-// No token inside.
-class Param : public AST {
-private:
-	AST * m_var_node;
-	AST * m_type_node;
-
-public:
-	Param(AST * var_node, AST * type_node);
-	virtual ~Param();
-
-	AST * getVarChild() const;
-	AST * getTypeChild() const;
-};
-
 // Token inside should be token of id of procedure name.
 class ProcedureCall : public AST {
 private :
     // procedure name
     std::string m_proc_name;
+
     // actual parameters
     // All actual parameters are child (node).
     std::vector<AST *> m_actual_param;
+
+    // procedure symbol
+    ProcedureSymbol m_proc_symbol;
 
 public :
     ProcedureCall(
         std::string procedure_name,
         std::vector<AST *> & actual_parameters,
-        Token token);
+        Token token,
+        ProcedureSymbol procudure_symbol = ProcedureSymbol("none"));
 
     virtual ~ProcedureCall();
 
     std::string getProcedureName() const;
     std::vector<AST *> getActualParameters() const;
+    ProcedureSymbol getProcedureSymbol() const;
+
+    void setProcedureSymbol(ProcedureSymbol & procedure_symbol);
 
 };
 

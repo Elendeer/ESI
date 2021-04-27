@@ -11,8 +11,6 @@
 #include <string>
 #include <vector>
 
-#include "AST.hpp"
-
 namespace ESI {
 
 // Type of a symbol will be used in type checking.
@@ -66,6 +64,7 @@ class VarSymbol : public Symbol {
 
 public :
     VarSymbol(std::string name, SymbolType type);
+    VarSymbol(const VarSymbol & obj) = default ;
     virtual ~VarSymbol();
 
     virtual SymbolCategory getCategory() const;
@@ -74,18 +73,22 @@ public :
 // Procedure symbol.
 class ProcedureSymbol : public Symbol {
 private:
-    std::vector<Symbol *> m_parameters;
+    std::vector<VarSymbol *> m_parameters;
 
 public :
     ProcedureSymbol(std::string name);
-	ProcedureSymbol(std::string name, std::vector<Symbol *> & parameters);
+	ProcedureSymbol(std::string name, std::vector<VarSymbol *> & parameters);
+    ProcedureSymbol(const ProcedureSymbol & obj);
+
 	virtual ~ProcedureSymbol();
 
     virtual SymbolCategory getCategory() const;
 
-    void pushParameter(Symbol * param_node);
+    void pushParameter(VarSymbol * param_node);
 
-    std::vector<Symbol *> getParams();
+    std::vector<VarSymbol *> getParams();
+
+    void operator= (const ProcedureSymbol obj);
 };
 
 } // namespace ESI

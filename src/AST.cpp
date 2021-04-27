@@ -278,6 +278,30 @@ NoOp::~NoOp() {
 // ===== =====
 
 /*********************************************
+ * Parameter node
+*********************************************/
+
+Param::Param(AST * var_node, AST * type_node)
+	: AST(NodeType::PARAM, Token()),
+	m_var_node(var_node), m_type_node(type_node) {
+
+        m_children.push_back(var_node);
+        m_children.push_back(type_node);
+    }
+
+Param::~Param() {
+    // std::cout << "param deleted" << std::endl;
+}
+
+AST * Param::getVarChild() const {
+	return m_var_node;
+}
+
+AST * Param::getTypeChild() const {
+	return m_type_node;
+}
+
+/*********************************************
  * Procedure declaration node
 *********************************************/
 
@@ -312,39 +336,17 @@ AST * ProcedureDecl::getBlock() const {
 }
 
 /*********************************************
- * Parameter node
-*********************************************/
-
-Param::Param(AST * var_node, AST * type_node)
-	: AST(NodeType::PARAM, Token()),
-	m_var_node(var_node), m_type_node(type_node) {
-
-        m_children.push_back(var_node);
-        m_children.push_back(type_node);
-    }
-
-Param::~Param() {
-    // std::cout << "param deleted" << std::endl;
-}
-
-AST * Param::getVarChild() const {
-	return m_var_node;
-}
-
-AST * Param::getTypeChild() const {
-	return m_type_node;
-}
-
-/*********************************************
  * ProcedureCall node
 *********************************************/
 
 ProcedureCall::ProcedureCall(
     string procedure_name,
     std::vector<AST *> & actual_parameters,
-    Token token) :
+    Token token,
+    ProcedureSymbol procedure_symbol) :
     AST(NodeType::PROCEDURE_CALL, token),
-    m_proc_name(procedure_name) {
+    m_proc_name(procedure_name),
+    m_proc_symbol(procedure_symbol) {
         for (AST * p : actual_parameters) {
             m_actual_param.push_back(p);
             m_children.push_back(p);
@@ -358,6 +360,14 @@ string ProcedureCall::getProcedureName() const {
 
 vector<AST *> ProcedureCall::getActualParameters() const {
     return m_actual_param;
+}
+
+ProcedureSymbol ProcedureCall::getProcedureSymbol() const {
+    return m_proc_symbol;
+}
+
+void ProcedureCall::setProcedureSymbol(ProcedureSymbol & procedure_symbol) {
+    m_proc_symbol = procedure_symbol;
 }
 
 

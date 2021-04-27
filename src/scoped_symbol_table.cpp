@@ -128,6 +128,7 @@ void ScopedSymbolTable::define(Symbol * symbol) {
         m_map[name] = new ProcedureSymbol(name);
     }
     else {
+        std::cout << "category not found" << std::endl;
         // Nothing else.
     }
 }

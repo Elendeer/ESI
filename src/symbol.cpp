@@ -96,8 +96,15 @@ ProcedureSymbol::ProcedureSymbol(string name):
         m_parameters.clear();
     }
 
-ProcedureSymbol::ProcedureSymbol(string name, vector<Symbol *> & parameters):
+ProcedureSymbol::ProcedureSymbol(string name, vector<VarSymbol *> & parameters):
     Symbol(name), m_parameters(parameters) {}
+
+ProcedureSymbol::ProcedureSymbol(const ProcedureSymbol & obj) :
+    Symbol(obj.m_name) {
+        for (VarSymbol * p : obj.m_parameters) {
+            m_parameters.push_back(new VarSymbol(*p));
+        }
+    }
 
 ProcedureSymbol::~ProcedureSymbol() {
     for (Symbol * p : m_parameters) {
@@ -112,12 +119,28 @@ SymbolCategory ProcedureSymbol::getCategory() const {
     return SymbolCategory::PROCEDURE_SYMBOL;
 }
 
-void ProcedureSymbol::pushParameter(Symbol * param_node) {
+void ProcedureSymbol::pushParameter(VarSymbol * param_node) {
     m_parameters.push_back(param_node);
 }
 
-vector<Symbol *> ProcedureSymbol::getParams() {
+vector<VarSymbol *> ProcedureSymbol::getParams() {
     return m_parameters;
+}
+
+void ProcedureSymbol::operator= (const ProcedureSymbol obj) {
+    for (Symbol * p : m_parameters) {
+        if (p != nullptr) {
+            delete p;
+            p = nullptr;
+        }
+    }
+    m_parameters.clear();
+
+    m_name = obj.m_name;
+
+    for (VarSymbol * p : obj.m_parameters) {
+        m_parameters.push_back(new VarSymbol(*p));
+    }
 }
 
 } // namespace ESI

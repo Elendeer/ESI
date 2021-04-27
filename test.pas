@@ -8,12 +8,12 @@ b : REAL;
 { b : REAL;}
 
 {注释：声明程序}
-PROCEDURE P1;
+{PROCEDURE P1;
 VAR
     a : INTEGER;
 BEGIN
     a := 666;
-END;
+END;}
 
 PROCEDURE P2(a, b : REAL; c : INTEGER);
 VAR
@@ -25,7 +25,7 @@ BEGIN
 
 a := (1 + 2) * 3;
 b := a div 5;
-P1();
+P2(3.5, 4.5, 5);
 {P1(2, 4 + 2);}
 
 END.

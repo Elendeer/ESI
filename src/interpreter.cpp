@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 using std::string;
+using std::vector;
 
 using std::cout;
 using std::endl;
@@ -236,8 +237,42 @@ Any Interpreter::visitProcedureDecl(AST * node) {
 }
 
 Any Interpreter::visitProcedureCall(AST * node) {
-    // Do nothing.
-    if (node != nullptr) return Any();
+    ProcedureCall * procedure_call_node = dynamic_cast<ProcedureCall *>(node);
+
+    string procedure_name = procedure_call_node->getProcedureName();
+
+    // cout << "visiting procedure call: " << procedure_name << endl;
+
+    ActivationRecord ar = ActivationRecord(
+            procedure_name,
+            ARType::PROCEDURE,
+            2);
+
+    ProcedureSymbol procedure_symbol = 
+        procedure_call_node->getProcedureSymbol();
+
+    vector<VarSymbol *> formal_parameters =
+        procedure_symbol.getParams();
+    vector<AST *> actual_parameters =
+        procedure_call_node->getActualParameters();
+
+    long unsigned int idx = 0;
+    while (idx < formal_parameters.size() ) {
+        VarSymbol * parameter_symbol = formal_parameters.at(idx);
+        AST * parameter_node = actual_parameters.at(idx);
+
+        string var_name = parameter_symbol->getName();
+        ar[var_name] = visit(parameter_node);
+
+        ++ idx;
+    }
+
+    // cout << "test for interpreter's procedure call visiting: " << endl;
+    // ar.print();
+    // cout << endl;
+
+    m_call_stack.push(ar);
+
     return Any();
 }
 
