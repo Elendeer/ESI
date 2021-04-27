@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-23 09:38:51
+ * @LastEditTime : 2021-04-27 19:58:28
  * @Description  :
  *********************************************/
 
@@ -248,7 +248,7 @@ Any Interpreter::visitProcedureCall(AST * node) {
             ARType::PROCEDURE,
             2);
 
-    ProcedureSymbol procedure_symbol = 
+    ProcedureSymbol procedure_symbol =
         procedure_call_node->getProcedureSymbol();
 
     vector<VarSymbol *> formal_parameters =
@@ -267,11 +267,21 @@ Any Interpreter::visitProcedureCall(AST * node) {
         ++ idx;
     }
 
-    // cout << "test for interpreter's procedure call visiting: " << endl;
-    // ar.print();
-    // cout << endl;
-
     m_call_stack.push(ar);
+
+    if (m_if_print_stack) {
+        cout << "ENTER PROCEDURE: " << procedure_name << endl;
+        printStack();
+    }
+
+    visit((AST *)procedure_symbol.getProcedureBlock());
+
+    if (m_if_print_stack) {
+        cout << "LEAVE PROCEDURE: " << procedure_name << endl;
+        printStack();
+    }
+
+    m_call_stack.pop();
 
     return Any();
 }

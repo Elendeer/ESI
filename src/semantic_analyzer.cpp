@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-23 12:51:17
+ * @LastEditTime : 2021-04-27 20:08:12
  * @Description  :
 *********************************************/
 //
@@ -247,18 +247,24 @@ Any SemanticAnalyzer::visitType(AST * node) {
 // ===== =====
 
 Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
-    ProcedureDecl * procedure_decl_node = dynamic_cast<ProcedureDecl *>(node);
+    ProcedureDecl * procedure_decl_node =
+        dynamic_cast<ProcedureDecl *>(node);
+
     string proc_name = procedure_decl_node->getName();
 
     // Symbol creating
     // Must define the symbol first than take the pointer out,
     // because these two pointer is pointing to different object.
     m_p_current_scope->define(new ProcedureSymbol(proc_name));
-    ProcedureSymbol * proc_symbol = 
+    ProcedureSymbol * proc_symbol =
         dynamic_cast<ProcedureSymbol * >(
                 m_p_current_scope->lookup(proc_name));
 
+    // Accessed by the interpreter when executing procedure call.
+    proc_symbol->setProcedureBlock(
+        procedure_decl_node->getBlock());
 
+    // log
     if (m_if_print) {
         cout << "ENTER scope: " << proc_name << endl;
     }
@@ -293,6 +299,7 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
 
     visitBlock(procedure_decl_node->getBlock());
 
+    // log
     if (m_if_print) {
         procedure_scope.print();
         cout << "LEAVE scope: " << proc_name << endl << endl;

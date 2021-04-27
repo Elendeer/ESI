@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-07 11:16:08
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 17:09:45
+ * @LastEditTime : 2021-04-27 19:44:16
  * @Description  :
 *********************************************/
 #ifndef INC_SYMBOL_HPP_
@@ -75,17 +75,26 @@ class ProcedureSymbol : public Symbol {
 private:
     std::vector<VarSymbol *> m_parameters;
 
+    // Store a 'Block *' pointer pointing to the
+    // block AST node of the procedure.
+    // Here 'void *' is used for aviod the mutual inclusion
+    // of the header files.
+    void * m_p_procedure_block;
+
 public :
     ProcedureSymbol(std::string name);
-	ProcedureSymbol(std::string name, std::vector<VarSymbol *> & parameters);
-    ProcedureSymbol(const ProcedureSymbol & obj);
+	ProcedureSymbol(
+        std::string name, std::vector<VarSymbol *> & parameters);
 
+    ProcedureSymbol(const ProcedureSymbol & obj);
 	virtual ~ProcedureSymbol();
 
     virtual SymbolCategory getCategory() const;
 
     void pushParameter(VarSymbol * param_node);
+    void setProcedureBlock(void * p_block);
 
+    void * getProcedureBlock() const;
     std::vector<VarSymbol *> getParams();
 
     void operator= (const ProcedureSymbol obj);

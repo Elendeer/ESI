@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-07 11:34:16
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-12 17:16:36
+ * @LastEditTime : 2021-04-27 20:18:36
  * @Description  :
 *********************************************/
 
@@ -92,7 +92,7 @@ SymbolCategory VarSymbol::getCategory() const {
 // ===== ProcedureSymbol Class =====
 
 ProcedureSymbol::ProcedureSymbol(string name):
-    Symbol(name) {
+    Symbol(name), m_p_procedure_block(nullptr) {
         m_parameters.clear();
     }
 
@@ -104,6 +104,8 @@ ProcedureSymbol::ProcedureSymbol(const ProcedureSymbol & obj) :
         for (VarSymbol * p : obj.m_parameters) {
             m_parameters.push_back(new VarSymbol(*p));
         }
+
+        m_p_procedure_block = obj.m_p_procedure_block;
     }
 
 ProcedureSymbol::~ProcedureSymbol() {
@@ -121,6 +123,14 @@ SymbolCategory ProcedureSymbol::getCategory() const {
 
 void ProcedureSymbol::pushParameter(VarSymbol * param_node) {
     m_parameters.push_back(param_node);
+}
+
+void ProcedureSymbol::setProcedureBlock(void * p_block) {
+    m_p_procedure_block = p_block;
+}
+
+void * ProcedureSymbol::getProcedureBlock() const {
+    return m_p_procedure_block;
 }
 
 vector<VarSymbol *> ProcedureSymbol::getParams() {

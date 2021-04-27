@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-23 09:36:13
+ * @LastEditTime : 2021-04-27 19:28:30
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -289,6 +289,7 @@ private :
 
     // procedure symbol
     ProcedureSymbol m_proc_symbol;
+    Block * m_proc_block;
 
 public :
     ProcedureCall(
