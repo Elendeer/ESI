@@ -39,8 +39,11 @@ SemanticAnalyzer::SemanticAnalyzer(AST * root, bool if_print)
     m_p_current_scope(nullptr),
     m_if_print(if_print) {
         // Build-in type symbols
-        m_build_in_type_scope.define(Symbol("INTEGER", SymbolType::INTEGER));
-        m_build_in_type_scope.define(Symbol("REAL", SymbolType::REAL));
+        // Levels are set to -1
+        m_build_in_type_scope.define(
+                Symbol("INTEGER", -1, SymbolType::INTEGER));
+        m_build_in_type_scope.define(
+                Symbol("REAL", -1, SymbolType::REAL));
     }
 
 SemanticAnalyzer::~SemanticAnalyzer() {}
@@ -234,7 +237,10 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
     // Get variable symble type .
     SymbolType var_type = var_type_symbol->getType();
 
-    m_p_current_scope->define(Symbol(var_name, var_type));
+    m_p_current_scope->define(
+            Symbol(var_name,
+                m_p_current_scope->getScopeLevel(),
+                var_type));
 
     return Any();
 }
@@ -258,8 +264,10 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
     //
     // The block pointer is accessed by the interpreter
     // when executing procedure call.
-    m_p_current_scope->define(ProcedureSymbol(
+    m_p_current_scope->define(
+            ProcedureSymbol(
                 proc_name,
+                m_p_current_scope->getScopeLevel(),
                 procedure_decl_node->getBlock()));
 
     ProcedureSymbol * proc_symbol =
@@ -298,7 +306,10 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
         // get parameter name.
         string param_name = var_node->getVal();
 
-        VarSymbol * var_symbol = new VarSymbol(param_name, param_type);
+        VarSymbol * var_symbol = new VarSymbol(
+                param_name,
+                m_p_current_scope->getScopeLevel(),
+                param_type);
         m_p_current_scope->define(*var_symbol);
         proc_symbol->pushParameter(var_symbol);
     }

@@ -296,7 +296,7 @@ public :
         std::string procedure_name,
         std::vector<AST *> & actual_parameters,
         Token token,
-        ProcedureSymbol procudure_symbol = ProcedureSymbol("none"));
+        ProcedureSymbol procudure_symbol = ProcedureSymbol("none", 0));
 
     virtual ~ProcedureCall();
 

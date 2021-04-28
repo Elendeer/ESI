@@ -39,7 +39,6 @@ ScopedSymbolTable::ScopedSymbolTable(const ScopedSymbolTable & obj) {
             define(*i.second);
         }
     }
-
 }
 
 ScopedSymbolTable::~ScopedSymbolTable() {
@@ -48,6 +47,7 @@ ScopedSymbolTable::~ScopedSymbolTable() {
     for (auto i : m_map) {
         if (i.second != nullptr) {
             delete i.second;
+            i.second = nullptr;
         }
     }
 }
@@ -98,19 +98,20 @@ void ScopedSymbolTable::print() const {
 void ScopedSymbolTable::define(const Symbol & symbol) {
     SymbolCategory category = symbol.getCategory();
     string name = symbol.getName();
+    int level = symbol.getLevel();
     SymbolType type = symbol.getType();
 
     if (category == SymbolCategory::SYMBOL) {
-        m_map[name] = new Symbol(name, type);
+        m_map[name] = new Symbol(name, level, type);
     }
     else if (category == SymbolCategory::BUILD_IN_TYPE_SYMBOL) {
-        m_map[name] = new BuildInTypeSymbol(name);
+        m_map[name] = new BuildInTypeSymbol(name, level);
     }
     else if (category == SymbolCategory::VAR_SYMBOL) {
-        m_map[name] = new VarSymbol(name, type);
+        m_map[name] = new VarSymbol(name, level, type);
     }
     else if (category == SymbolCategory::PROCEDURE_SYMBOL) {
-        m_map[name] = new ProcedureSymbol(name);
+        m_map[name] = new ProcedureSymbol(name, level);
     }
     else {
         std::cout << "category not found" << std::endl;

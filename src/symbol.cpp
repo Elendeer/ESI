@@ -16,13 +16,16 @@ namespace ESI {
 
 // ===== Symbol Class =====
 
-Symbol::Symbol(string name, SymbolType type) :
-    m_name(name), m_type(type) {}
+Symbol::Symbol(string name, int level, SymbolType type) :
+    m_name(name), m_level(level), m_type(type) {}
 
 Symbol::~Symbol() {}
 
 string Symbol::getName() const {
     return m_name;
+}
+int Symbol::getLevel() const {
+    return m_level;
 }
 SymbolType Symbol::getType() const {
     return m_type;
@@ -69,8 +72,8 @@ SymbolCategory Symbol::getCategory() const {
 
 // ===== BuildInTypeSymbol Class =====
 
-BuildInTypeSymbol::BuildInTypeSymbol(string name) :
-    Symbol(name) {}
+BuildInTypeSymbol::BuildInTypeSymbol(string name, int level) :
+    Symbol(name, level) {}
 
 BuildInTypeSymbol::~BuildInTypeSymbol() {}
 
@@ -80,8 +83,8 @@ SymbolCategory BuildInTypeSymbol::getCategory() const {
 
 // ===== VarSymbol Class =====
 
-VarSymbol::VarSymbol(string name, SymbolType type) :
-    Symbol(name, type) {}
+VarSymbol::VarSymbol(string name, int level, SymbolType type) :
+    Symbol(name, level, type) {}
 
 VarSymbol::~VarSymbol() {}
 
@@ -91,8 +94,9 @@ SymbolCategory VarSymbol::getCategory() const {
 
 // ===== ProcedureSymbol Class =====
 
-ProcedureSymbol::ProcedureSymbol(string name, void * p_procedure_symbol):
-    Symbol(name), m_p_procedure_block(p_procedure_symbol) {
+ProcedureSymbol::ProcedureSymbol(
+        string name, int level, void * p_procedure_symbol):
+    Symbol(name, level), m_p_procedure_block(p_procedure_symbol) {
         m_parameters.clear();
     }
 

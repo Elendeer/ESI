@@ -35,14 +35,17 @@ enum class SymbolCategory {
 class Symbol {
 protected :
     std::string m_name;
+    int m_level;
     SymbolType m_type;
 
 public:
-    Symbol(std::string name, SymbolType type = SymbolType::NONE);
+    Symbol(std::string name,
+            int level = 0, SymbolType type = SymbolType::NONE);
     Symbol(const Symbol & obj) = default;
     virtual ~Symbol();
 
     std::string getName() const;
+    int getLevel() const;
     SymbolType getType() const;
     virtual SymbolCategory getCategory() const;
 
@@ -54,7 +57,7 @@ public:
 class BuildInTypeSymbol : public Symbol {
 
 public :
-    BuildInTypeSymbol(std::string name);
+    BuildInTypeSymbol(std::string name, int level);
     BuildInTypeSymbol(const BuildInTypeSymbol & obj) = default;
     virtual ~BuildInTypeSymbol();
 
@@ -65,7 +68,7 @@ public :
 class VarSymbol : public Symbol {
 
 public :
-    VarSymbol(std::string name, SymbolType type);
+    VarSymbol(std::string name, int level, SymbolType type);
     VarSymbol(const VarSymbol & obj) = default ;
     virtual ~VarSymbol();
 
@@ -84,7 +87,8 @@ private:
     void * m_p_procedure_block;
 
 public :
-    ProcedureSymbol(std::string name, void * p_procedure_symbol = nullptr);
+    ProcedureSymbol(std::string name,
+            int level, void * p_procedure_symbol = nullptr);
 
     ProcedureSymbol(const ProcedureSymbol & obj);
 	virtual ~ProcedureSymbol();
