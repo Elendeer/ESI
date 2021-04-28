@@ -98,6 +98,8 @@ ProcedureSymbol::ProcedureSymbol(string name, void * p_procedure_symbol):
 
 ProcedureSymbol::ProcedureSymbol(const ProcedureSymbol & obj) :
     Symbol(obj.m_name) {
+        m_parameters.clear();
+
         for (VarSymbol * p : obj.m_parameters) {
             m_parameters.push_back(new VarSymbol(*p));
         }

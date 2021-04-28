@@ -39,6 +39,7 @@ protected :
 
 public:
     Symbol(std::string name, SymbolType type = SymbolType::NONE);
+    Symbol(const Symbol & obj) = default;
     virtual ~Symbol();
 
     std::string getName() const;
@@ -54,6 +55,7 @@ class BuildInTypeSymbol : public Symbol {
 
 public :
     BuildInTypeSymbol(std::string name);
+    BuildInTypeSymbol(const BuildInTypeSymbol & obj) = default;
     virtual ~BuildInTypeSymbol();
 
     virtual SymbolCategory getCategory() const;
