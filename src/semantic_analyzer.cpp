@@ -39,8 +39,8 @@ SemanticAnalyzer::SemanticAnalyzer(AST * root, bool if_print)
     m_p_current_scope(nullptr),
     m_if_print(if_print) {
         // Build-in type symbols
-        m_build_in_type_scope.define(new Symbol("INTEGER", SymbolType::INTEGER));
-        m_build_in_type_scope.define(new Symbol("REAL", SymbolType::REAL));
+        m_build_in_type_scope.define(Symbol("INTEGER", SymbolType::INTEGER));
+        m_build_in_type_scope.define(Symbol("REAL", SymbolType::REAL));
     }
 
 SemanticAnalyzer::~SemanticAnalyzer() {}
@@ -234,7 +234,7 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
     // Get variable symble type .
     SymbolType var_type = var_type_symbol->getType();
 
-    m_p_current_scope->define(new Symbol(var_name, var_type));
+    m_p_current_scope->define(Symbol(var_name, var_type));
 
     return Any();
 }
@@ -258,7 +258,7 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
     //
     // The block pointer is accessed by the interpreter
     // when executing procedure call.
-    m_p_current_scope->define(new ProcedureSymbol(
+    m_p_current_scope->define(ProcedureSymbol(
                 proc_name,
                 procedure_decl_node->getBlock()));
 
@@ -266,9 +266,15 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
         dynamic_cast<ProcedureSymbol * >(
                 m_p_current_scope->lookup(proc_name));
 
+    if (proc_symbol == nullptr) {
+        error("Undefined Symbol: " + proc_name,
+                ErrorCode::ID_NOT_FOUND,
+                procedure_decl_node->getToken());
+    }
+
     // log
     if (m_if_print) {
-        cout << "ENTER scope: " << proc_name << endl;
+        cout << "ENTER: " << proc_name << endl;
     }
     // Create scope for this procedure.
     ScopedSymbolTable procedure_scope = ScopedSymbolTable(
@@ -293,7 +299,7 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
         string param_name = var_node->getVal();
 
         VarSymbol * var_symbol = new VarSymbol(param_name, param_type);
-        m_p_current_scope->define(var_symbol);
+        m_p_current_scope->define(*var_symbol);
         proc_symbol->pushParameter(var_symbol);
     }
 

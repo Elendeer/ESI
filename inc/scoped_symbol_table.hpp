@@ -33,8 +33,8 @@ public:
     ScopedSymbolTable(std::string scope_name = "none",
                       int scope_level = -1,
                       ScopedSymbolTable *enclosing_scope = nullptr);
-    ~ScopedSymbolTable();
     ScopedSymbolTable(const ScopedSymbolTable &obj);
+    ~ScopedSymbolTable();
 
     std::string getScopeName() const;
     int getScopeLevel() const;
@@ -49,7 +49,7 @@ public:
     void print() const;
 
     // Define a symbol in symbol table.
-    void define(Symbol *symbol);
+    void define(const Symbol & symbol);
 
     // Cheack if the name's corresponding symbol exist in symbol table.
     // It will recursively go up to check the scope tree by using

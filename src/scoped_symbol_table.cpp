@@ -25,15 +25,6 @@ ScopedSymbolTable::ScopedSymbolTable(
 
     m_map.clear();
 }
-ScopedSymbolTable::~ScopedSymbolTable() {
-    if (m_map.empty()) return ;
-
-    for (auto i : m_map) {
-        if (i.second != nullptr) {
-            delete i.second;
-        }
-    }
-}
 
 // Copy constructor
 ScopedSymbolTable::ScopedSymbolTable(const ScopedSymbolTable & obj) {
@@ -45,26 +36,20 @@ ScopedSymbolTable::ScopedSymbolTable(const ScopedSymbolTable & obj) {
     // i is an iterator pointing a pair<string, Symbol * >.
     for (auto i : obj.m_map) {
         if (i.second != nullptr) {
-            SymbolCategory category = i.second->getCategory();
-            string name = i.first; // the same with i.second->getName()
-            SymbolType type = i.second->getType();
-
-            if (category == SymbolCategory::SYMBOL) {
-                m_map[name] = new Symbol(name, type);
-            }
-            else if (category == SymbolCategory::BUILD_IN_TYPE_SYMBOL) {
-                m_map[name] = new BuildInTypeSymbol(name);
-            }
-            else if (category == SymbolCategory::VAR_SYMBOL) {
-                m_map[name] = new VarSymbol(name, type);
-            }
-            else {
-                // Nothing else.
-                continue;
-            }
+            define(*i.second);
         }
     }
 
+}
+
+ScopedSymbolTable::~ScopedSymbolTable() {
+    if (m_map.empty()) return ;
+
+    for (auto i : m_map) {
+        if (i.second != nullptr) {
+            delete i.second;
+        }
+    }
 }
 
 string ScopedSymbolTable::getScopeName() const {
@@ -110,10 +95,10 @@ void ScopedSymbolTable::print() const {
     cout << "----- ----- ----- -----" << endl;
 }
 
-void ScopedSymbolTable::define(Symbol * symbol) {
-    SymbolCategory category = symbol->getCategory();
-    string name = symbol->getName();
-    SymbolType type = symbol->getType();
+void ScopedSymbolTable::define(const Symbol & symbol) {
+    SymbolCategory category = symbol.getCategory();
+    string name = symbol.getName();
+    SymbolType type = symbol.getType();
 
     if (category == SymbolCategory::SYMBOL) {
         m_map[name] = new Symbol(name, type);
