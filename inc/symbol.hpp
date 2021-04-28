@@ -31,6 +31,7 @@ enum class SymbolCategory {
 
 // As a base class.
 // name : name of the symbol;
+// level : nested level of the symbol;
 // type : if this symbol is a variable, it will have a type.
 class Symbol {
 protected :
@@ -78,7 +79,7 @@ public :
 // Procedure symbol.
 class ProcedureSymbol : public Symbol {
 private:
-    std::vector<VarSymbol *> m_parameters;
+    std::vector<VarSymbol> m_parameters;
 
     // Store a 'Block *' pointer pointing to the
     // block AST node of the procedure.
@@ -88,19 +89,19 @@ private:
 
 public :
     ProcedureSymbol(std::string name,
-            int level, void * p_procedure_symbol = nullptr);
+            int level, void * p_procedure_block = nullptr);
 
     ProcedureSymbol(const ProcedureSymbol & obj);
 	virtual ~ProcedureSymbol();
 
     virtual SymbolCategory getCategory() const;
 
-    void pushParameter(VarSymbol * param_node);
+    void pushParameter(const VarSymbol & param_symbol);
 
     void * getProcedureBlock() const;
-    std::vector<VarSymbol *> getParams();
+    std::vector<VarSymbol> getParams();
 
-    ProcedureSymbol & operator= (const ProcedureSymbol obj);
+    const ProcedureSymbol & operator= (const ProcedureSymbol & obj);
 };
 
 } // namespace ESI

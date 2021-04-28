@@ -304,7 +304,7 @@ public :
     std::vector<AST *> getActualParameters() const;
     ProcedureSymbol getProcedureSymbol() const;
 
-    void setProcedureSymbol(ProcedureSymbol & procedure_symbol);
+    void setProcedureSymbol(const ProcedureSymbol & procedure_symbol);
 
 };
 

@@ -111,7 +111,10 @@ void ScopedSymbolTable::define(const Symbol & symbol) {
         m_map[name] = new VarSymbol(name, level, type);
     }
     else if (category == SymbolCategory::PROCEDURE_SYMBOL) {
-        m_map[name] = new ProcedureSymbol(name, level);
+        void * p_procedure_block =
+            dynamic_cast<const ProcedureSymbol&>(symbol).getProcedureBlock();
+
+        m_map[name] = new ProcedureSymbol(name, level, p_procedure_block);
     }
     else {
         std::cout << "category not found" << std::endl;

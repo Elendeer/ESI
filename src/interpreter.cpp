@@ -186,6 +186,7 @@ Any Interpreter::visitProgram(AST *node) {
 
     m_call_stack.push(ar);
 
+    // log
     if (m_if_print_stack) {
         cout << "ENTER PROGRAM: " << program_name << endl;
         printStack();
@@ -193,6 +194,7 @@ Any Interpreter::visitProgram(AST *node) {
 
     visit(program_node->getBlock());
 
+    // log
     if (m_if_print_stack) {
         cout << "LEAVE PROGRAM: " << program_name << endl;
         printStack();
@@ -241,27 +243,26 @@ Any Interpreter::visitProcedureCall(AST * node) {
 
     string procedure_name = procedure_call_node->getProcedureName();
 
-    // cout << "visiting procedure call: " << procedure_name << endl;
+    ProcedureSymbol procedure_symbol =
+        procedure_call_node->getProcedureSymbol();
 
     ActivationRecord ar = ActivationRecord(
             procedure_name,
             ARType::PROCEDURE,
-            2);
+            procedure_symbol.getLevel() + 1);
 
-    ProcedureSymbol procedure_symbol =
-        procedure_call_node->getProcedureSymbol();
 
-    vector<VarSymbol *> formal_parameters =
+    vector<VarSymbol> formal_parameters =
         procedure_symbol.getParams();
     vector<AST *> actual_parameters =
         procedure_call_node->getActualParameters();
 
     long unsigned int idx = 0;
     while (idx < formal_parameters.size() ) {
-        VarSymbol * parameter_symbol = formal_parameters.at(idx);
+        VarSymbol parameter_symbol = formal_parameters.at(idx);
         AST * parameter_node = actual_parameters.at(idx);
 
-        string var_name = parameter_symbol->getName();
+        string var_name = parameter_symbol.getName();
         ar[var_name] = visit(parameter_node);
 
         ++ idx;
@@ -269,6 +270,7 @@ Any Interpreter::visitProcedureCall(AST * node) {
 
     m_call_stack.push(ar);
 
+    // log
     if (m_if_print_stack) {
         cout << "ENTER PROCEDURE: " << procedure_name << endl;
         printStack();
@@ -276,6 +278,7 @@ Any Interpreter::visitProcedureCall(AST * node) {
 
     visit((AST *)procedure_symbol.getProcedureBlock());
 
+    // log
     if (m_if_print_stack) {
         cout << "LEAVE PROCEDURE: " << procedure_name << endl;
         printStack();

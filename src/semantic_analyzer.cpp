@@ -306,11 +306,14 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
         // get parameter name.
         string param_name = var_node->getVal();
 
-        VarSymbol * var_symbol = new VarSymbol(
+        // This symbol will be pushed into the procedure symbol as
+        // a parameter, and will be deleted by the destructor
+        // of the procedure symbol.
+        VarSymbol var_symbol = VarSymbol(
                 param_name,
                 m_p_current_scope->getScopeLevel(),
                 param_type);
-        m_p_current_scope->define(*var_symbol);
+        m_p_current_scope->define(var_symbol);
         proc_symbol->pushParameter(var_symbol);
     }
 
@@ -358,7 +361,7 @@ Any SemanticAnalyzer::visitProcedureCall(AST * node) {
     // Try to compare the number of formal parameters and
     // actual parameters.
 
-    vector<VarSymbol *> formal_parameters =
+    vector<VarSymbol> formal_parameters =
         p_procedure_symbol -> getParams();
 
     vector<AST *> actual_parameters =

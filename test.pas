@@ -7,18 +7,18 @@ a : INTEGER;
 b : REAL;
 { b : REAL;}
 
-{注释：声明程序}
-{PROCEDURE P1;
-VAR
-    a : INTEGER;
-BEGIN
-    a := 666;
-END;}
 
 PROCEDURE P2(a, b : REAL; c : INTEGER);
 VAR
-    {a : INTEGER; duplicat declaration here, will throw a sementic error.}
+    {注释：声明程序}
+    PROCEDURE P1;
+    VAR
+        a : INTEGER;
+    BEGIN
+        a := 666;
+    END;
 BEGIN
+    P1();
 END;
 
 BEGIN

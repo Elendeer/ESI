@@ -366,7 +366,8 @@ ProcedureSymbol ProcedureCall::getProcedureSymbol() const {
     return m_proc_symbol;
 }
 
-void ProcedureCall::setProcedureSymbol(ProcedureSymbol & procedure_symbol) {
+void ProcedureCall::setProcedureSymbol(
+        const ProcedureSymbol & procedure_symbol) {
     m_proc_symbol = procedure_symbol;
 }
 
