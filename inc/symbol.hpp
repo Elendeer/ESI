@@ -82,9 +82,7 @@ private:
     void * m_p_procedure_block;
 
 public :
-    ProcedureSymbol(std::string name);
-	ProcedureSymbol(
-        std::string name, std::vector<VarSymbol *> & parameters);
+    ProcedureSymbol(std::string name, void * p_procedure_symbol = nullptr);
 
     ProcedureSymbol(const ProcedureSymbol & obj);
 	virtual ~ProcedureSymbol();
@@ -92,12 +90,11 @@ public :
     virtual SymbolCategory getCategory() const;
 
     void pushParameter(VarSymbol * param_node);
-    void setProcedureBlock(void * p_block);
 
     void * getProcedureBlock() const;
     std::vector<VarSymbol *> getParams();
 
-    void operator= (const ProcedureSymbol obj);
+    ProcedureSymbol & operator= (const ProcedureSymbol obj);
 };
 
 } // namespace ESI

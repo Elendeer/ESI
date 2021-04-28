@@ -255,14 +255,16 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
     // Symbol creating
     // Must define the symbol first than take the pointer out,
     // because these two pointer is pointing to different object.
-    m_p_current_scope->define(new ProcedureSymbol(proc_name));
+    //
+    // The block pointer is accessed by the interpreter
+    // when executing procedure call.
+    m_p_current_scope->define(new ProcedureSymbol(
+                proc_name,
+                procedure_decl_node->getBlock()));
+
     ProcedureSymbol * proc_symbol =
         dynamic_cast<ProcedureSymbol * >(
                 m_p_current_scope->lookup(proc_name));
-
-    // Accessed by the interpreter when executing procedure call.
-    proc_symbol->setProcedureBlock(
-        procedure_decl_node->getBlock());
 
     // log
     if (m_if_print) {
