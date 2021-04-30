@@ -43,7 +43,10 @@ enum class NodeType {
     // ===== =====
     PROCEDURE_DECL,
 	PARAM,
-    PROCEDURE_CALL
+    PROCEDURE_CALL,
+
+    STRING,
+    BOOLEAN
 
 };
 
@@ -218,7 +221,7 @@ private:
     std::string m_value;
 
 public:
-    Type(Token type);
+    Type(Token type_token);
     virtual ~Type();
 
     std::string getVal() const;
@@ -306,6 +309,23 @@ public :
 
     void setProcedureSymbol(const ProcedureSymbol & procedure_symbol);
 
+};
+
+// String node
+class String : public AST {
+private:
+
+public:
+    String(Token token);
+    ~String();
+};
+
+class Boolean : public AST {
+private:
+
+public:
+    Boolean(Token token);
+    ~Boolean();
 };
 
 } // namespace ESI

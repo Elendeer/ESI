@@ -15,6 +15,7 @@ namespace ESI {
 
 const char Lexer::NOCHAR = (char)(-1);
 
+// Build resered keywords according to enum class TokenType.
 void Lexer::buildReservedKeywordMap() {
     // Enum class TokenType will make all reserved words between
     // TokenType::PROGRAM and TokenType::END.
@@ -117,7 +118,7 @@ Token Lexer::number() {
 }
 
 Token Lexer::id() {
-    std::string result = "";
+    string result = "";
 
     while (
         m_current_char != NOCHAR
@@ -139,6 +140,31 @@ Token Lexer::id() {
 
     return Token(
             TokenType::ID,
+            result,
+            m_line_no,
+            m_column);
+}
+
+Token Lexer::readString() {
+    string result = "";
+
+    while (m_current_char != NOCHAR) {
+        if (m_current_char == '\'' && peek() == '\'') {
+            // '\'' make the next '\'' a normal character.
+            advance();
+        }
+        else if (m_current_char == '\'' && peek() != '\'') {
+            // skip the last '\''
+            advance();
+            break;
+        }
+
+        result += m_current_char;
+        advance();
+    }
+
+    return Token(
+            TokenType::STRING,
             result,
             m_line_no,
             m_column);
@@ -190,7 +216,7 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::MUL,
-                    "*",
+                    (string)"*",
                     m_line_no,
                     m_column);
         }
@@ -198,7 +224,7 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::FLOAT_DIV,
-                    "/",
+                    (string)"/",
                     m_line_no,
                     m_column);
         }
@@ -206,7 +232,7 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::PLUS,
-                    "+",
+                    (string)"+",
                     m_line_no,
                     m_column);
         }
@@ -214,7 +240,7 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::MINUS,
-                    "-",
+                    (string)"-",
                     m_line_no,
                     m_column);
         }
@@ -223,7 +249,7 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::LPAREN,
-                    "(",
+                    (string)"(",
                     m_line_no,
                     m_column);
         }
@@ -231,7 +257,7 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::RPAREN,
-                    ")",
+                    (string)")",
                     m_line_no,
                     m_column);
         }
@@ -246,7 +272,7 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::ASSIGN,
-                    ":=",
+                    (string)":=",
                     m_line_no,
                     m_column);
         }
@@ -254,7 +280,7 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::COLON,
-                    ":",
+                    (string)":",
                     m_line_no,
                     m_column);
         }
@@ -263,7 +289,7 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::SEMI,
-                    ";",
+                    (string)";",
                     m_line_no,
                     m_column);
         }
@@ -271,7 +297,7 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::DOT,
-                    ".",
+                    (string)".",
                     m_line_no,
                     m_column);
         }
@@ -279,11 +305,14 @@ Token Lexer::getNextToken() {
             advance();
             return Token(
                     TokenType::COMMA,
-                    ",",
+                    (string)",",
                     m_line_no,
                     m_column);
         }
-
+        else if (m_current_char == '\'') {
+            advance();
+            return readString();
+        }
         else {
             error("Invailid Character met.", ErrorCode::NONE);
         }

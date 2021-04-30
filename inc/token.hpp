@@ -29,6 +29,12 @@ enum class TokenType {
     // Types, which are also reserved keywords.
     INTEGER,
     REAL,
+    STRING,
+    BOOLEAN,
+
+    // bool values
+    TRUE,
+    FALSE,
 
     INTEGER_DIV, // the DIV reserved keyword
 

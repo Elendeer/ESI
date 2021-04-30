@@ -26,7 +26,7 @@ formal_parameters : ID (COMMA ID)* COLON type_spec
 procedure_declaration :
     PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI
 
-type_spec : INTEGER | REAL
+type_spec : INTEGER | REAL | STRING | BOOL
 
 compound_statement : BEGIN statement_list END
 
@@ -46,6 +46,9 @@ factor : PLUS factor
          | MINUS factor
          | INTEGER_CONST
          | REAL_CONST
+         | STRING
+         | TRUE
+         | FALSE
          | LPAREN expr RPAREN
          | variable
 

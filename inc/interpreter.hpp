@@ -29,6 +29,8 @@ private:
     // to visit a node depends on type of the node.
     virtual Any visit(AST *node);
 
+    virtual void generic_visit(AST *node);
+
     Any visitUnaryOp(AST *node);
     Any visitBinOp(AST *node);
     Any visitNum(AST *node);
@@ -46,7 +48,8 @@ private:
     Any visitProcedureDecl(AST * node);
     Any visitProcedureCall(AST * node);
 
-    virtual void generic_visit(AST *node);
+    Any visitString(AST * node);
+    Any visitBoolean(AST * node);
 
 public:
     Interpreter(AST * root, bool if_print_stack);

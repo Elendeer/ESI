@@ -67,6 +67,12 @@ Any Interpreter::visit(AST *node) {
     else if (node->getType() == NodeType::PROCEDURE_CALL) {
         visitProcedureCall(node);
     }
+    else if (node->getType() == NodeType::STRING) {
+        return visitString(node);
+    }
+    else if (node->getType() == NodeType::BOOLEAN) {
+        return visitBoolean(node);
+    }
     else {
         generic_visit(node);
     }
@@ -75,7 +81,7 @@ Any Interpreter::visit(AST *node) {
 }
 
 void Interpreter::generic_visit(AST *node) {
-    throw std::runtime_error(
+    throw InterpreterError(
         (string) "No " + node->getTypeString() + " type method");
 }
 
@@ -287,6 +293,18 @@ Any Interpreter::visitProcedureCall(AST * node) {
     m_call_stack.pop();
 
     return Any();
+}
+
+Any Interpreter::visitString(AST * node) {
+    String * string_node = dynamic_cast<String *>(node);
+
+    return string_node -> getToken().getVal();
+}
+
+Any Interpreter::visitBoolean(AST * node) {
+    Boolean * boolean_node = dynamic_cast<Boolean * >(node);
+
+    return boolean_node -> getToken().getVal();
 }
 
 // ===== =====

@@ -51,6 +51,9 @@ private :
     Any visitProcedureDecl(AST * node);
     Any visitProcedureCall(AST * node);
 
+    Any visitString(AST * node);
+    Any visitBoolean(AST * node);
+
 public :
     SemanticAnalyzer(AST * root, bool if_print);
     virtual ~SemanticAnalyzer();

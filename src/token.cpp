@@ -23,6 +23,12 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     // Types, which are also reserved keywords.
     {TokenType::INTEGER, "INTEGER"},
     {TokenType::REAL, "REAL"},
+    {TokenType::STRING, "STRING"},
+    {TokenType::BOOLEAN, "BOOLEAN"},
+
+    // bool values
+    {TokenType::TRUE, "TRUE"},
+    {TokenType::FALSE, "FALSE"},
 
     {TokenType::INTEGER_DIV, "DIV"}, // the DIV reserved keyword
 
@@ -103,7 +109,19 @@ string Token::getStringRepr() {
 		    + to_string(Any::anyCast<double>(m_value)) + ")"
             + position_str;
 	}
+	else if (m_type == TokenType::BOOLEAN) {
+        string bool_str = "true";
+        if (!Any::anyCast<bool>(m_value)) {
+            bool_str = "false";
+        }
+
+		return "Token(" + type + ", "
+		    + bool_str + ")"
+            + position_str;
+	}
 	else {
+        // TokenType::STRING and else
+
 		return "Token(" + type + ", \""
             + Any::anyCast<string>(m_value) + "\")"
             + position_str;

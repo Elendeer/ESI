@@ -17,7 +17,10 @@ namespace ESI {
 enum class SymbolType {
     NONE,
     INTEGER,
-    REAL
+    REAL,
+
+    STRING,
+    BOOLEAN
 };
 
 // Used in category judging.

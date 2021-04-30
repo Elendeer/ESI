@@ -95,6 +95,9 @@ void Parser::eat(TokenType token_type) {
 //          | MINUS factor
 //          | INTEGER_CONST
 //          | REAL_CONST
+//          | STRING
+//          | TRUE
+//          | FALSE
 //          | LPAREN expr RPAREN
 //          | variable
 // Memmory allocations inside, may thorw exceptions.
@@ -122,6 +125,21 @@ AST *Parser::factor() {
         eat(TokenType::REAL_CONST);
 
         return new Num(token);
+    }
+    else if (token.getType() == TokenType::STRING) {
+        eat(TokenType::STRING);
+
+        return new String(token);
+    }
+    else if (token.getType() == TokenType::TRUE) {
+        eat(TokenType::TRUE);
+
+        return new Boolean(token);
+    }
+    else if (token.getType() == TokenType::FALSE) {
+        eat(TokenType::FALSE);
+
+        return new Boolean(token);
     }
     else if (token.getType() == TokenType::LPAREN) {
         eat(TokenType::LPAREN);
@@ -325,7 +343,7 @@ vector<AST *> Parser::variableDeclaration() {
 
     // For m_current_token will change after function eat() is called.
     Token tmp_token = m_current_token;
-    AST* p_type_node = nullptr;
+    AST* p_tmp_type_node = nullptr;
 
     eat(TokenType::ID);
     var_nodes.push_back(new Var(tmp_token));
@@ -345,7 +363,7 @@ vector<AST *> Parser::variableDeclaration() {
         // Type node may be used more than one time (e.g. a, b : INTEGER),
         // so this node will be used as a template.
         // Delete this pointer on time is necessary.
-        p_type_node = typeSpec();
+        p_tmp_type_node = typeSpec();
     } // try
     catch (const ParserError & error ) {
         if (!var_nodes.empty())
@@ -361,19 +379,19 @@ vector<AST *> Parser::variableDeclaration() {
 
     try {
         for (auto p_var_node : var_nodes) {
-            AST * tmp_p_type_node = new Type(p_type_node -> getToken());
-            var_decl.push_back(new VarDecl(p_var_node, tmp_p_type_node));
+            AST * p_type_node = new Type(p_tmp_type_node -> getToken());
+            var_decl.push_back(new VarDecl(p_var_node, p_type_node));
         }
 
-        delete p_type_node;
-        p_type_node = nullptr;
+        delete p_tmp_type_node;
+        p_tmp_type_node = nullptr;
 
         return var_decl;
     }// try
     catch (const ParserError & error) {
-        if (p_type_node != nullptr) {
-            delete p_type_node;
-            p_type_node = nullptr;
+        if (p_tmp_type_node != nullptr) {
+            delete p_tmp_type_node;
+            p_tmp_type_node = nullptr;
         }
         if (!var_decl.empty())
             for (auto p : var_decl)
@@ -451,7 +469,7 @@ vector<AST *> Parser::procedureDeclaration() {
     return procedures;
 }
 
-// type_spec : INTERGER | REAL
+// type_spec : INTERGER | REAL | STRING | BOOL
 AST * Parser::typeSpec() {
     Token token = m_current_token;
     if (m_current_token.getType() == TokenType::INTEGER) {
@@ -460,6 +478,14 @@ AST * Parser::typeSpec() {
     }
     else if (m_current_token.getType() == TokenType::REAL) {
         eat(TokenType::REAL);
+        return new Type(token);
+    }
+    else if (m_current_token.getType() == TokenType::STRING) {
+        eat(TokenType::STRING);
+        return new Type(token);
+    }
+    else if (m_current_token.getType() == TokenType::BOOLEAN) {
+        eat(TokenType::BOOLEAN);
         return new Type(token);
     }
     else {

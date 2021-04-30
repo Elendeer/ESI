@@ -34,7 +34,10 @@ const unordered_map<NodeType, std::string> AST::map_node_type_string {
     {NodeType::VAR_DECL, "VAR_DECL"},
     {NodeType::TYPE, "TYPE"},
 
-    {NodeType::PROCEDURE_DECL, "PORCEDURE_DECL"}
+    {NodeType::PROCEDURE_DECL, "PORCEDURE_DECL"},
+
+    {NodeType::STRING, "STRING"},
+    {NodeType::BOOLEAN, "BOOLEAN"}
 };
 
 /*********************************************
@@ -252,8 +255,8 @@ AST * VarDecl::getTypeChild() const {
  * Type node
 *********************************************/
 
-Type::Type(Token type) : AST(NodeType::TYPE, type) {
-    m_value = Any::anyCast<string>(type.getVal());
+Type::Type(Token type_token) : AST(NodeType::TYPE, type_token) {
+    m_value = Any::anyCast<string>(type_token.getVal());
 }
 Type::~Type() {
 }
@@ -370,6 +373,24 @@ void ProcedureCall::setProcedureSymbol(
         const ProcedureSymbol & procedure_symbol) {
     m_proc_symbol = procedure_symbol;
 }
+
+/*********************************************
+ * String node
+*********************************************/
+
+String::String(Token token) :
+    AST(NodeType::STRING, token) {}
+
+String::~String() {}
+
+/*********************************************
+ * Boolean node
+*********************************************/
+
+Boolean::Boolean(Token token) :
+    AST(NodeType::BOOLEAN, token) {}
+
+Boolean::~Boolean() {}
 
 
 } // namespace ESI

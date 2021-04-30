@@ -14,15 +14,9 @@ using namespace std;
 using namespace ESI;
 
 int main() {
-    ActivationRecord ar1("program1", ARType::PROGRAM, 1);
-    // ar1.print();
+    Any a = false;
 
-    ar1["y"] = 1;
-
-    CallStack call_stack;
-    call_stack.push(ar1);
-
-    call_stack.print();
+    cout << to_string(Any::anyCast<bool>(a)) << endl;
 
     return 0;
 }

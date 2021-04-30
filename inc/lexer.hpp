@@ -68,6 +68,9 @@ private:
     // Handle identifiers and reserved keywords.
     Token id();
 
+    // Recognize a string, retrun a string token.
+    Token readString();
+
 public:
     Lexer(const std::string & text);
     // Lexer(const Lexer &) = default;

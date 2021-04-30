@@ -13,7 +13,9 @@ enum class ErrorCode {
     UNEXPECTED_TOKEN,
     ID_NOT_FOUND,
     DUPLICATE_ID,
-    WRONG_PARAMS_NUM
+    WRONG_PARAMS_NUM,
+
+    UNKNOW_TYPE
 };
 
 // Base class for exceptions used by this project.

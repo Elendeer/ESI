@@ -26,6 +26,9 @@ Exception::Exception(
         else if (error_code == ErrorCode::WRONG_PARAMS_NUM) {
             m_msg = message + "\tErrorCode: Wrong parameter number; ";
         }
+        else if (error_code == ErrorCode::UNKNOW_TYPE) {
+            m_msg = message + "\tErrorCode: Unknow type; ";
+        }
         else {
             m_msg = message + "\tError code not found;";
         }

@@ -54,6 +54,8 @@ public:
 // ===== Class Any =====
 
 // DataType == DataType::Empty by default.
+// Please explicit use string cast if you want to store
+// a string inside. Or it will recognize it as a bool value.
 class Any {
 private:
     bool m_bool_value;

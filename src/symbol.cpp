@@ -60,9 +60,17 @@ string Symbol::strRepr() {
         return (string)(category_str +
         "type : REAL, name : " + m_name + ">");
     }
+    else if (m_type == SymbolType::STRING) {
+        return (string)(category_str +
+        "type : STRING, name : " + m_name + ">");
+    }
+    else if (m_type == SymbolType::BOOLEAN) {
+        return (string)(category_str +
+        "type : BOOLEAN, name : " + m_name + ">");
+    }
     else {
         // Nothing else.
-        return (string)"none";
+        return (string)"<No symbol type string>";
     }
 }
 

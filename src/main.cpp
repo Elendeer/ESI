@@ -43,7 +43,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
             return 1;
         }
 
-        SemanticAnalyzer semantic_analyzer(ast_root, false);
+        SemanticAnalyzer semantic_analyzer(ast_root, true);
 
         try {
             cout << "Semantic analyzing ..." << endl;

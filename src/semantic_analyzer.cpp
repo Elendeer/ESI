@@ -44,6 +44,10 @@ SemanticAnalyzer::SemanticAnalyzer(AST * root, bool if_print)
                 Symbol("INTEGER", -1, SymbolType::INTEGER));
         m_build_in_type_scope.define(
                 Symbol("REAL", -1, SymbolType::REAL));
+        m_build_in_type_scope.define(
+                Symbol("STRING", -1, SymbolType::STRING));
+        m_build_in_type_scope.define(
+                Symbol("BOOLEAN", -1, SymbolType::BOOLEAN));
     }
 
 SemanticAnalyzer::~SemanticAnalyzer() {}
@@ -106,6 +110,12 @@ Any SemanticAnalyzer::visit(AST *node) {
     else if (node->getType() == NodeType::PROCEDURE_CALL) {
         visitProcedureCall(node);
     }
+    else if (node->getType() == NodeType::STRING) {
+        visitString(node);
+    }
+    else if (node->getType() == NodeType::BOOLEAN) {
+        visitBoolean(node);
+    }
     else {
         generic_visit(node);
     }
@@ -130,6 +140,7 @@ Any SemanticAnalyzer::visitBinOp(AST *node) {
 }
 
 Any SemanticAnalyzer::visitNum(AST *node) {
+    // Do nothing.
     if (node != nullptr) return Any();
     return Any();
 }
@@ -151,7 +162,10 @@ Any SemanticAnalyzer::visitNoOp() {
 Any SemanticAnalyzer::visitAssign(AST *node) {
     Assign * assign_node = dynamic_cast<Assign *>(node);
 
-    visit(assign_node->getLeft());
+    Var * var_node = dynamic_cast<Var *>(
+            assign_node->getLeft());
+
+    visit(var_node);
     visit(assign_node->getRight());
 
     return Any();
@@ -234,6 +248,12 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
     Type * type_node = dynamic_cast<Type *>(var_decl_node->getTypeChild());
     string var_type_str = type_node->getVal();
     Symbol * var_type_symbol = m_build_in_type_scope.lookup(var_type_str);
+
+    if (var_type_symbol == nullptr) {
+        error("Invailid Syntax: declare a variable with unknow type.",
+                ErrorCode::UNKNOW_TYPE,
+                var_node->getToken());
+    }
     // Get variable symble type .
     SymbolType var_type = var_type_symbol->getType();
 
@@ -386,6 +406,18 @@ Any SemanticAnalyzer::visitProcedureCall(AST * node) {
     // put Procedure Symbol into ProcedureCall node
     procedure_call_node->setProcedureSymbol(*p_procedure_symbol);
 
+    return Any();
+}
+
+Any SemanticAnalyzer::visitString(AST * node) {
+    // Do nothing
+    if (node == nullptr) return Any();
+    return Any();
+}
+
+Any SemanticAnalyzer::visitBoolean(AST * node) {
+    // Do nothing.
+    if (node != nullptr) return Any();
     return Any();
 }
 
