@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-27 19:28:30
+ * @LastEditTime : 2021-05-07 21:27:14
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -46,8 +46,9 @@ enum class NodeType {
     PROCEDURE_CALL,
 
     STRING,
-    BOOLEAN
+    BOOLEAN,
 
+    FUNCTION_DECL
 };
 
 
@@ -326,6 +327,38 @@ private:
 public:
     Boolean(Token token);
     ~Boolean();
+};
+
+// ===== =====
+
+// Function declaration node.
+class FunctionDecl : public AST {
+private:
+    std::string m_name;
+    AST * m_type_node;
+    AST * m_block;
+    std::vector<AST *> m_parameters;
+
+public:
+    FunctionDecl(
+        std::string name,
+        std::vector<AST *> & parameters,
+        AST * type_node,
+        AST * block);
+
+    virtual ~FunctionDecl();
+
+    std::string getName() const ;
+
+    // Get parameters.
+    // Return a vector contains pointers pointing to
+    // parameters.
+    std::vector<AST *> getParams() const;
+
+    // Return piontor of the type node.
+    AST * getType() const;
+    // Return piontor of the block node.
+    AST * getBlock() const ;
 };
 
 } // namespace ESI

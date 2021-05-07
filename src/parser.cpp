@@ -289,7 +289,7 @@ AST * Parser::block() {
 }
 
 // declarations : (VAR (variable_declaration SEMI)+)?
-//             procedure_declaration*
+//     (procedure_declaration | function_declaration)*
 vector<AST *> Parser::declarations() {
     vector<AST *> declarations;
 
@@ -313,12 +313,17 @@ vector<AST *> Parser::declarations() {
 
     } // while
 
-    // procedure_declaration*
-    while (m_current_token.getType() == TokenType::PROCEDURE) {
-        vector<AST *> procedures = procedureDeclaration();
-        for (AST * p : procedures) {
-            declarations.push_back(p);
-        }
+    // (procedure_declaration | function_declaration)*
+    while (m_current_token.getType() == TokenType::PROCEDURE
+        || m_current_token.getType() == TokenType::FUNCTION) {
+            if (m_current_token.getType() == TokenType::PROCEDURE) {
+                AST * procedure_decl_node = procedureDeclaration();
+                declarations.push_back(procedure_decl_node);
+            }
+            else { // function
+                AST * function_decl_node = functionDeclaration();
+                declarations.push_back(function_decl_node);
+            }
     } // while
 
 
@@ -406,8 +411,8 @@ vector<AST *> Parser::variableDeclaration() {
 
 // procedure_declaration:
 // PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI
-vector<AST *> Parser::procedureDeclaration() {
-    vector<AST *> procedures;
+AST * Parser::procedureDeclaration() {
+    AST *  procedure_node = nullptr;
 
     // Procedure daclarations will use it.
     AST * p_block = nullptr;
@@ -417,10 +422,6 @@ vector<AST *> Parser::procedureDeclaration() {
     params.clear();
 
     try {
-
-        // For every procedure, parameter vector start form empty.
-        params.clear();
-
         eat(TokenType::PROCEDURE);
         string name = Any::anyCast<string>(m_current_token.getVal());
         eat(TokenType::ID);
@@ -435,14 +436,11 @@ vector<AST *> Parser::procedureDeclaration() {
 
         p_block = block();
         eat(TokenType::SEMI);
-        AST * procedure_node = new ProcedureDecl(name, params, p_block);
+        procedure_node = new ProcedureDecl(name, params, p_block);
 
-        // Set to nullptr for next while loop.
         // If not, will cause a sigment fault of duplicate deleting.
         // (when error is met).
         p_block = nullptr;
-
-        procedures.push_back(procedure_node);
 
     } // try
     catch (const ParserError & error) {
@@ -458,15 +456,15 @@ vector<AST *> Parser::procedureDeclaration() {
                     p = nullptr;
                 }
 
-        if (!procedures.empty())
-            for (AST * p : procedures)
-                if (p != nullptr) {
-                    delete p;
-                    p = nullptr;
-                }
+        if (procedure_node != nullptr) {
+            delete procedure_node;
+            procedure_node = nullptr;
+        }
+
+        throw error;
     }
 
-    return procedures;
+    return procedure_node;
 }
 
 // type_spec : INTERGER | REAL | STRING | BOOL
@@ -770,6 +768,80 @@ AST * Parser::procedureCallStatement() {
 
         throw error;
     }
+}
+
+
+// function_declaration :
+//     FUNCTION ID (LPAREN formal_parameter_list RPAREN)?
+//     COLON type_spec SEMI block SEMI
+AST * Parser::functionDeclaration() {
+    AST *  function_decl_node = nullptr;
+
+    // Function daclarations will use them.
+    AST * p_block = nullptr;
+    AST * p_type_node = nullptr;
+
+    // Function daclarations will use it.
+    // Empty vector by default.
+    vector<AST *> params;
+    params.clear();
+
+    try {
+        eat(TokenType::FUNCTION);
+        string name = Any::anyCast<string>(m_current_token.getVal());
+        eat(TokenType::ID);
+
+        if (m_current_token.getType() == TokenType::LPAREN) {
+            eat(TokenType::LPAREN);
+            params = formalParameterList();
+            eat(TokenType::RPAREN);
+        }
+
+        eat(TokenType::COLON);
+
+        p_type_node = typeSpec();
+
+        eat(TokenType::SEMI);
+
+        p_block = block();
+        eat(TokenType::SEMI);
+        function_decl_node = new FunctionDecl(
+            name, params, p_type_node,  p_block);
+
+        // If not, will cause a sigment fault of duplicate deleting.
+        // (when error is met).
+        p_type_node = nullptr;
+        p_block = nullptr;
+
+    } // try
+    catch (const ParserError & error) {
+        if (p_type_node != nullptr) {
+            delete p_type_node;
+            p_type_node = nullptr;
+        }
+
+        if (p_block != nullptr) {
+            delete p_block;
+            p_block = nullptr;
+        }
+
+        if (!params.empty())
+            for (auto p : params)
+                if (p != nullptr) {
+                    delete p;
+                    p = nullptr;
+                }
+
+        if (function_decl_node != nullptr) {
+            delete function_decl_node;
+            function_decl_node = nullptr;
+        }
+
+        throw error;
+    }
+
+    return function_decl_node;
+
 }
 
 // ===== =====

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-07 11:34:16
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-27 20:18:36
+ * @LastEditTime : 2021-05-07 22:21:51
  * @Description  :
 *********************************************/
 
@@ -103,10 +103,11 @@ SymbolCategory VarSymbol::getCategory() const {
 // ===== ProcedureSymbol Class =====
 
 ProcedureSymbol::ProcedureSymbol(
-        string name, int level, void * p_procedure_block):
-    Symbol(name, level), m_p_procedure_block(p_procedure_block) {
-        m_parameters.clear();
-    }
+    string name, int level, void * p_procedure_block):
+        Symbol(name, level),
+        m_p_procedure_block(p_procedure_block) {
+            m_parameters.clear();
+        }
 
 ProcedureSymbol::ProcedureSymbol(const ProcedureSymbol & obj) :
     Symbol(obj.m_name, obj.m_level, obj.m_type),
@@ -155,4 +156,56 @@ const ProcedureSymbol & ProcedureSymbol::operator= (
     return obj;
 }
 
+// ===== FunctionSymbol Class =====
+
+FunctionSymbol::FunctionSymbol(
+    string name,
+    int level,
+    SymbolType type,
+    void * p_function_block) :
+        Symbol(name, level, type),
+        m_p_function_block(p_function_block) {
+            m_parameters.clear();
+        }
+
+FunctionSymbol::FunctionSymbol(const FunctionSymbol & obj):
+    Symbol(obj.m_name, obj.m_level, obj.m_type),
+    m_p_function_block(obj.m_p_function_block) {
+        m_parameters.clear();
+}
+
+FunctionSymbol::~FunctionSymbol() {}
+
+SymbolCategory FunctionSymbol::getCategory() const {
+    return SymbolCategory::FUNCTION_SYMBOL;
+}
+
+void FunctionSymbol::pushParameter(const VarSymbol & param_symbol) {
+    m_parameters.push_back(param_symbol);
+}
+
+void * FunctionSymbol::getFunctionBlock() const {
+    return m_p_function_block;
+}
+
+vector<VarSymbol> FunctionSymbol::getParams() {
+    return m_parameters;
+}
+
+const FunctionSymbol & FunctionSymbol::operator= (
+        const FunctionSymbol & obj) {
+    m_parameters.clear();
+
+    m_name = obj.m_name;
+    m_level = obj.m_level;
+    m_type = obj.m_type;
+
+    m_p_function_block = obj.m_p_function_block;
+
+    for (VarSymbol parameter : obj.m_parameters) {
+        m_parameters.push_back(parameter);
+    }
+
+    return obj;
+}
 } // namespace ESI

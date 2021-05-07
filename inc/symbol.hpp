@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-07 11:16:08
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-27 19:44:16
+ * @LastEditTime : 2021-05-07 22:19:20
  * @Description  :
 *********************************************/
 #ifndef INC_SYMBOL_HPP_
@@ -29,13 +29,15 @@ enum class SymbolCategory {
     BUILD_IN_TYPE_SYMBOL,
     VAR_SYMBOL,
 
-	PROCEDURE_SYMBOL
+	PROCEDURE_SYMBOL,
+	FUNCTION_SYMBOL
 };
 
 // As a base class.
 // name : name of the symbol;
 // level : nested level of the symbol;
-// type : if this symbol is a variable, it will have a type.
+// type : if this symbol is a variable or a function,
+//        it will have a type.
 class Symbol {
 protected :
     std::string m_name;
@@ -105,6 +107,37 @@ public :
     std::vector<VarSymbol> getParams();
 
     const ProcedureSymbol & operator= (const ProcedureSymbol & obj);
+};
+
+// Function symbol
+class FunctionSymbol : public Symbol {
+private:
+    std::vector<VarSymbol> m_parameters;
+
+    // Store a 'Block *' pointer pointing to the
+    // block AST node of the function.
+    // Here 'void *' is used for aviod the mutual inclusion
+    // of the header files.
+    void * m_p_function_block;
+
+public :
+    FunctionSymbol(std::string name,
+            int level,
+            SymbolType type,
+            void * p_procedure_block = nullptr);
+
+    FunctionSymbol(const FunctionSymbol & obj);
+
+    virtual ~FunctionSymbol();
+
+    virtual SymbolCategory getCategory() const;
+
+    void pushParameter(const VarSymbol & param_symbol);
+
+    void * getFunctionBlock() const;
+    std::vector<VarSymbol> getParams();
+
+    const FunctionSymbol & operator= (const FunctionSymbol & obj);
 };
 
 } // namespace ESI

@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-23 09:19:19
+ * @LastEditTime : 2021-05-07 21:27:42
  * @Description  :
  *********************************************/
 
@@ -37,7 +37,8 @@ const unordered_map<NodeType, std::string> AST::map_node_type_string {
     {NodeType::PROCEDURE_DECL, "PORCEDURE_DECL"},
 
     {NodeType::STRING, "STRING"},
-    {NodeType::BOOLEAN, "BOOLEAN"}
+    {NodeType::BOOLEAN, "BOOLEAN"},
+    {NodeType::FUNCTION_DECL, "FUNCTION_DECL"}
 };
 
 /*********************************************
@@ -391,6 +392,51 @@ Boolean::Boolean(Token token) :
     AST(NodeType::BOOLEAN, token) {}
 
 Boolean::~Boolean() {}
+
+
+/*********************************************
+ * Function node
+*********************************************/
+
+FunctionDecl::FunctionDecl(
+    string name,
+    vector<AST *> & parameters,
+    AST * type_node,
+    AST * block) :
+
+    AST(NodeType::FUNCTION_DECL, Token()),
+    m_name(name),
+    m_type_node(type_node),
+    m_block(block) {
+
+        for (auto p : parameters) {
+            m_children.push_back(p);
+            m_parameters.push_back(p);
+        }
+        m_children.push_back(type_node);
+        m_children.push_back(block);
+    }
+
+FunctionDecl::~FunctionDecl() {
+}
+
+string FunctionDecl::getName() const {
+    return m_name;
+}
+
+vector<AST *> FunctionDecl::getParams() const {
+    return m_parameters;
+}
+
+AST * FunctionDecl::getBlock() const {
+    return m_block;
+}
+
+AST * FunctionDecl::getType() const {
+    return m_type_node;
+}
+
+
 
 
 } // namespace ESI

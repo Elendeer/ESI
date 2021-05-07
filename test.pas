@@ -11,6 +11,11 @@ var
     begin
     end;
 
+    function f1(a : boolean; s : string) : integer;
+    var
+    begin
+    end;
+
 begin
     s := '''str''ing''';
     a := 1;

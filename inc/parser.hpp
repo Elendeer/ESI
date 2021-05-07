@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-21 14:50:46
+ * @LastEditTime : 2021-05-07 21:13:31
  * @Description  :
 *********************************************/
 
@@ -44,7 +44,7 @@ private:
     AST *block();
     std::vector<AST *> declarations();
     std::vector<AST *> variableDeclaration();
-    std::vector<AST *> procedureDeclaration();
+    AST * procedureDeclaration();
     AST * typeSpec();
 
     AST *compoundStatement();
@@ -57,6 +57,8 @@ private:
     std::vector<AST *> formalParameterList();
     std::vector<AST *> formalParameters();
     AST * procedureCallStatement();
+
+    AST * functionDeclaration();
 
 public:
     // Might throw exception when init.
