@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-27 19:58:28
+ * @LastEditTime : 2021-05-08 17:07:46
  * @Description  :
  *********************************************/
 
@@ -72,6 +72,9 @@ Any Interpreter::visit(AST *node) {
     }
     else if (node->getType() == NodeType::BOOLEAN) {
         return visitBoolean(node);
+    }
+    else if (node->getType() == NodeType::FUNCTION_DECL) {
+        visitFunctionDecl(node);
     }
     else {
         generic_visit(node);
@@ -305,6 +308,14 @@ Any Interpreter::visitBoolean(AST * node) {
     Boolean * boolean_node = dynamic_cast<Boolean * >(node);
 
     return boolean_node -> getToken().getVal();
+}
+
+Any Interpreter::visitFunctionDecl(AST * node) {
+    // Do nothing.
+    FunctionDecl * function_decl_node = dynamic_cast<FunctionDecl *>(node);
+    string function_name = function_decl_node->getName();
+
+    return Any();
 }
 
 // ===== =====

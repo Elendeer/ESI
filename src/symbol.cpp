@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-07 11:34:16
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-07 22:21:51
+ * @LastEditTime : 2021-05-08 16:27:03
  * @Description  :
 *********************************************/
 
@@ -46,6 +46,13 @@ string Symbol::strRepr() {
     else if (category == SymbolCategory::PROCEDURE_SYMBOL) {
         category_str = "procedure-symbol<";
     }
+    else if (category == SymbolCategory::FUNCTION_SYMBOL) {
+        category_str = "function-symbol<";
+    }
+    else {
+        category_str = "unknow-symbol<";
+    }
+
 
     // ===== =====
     if (m_type == SymbolType::NONE) {

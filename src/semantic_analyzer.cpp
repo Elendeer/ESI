@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-27 20:08:12
+ * @LastEditTime : 2021-05-08 16:57:53
  * @Description  :
 *********************************************/
 //
@@ -115,6 +115,9 @@ Any SemanticAnalyzer::visit(AST *node) {
     }
     else if (node->getType() == NodeType::BOOLEAN) {
         visitBoolean(node);
+    }
+    else if (node->getType() == NodeType::FUNCTION_DECL) {
+        visitFunctionDecl(node);
     }
     else {
         generic_visit(node);
@@ -418,6 +421,109 @@ Any SemanticAnalyzer::visitString(AST * node) {
 Any SemanticAnalyzer::visitBoolean(AST * node) {
     // Do nothing.
     if (node != nullptr) return Any();
+    return Any();
+}
+
+Any SemanticAnalyzer::visitFunctionDecl(AST * node) {
+    FunctionDecl * function_decl_node =
+        dynamic_cast<FunctionDecl *>(node);
+
+    string func_name = function_decl_node->getName();
+
+
+    // get function symbol type.
+
+    Type * function_type_node =
+        dynamic_cast<Type *>(function_decl_node->getType());
+    Symbol * p_function_type_symbol =
+        m_build_in_type_scope.lookup(function_type_node->getVal());
+    SymbolType function_symbol_type = p_function_type_symbol->getType();
+
+    // Symbol creating
+    // Must define the symbol first than take the pointer out,
+    // because these two pointer is pointing to different object.
+    //
+    // The block pointer will be accessed by the interpreter
+    // when executing procedure call.
+    m_p_current_scope->define(
+            FunctionSymbol(
+                func_name,
+                m_p_current_scope->getScopeLevel(),
+                function_symbol_type,
+                function_decl_node->getBlock()));
+
+    FunctionSymbol * proc_symbol =
+        dynamic_cast<FunctionSymbol *>(
+                m_p_current_scope->lookup(func_name));
+
+    if (proc_symbol == nullptr) {
+        error("Undefined Symbol: " + func_name,
+                ErrorCode::ID_NOT_FOUND,
+                function_decl_node->getToken());
+    }
+
+    // log
+    if (m_if_print) {
+        cout << "ENTER: " << func_name << endl;
+    }
+
+    // Create scope for this procedure.
+    ScopedSymbolTable procedure_scope = ScopedSymbolTable(
+        func_name,
+        m_p_current_scope->getScopeLevel() + 1,
+        m_p_current_scope);
+
+    // change current scope to the new created one.
+    m_p_current_scope = & procedure_scope;
+
+    // define a return variable according to function name.
+    VarSymbol return_var_symbol = VarSymbol(
+        func_name,
+        m_p_current_scope->getScopeLevel(),
+        function_symbol_type
+    );
+    m_p_current_scope->define(return_var_symbol);
+
+    // Put parameter symbols into procedure scope and procedure symbol.
+    for (AST * node : function_decl_node->getParams()) {
+        Param * param_node = dynamic_cast<Param *>(node);
+
+        Type * type_node = dynamic_cast<Type *>(param_node->getTypeChild());
+        Symbol * p_type_symbol =
+            m_build_in_type_scope.lookup(type_node->getVal());
+
+        // get parameter type.
+        SymbolType param_type = p_type_symbol->getType();
+
+        Var * var_node = dynamic_cast<Var *>(param_node->getVarChild());
+        // get parameter name.
+        string param_name = var_node->getVal();
+
+        // This symbol will be pushed into the procedure symbol as
+        // a parameter, and will be deleted by the destructor
+        // of the procedure symbol.
+        VarSymbol var_symbol = VarSymbol(
+                param_name,
+                m_p_current_scope->getScopeLevel(),
+                param_type);
+        m_p_current_scope->define(var_symbol);
+        proc_symbol->pushParameter(var_symbol);
+    }
+
+    visitBlock(function_decl_node->getBlock());
+
+    // log
+    if (m_if_print) {
+        procedure_scope.print();
+        cout << "LEAVE scope: " << func_name << endl << endl;
+    }
+
+    // this scope is local, will be delete after this function ended.
+    // m_p_current_scope will pointing to nothing after that.
+    // And we will reset this pointer to tmp.
+    m_p_current_scope = m_p_current_scope->getEnclosingScope();
+
+
     return Any();
 }
 

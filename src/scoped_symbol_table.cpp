@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 10:18:07
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-23 09:55:49
+ * @LastEditTime : 2021-05-08 16:24:30
  * @Description  :
 *********************************************/
 #include <iostream>
@@ -115,6 +115,19 @@ void ScopedSymbolTable::define(const Symbol & symbol) {
             dynamic_cast<const ProcedureSymbol&>(symbol).getProcedureBlock();
 
         m_map[name] = new ProcedureSymbol(name, level, p_procedure_block);
+    }
+    else if (category == SymbolCategory::FUNCTION_SYMBOL) {
+        const FunctionSymbol& function_symbol =
+            dynamic_cast<const FunctionSymbol&>(symbol);
+
+        void * p_function_block = function_symbol.getFunctionBlock();
+        SymbolType function_type = function_symbol.getType();
+
+        m_map[name] = new FunctionSymbol(
+            name,
+            level,
+            function_type,
+            p_function_block);
     }
     else {
         std::cout << "category not found" << std::endl;
