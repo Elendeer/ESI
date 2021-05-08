@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-07 11:34:16
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-08 16:27:03
+ * @LastEditTime : 2021-05-09 01:27:45
  * @Description  :
 *********************************************/
 
@@ -120,7 +120,6 @@ ProcedureSymbol::ProcedureSymbol(const ProcedureSymbol & obj) :
     Symbol(obj.m_name, obj.m_level, obj.m_type),
     m_p_procedure_block(obj.m_p_procedure_block) {
         m_parameters.clear();
-
         for (VarSymbol parameter : obj.m_parameters) {
             m_parameters.push_back(parameter);
         }
@@ -179,6 +178,11 @@ FunctionSymbol::FunctionSymbol(const FunctionSymbol & obj):
     Symbol(obj.m_name, obj.m_level, obj.m_type),
     m_p_function_block(obj.m_p_function_block) {
         m_parameters.clear();
+        for (VarSymbol parameter : obj.m_parameters) {
+            m_parameters.push_back(parameter);
+        }
+
+        m_p_function_block = obj.m_p_function_block;
 }
 
 FunctionSymbol::~FunctionSymbol() {}

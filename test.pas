@@ -2,22 +2,21 @@
 program test;
 
 var
-    s : string;
-    a, b : integer;
-    bool : boolean;
+    result : integer;
 
-    procedure p1(a : boolean; s : string);
+    function add(a, b : integer) : integer;
     var
     begin
+        {add := a + b;}
     end;
 
-    function f1(a : boolean; s : string) : integer;
+    procedure p(a : integer);
     var
     begin
     end;
 
 begin
-    s := '''str''ing''';
-    a := 1;
-    bool := true;
+
+    result := add(9, 1);
+
 end.

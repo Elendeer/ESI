@@ -15,7 +15,8 @@ enum class ErrorCode {
     DUPLICATE_ID,
     WRONG_PARAMS_NUM,
 
-    UNKNOW_TYPE
+    UNKNOW_TYPE,
+    WRONG_USAGE
 };
 
 // Base class for exceptions used by this project.

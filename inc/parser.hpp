@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-07 21:13:31
+ * @LastEditTime : 2021-05-08 17:49:34
  * @Description  :
 *********************************************/
 
@@ -59,6 +59,7 @@ private:
     AST * procedureCallStatement();
 
     AST * functionDeclaration();
+    AST * functionCall();
 
 public:
     // Might throw exception when init.

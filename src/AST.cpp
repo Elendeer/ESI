@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-07 21:27:42
+ * @LastEditTime : 2021-05-08 22:42:18
  * @Description  :
  *********************************************/
 
@@ -38,7 +38,8 @@ const unordered_map<NodeType, std::string> AST::map_node_type_string {
 
     {NodeType::STRING, "STRING"},
     {NodeType::BOOLEAN, "BOOLEAN"},
-    {NodeType::FUNCTION_DECL, "FUNCTION_DECL"}
+    {NodeType::FUNCTION_DECL, "FUNCTION_DECL"},
+    {NodeType::FUNCTION_CALL, "FUNCTION_CALL"}
 };
 
 /*********************************************
@@ -66,6 +67,11 @@ AST::~AST() {
 // ===== =====
 
 string AST::getTypeString() const {
+    if (map_node_type_string.find(m_nodeType)
+        == map_node_type_string.end()){
+            return "[AST type string no found]";
+        }
+
     return map_node_type_string.at(m_nodeType);
 }
 
@@ -346,16 +352,17 @@ AST * ProcedureDecl::getBlock() const {
 ProcedureCall::ProcedureCall(
     string procedure_name,
     std::vector<AST *> & actual_parameters,
-    Token token,
+    Token name_id_token,
     ProcedureSymbol procedure_symbol) :
-    AST(NodeType::PROCEDURE_CALL, token),
-    m_proc_name(procedure_name),
-    m_proc_symbol(procedure_symbol) {
-        for (AST * p : actual_parameters) {
-            m_actual_param.push_back(p);
-            m_children.push_back(p);
+        AST(NodeType::PROCEDURE_CALL, name_id_token),
+        m_proc_name(procedure_name),
+        m_proc_symbol(procedure_symbol) {
+            for (AST * p : actual_parameters) {
+                m_actual_param.push_back(p);
+                m_children.push_back(p);
+            }
         }
-    }
+
 ProcedureCall::~ProcedureCall() {}
 
 string ProcedureCall::getProcedureName() const {
@@ -371,9 +378,9 @@ ProcedureSymbol ProcedureCall::getProcedureSymbol() const {
 }
 
 void ProcedureCall::setProcedureSymbol(
-        const ProcedureSymbol & procedure_symbol) {
-    m_proc_symbol = procedure_symbol;
-}
+    const ProcedureSymbol & procedure_symbol) {
+        m_proc_symbol = procedure_symbol;
+    }
 
 /*********************************************
  * String node
@@ -395,7 +402,7 @@ Boolean::~Boolean() {}
 
 
 /*********************************************
- * Function node
+ * Function declaration node
 *********************************************/
 
 FunctionDecl::FunctionDecl(
@@ -436,7 +443,42 @@ AST * FunctionDecl::getType() const {
     return m_type_node;
 }
 
+/*********************************************
+ * Function call node
+*********************************************/
 
+FunctionCall::FunctionCall(
+    string function_name,
+    vector<AST *> & actual_parameters,
+    Token name_id_token,
+    FunctionSymbol function_symbol):
+        AST(NodeType::FUNCTION_CALL, name_id_token),
+        m_func_name(function_name),
+        m_func_symbol(function_symbol) {
+            for (AST * p : actual_parameters) {
+                m_actual_param.push_back(p);
+                m_children.push_back(p);
+            }
+        }
+
+FunctionCall::~FunctionCall() {}
+
+string FunctionCall::getFunctionName() const {
+    return m_func_name;
+}
+
+vector<AST *> FunctionCall::getActualParameters() const {
+    return m_actual_param;
+}
+
+FunctionSymbol FunctionCall::getFunctionSymbol() const {
+    return m_func_symbol;
+}
+
+void FunctionCall::setFunctionSymbol(
+    const FunctionSymbol & function_symbol) {
+        m_func_symbol = function_symbol;
+    }
 
 
 } // namespace ESI

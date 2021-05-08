@@ -100,6 +100,7 @@ void Parser::eat(TokenType token_type) {
 //          | FALSE
 //          | LPAREN expr RPAREN
 //          | variable
+//          | function_call
 // Memmory allocations inside, may thorw exceptions.
 AST *Parser::factor() {
     // For keeping current token.
@@ -158,6 +159,10 @@ AST *Parser::factor() {
         }
 
         return node;
+    }
+    else if (token.getType() == TokenType::ID
+        && m_lexer.getCurrentChar() == '(') {
+            return functionCall();
     }
     else {
         return variable();
@@ -842,6 +847,50 @@ AST * Parser::functionDeclaration() {
 
     return function_decl_node;
 
+}
+
+// function_call :
+//     ID LPAREN (expr(COMMA expr)*)? RPAREN
+AST * Parser::functionCall() {
+    // This token will put into FunctionCall node.
+    // It's the token of id of function name.
+    Token token = m_current_token;
+    string function_name = m_current_token.getVal();
+
+    eat(TokenType::ID);
+    eat(TokenType::LPAREN);
+
+    vector<AST *> actual_parameters;
+
+    try {
+        if (m_current_token.getType() != TokenType::RPAREN) {
+            AST * tmp_actual_param = expr();
+            actual_parameters.push_back(tmp_actual_param);
+        }
+
+        while (m_current_token.getType() == TokenType::COMMA) {
+            eat(TokenType::COMMA);
+            AST * tmp_actual_param = expr();
+            actual_parameters.push_back(tmp_actual_param);
+        }
+
+        eat(TokenType::RPAREN);
+
+        return new FunctionCall(
+            function_name,
+            actual_parameters,
+            token);
+    }
+    catch (ParserError & error) {
+        for (AST * p : actual_parameters) {
+            if (p != nullptr) {
+                delete p;
+                p = nullptr;
+            }
+        }
+
+        throw error;
+    }
 }
 
 // ===== =====

@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:22:37
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-08 17:05:25
+ * @LastEditTime : 2021-05-09 00:08:53
  * @Description  :
 *********************************************/
 
@@ -52,6 +52,7 @@ private:
     Any visitBoolean(AST * node);
 
     Any visitFunctionDecl(AST * node);
+    Any visitFunctionCall(AST * node);
 
 public:
     Interpreter(AST * root, bool if_print_stack);

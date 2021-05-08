@@ -25,6 +25,9 @@ void ActivationRecord::print() const {
     else if (m_type == ARType::PROCEDURE) {
         AR_type_str = "PROCECURE";
     }
+    else if (m_type == ARType::FUNCTION) {
+        AR_type_str = "FUNCTION";
+    }
     else {
         AR_type_str = "NOT FOUND";
     }

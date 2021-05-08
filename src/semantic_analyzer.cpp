@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-08 16:57:53
+ * @LastEditTime : 2021-05-09 01:33:29
  * @Description  :
 *********************************************/
 //
@@ -26,6 +26,7 @@
 #include "../inc/semantic_analyzer.hpp"
 
 using std::string;
+using std::to_string;
 
 using std::cout;
 using std::endl;
@@ -118,6 +119,9 @@ Any SemanticAnalyzer::visit(AST *node) {
     }
     else if (node->getType() == NodeType::FUNCTION_DECL) {
         visitFunctionDecl(node);
+    }
+    else if (node->getType() == NodeType::FUNCTION_CALL) {
+        visitFunctionCall(node);
     }
     else {
         generic_visit(node);
@@ -375,6 +379,14 @@ Any SemanticAnalyzer::visitProcedureCall(AST * node) {
             procedure_call_node -> getToken());
     }
 
+    // If function call be used as a statement, it will be
+    // recognized as a procedure call.
+    if (p_symbol->getCategory() == SymbolCategory::FUNCTION_SYMBOL) {
+        error("Call a function as a procedure(unused return value).",
+            ErrorCode::WRONG_USAGE,
+            procedure_call_node->getToken());
+    }
+
     ProcedureSymbol * p_procedure_symbol =
         dynamic_cast<ProcedureSymbol *>(p_symbol);
 
@@ -393,9 +405,13 @@ Any SemanticAnalyzer::visitProcedureCall(AST * node) {
 
     // parameter number no matched
     if (formal_parameters.size() != actual_parameters.size()) {
-        cout << formal_parameters.size() << endl << actual_parameters.size() << endl;
+        string message =
+            "Procedure call not matched: Wrong number of parameters. "
+            + (string)"formal/actual: "
+            + to_string(formal_parameters.size()) + "/"
+            + to_string(actual_parameters.size()) + ". ";
         error(
-            "Procedure call not matched: Wrong number of parameters.",
+            message,
             ErrorCode::WRONG_PARAMS_NUM,
             procedure_call_node -> getToken());
     }
@@ -452,11 +468,11 @@ Any SemanticAnalyzer::visitFunctionDecl(AST * node) {
                 function_symbol_type,
                 function_decl_node->getBlock()));
 
-    FunctionSymbol * proc_symbol =
+    FunctionSymbol * func_symbol =
         dynamic_cast<FunctionSymbol *>(
                 m_p_current_scope->lookup(func_name));
 
-    if (proc_symbol == nullptr) {
+    if (func_symbol == nullptr) {
         error("Undefined Symbol: " + func_name,
                 ErrorCode::ID_NOT_FOUND,
                 function_decl_node->getToken());
@@ -467,14 +483,14 @@ Any SemanticAnalyzer::visitFunctionDecl(AST * node) {
         cout << "ENTER: " << func_name << endl;
     }
 
-    // Create scope for this procedure.
-    ScopedSymbolTable procedure_scope = ScopedSymbolTable(
+    // Create scope for this function
+    ScopedSymbolTable function_scope = ScopedSymbolTable(
         func_name,
         m_p_current_scope->getScopeLevel() + 1,
         m_p_current_scope);
 
     // change current scope to the new created one.
-    m_p_current_scope = & procedure_scope;
+    m_p_current_scope = & function_scope;
 
     // define a return variable according to function name.
     VarSymbol return_var_symbol = VarSymbol(
@@ -484,7 +500,7 @@ Any SemanticAnalyzer::visitFunctionDecl(AST * node) {
     );
     m_p_current_scope->define(return_var_symbol);
 
-    // Put parameter symbols into procedure scope and procedure symbol.
+    // Put parameter symbols into function scope and function symbol.
     for (AST * node : function_decl_node->getParams()) {
         Param * param_node = dynamic_cast<Param *>(node);
 
@@ -499,22 +515,22 @@ Any SemanticAnalyzer::visitFunctionDecl(AST * node) {
         // get parameter name.
         string param_name = var_node->getVal();
 
-        // This symbol will be pushed into the procedure symbol as
+        // This symbol will be pushed into the function symbol as
         // a parameter, and will be deleted by the destructor
-        // of the procedure symbol.
+        // of the function symbol.
         VarSymbol var_symbol = VarSymbol(
                 param_name,
                 m_p_current_scope->getScopeLevel(),
                 param_type);
         m_p_current_scope->define(var_symbol);
-        proc_symbol->pushParameter(var_symbol);
+        func_symbol->pushParameter(var_symbol);
     }
 
     visitBlock(function_decl_node->getBlock());
 
     // log
     if (m_if_print) {
-        procedure_scope.print();
+        function_scope.print();
         cout << "LEAVE scope: " << func_name << endl << endl;
     }
 
@@ -523,6 +539,64 @@ Any SemanticAnalyzer::visitFunctionDecl(AST * node) {
     // And we will reset this pointer to tmp.
     m_p_current_scope = m_p_current_scope->getEnclosingScope();
 
+
+    return Any();
+}
+
+Any SemanticAnalyzer::visitFunctionCall(AST * node) {
+    FunctionCall * function_call_node =
+        dynamic_cast<FunctionCall *>(node);
+
+    string function_name =
+        function_call_node -> getFunctionName();
+
+    // try to get symbol.
+    Symbol * p_symbol = m_p_current_scope -> lookup(function_name);
+    if (p_symbol == nullptr) {
+        error(
+            "Function call no matched: Undefined function name.",
+            ErrorCode::ID_NOT_FOUND,
+            function_call_node -> getToken());
+    }
+
+    FunctionSymbol * p_function_symbol =
+        dynamic_cast<FunctionSymbol *>(p_symbol);
+
+    // To get formal parameter symbol vector
+    // from symbol table
+    // and actual parameter AST vector from AST node.
+    // Try to compare the number of formal parameters and
+    // actual parameters.
+
+    vector<VarSymbol> formal_parameters =
+        p_function_symbol -> getParams();
+
+    vector<AST *> actual_parameters =
+        function_call_node -> getActualParameters();
+
+
+    // parameter number no matched
+    if (formal_parameters.size() != actual_parameters.size()) {
+        string message =
+            "Function call not matched: Wrong number of parameters. "
+            + (string)"formal/actual: "
+            + to_string(formal_parameters.size()) + "/"
+            + to_string(actual_parameters.size()) + ". ";
+        error(
+            message,
+            ErrorCode::WRONG_PARAMS_NUM,
+            function_call_node -> getToken());
+    }
+
+    // parameter number matched
+
+    // visit each parameter
+    for (AST * p : actual_parameters) {
+        visit(p);
+    }
+
+    // put Function Symbol into ProcedureCall node
+    function_call_node->setFunctionSymbol(*p_function_symbol);
 
     return Any();
 }

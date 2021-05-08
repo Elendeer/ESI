@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-08 17:07:46
+ * @LastEditTime : 2021-05-09 00:30:29
  * @Description  :
  *********************************************/
 
@@ -75,6 +75,9 @@ Any Interpreter::visit(AST *node) {
     }
     else if (node->getType() == NodeType::FUNCTION_DECL) {
         visitFunctionDecl(node);
+    }
+    else if (node->getType() == NodeType::FUNCTION_CALL) {
+        return visitFunctionCall(node);
     }
     else {
         generic_visit(node);
@@ -316,6 +319,60 @@ Any Interpreter::visitFunctionDecl(AST * node) {
     string function_name = function_decl_node->getName();
 
     return Any();
+}
+
+Any Interpreter::visitFunctionCall(AST * node) {
+    FunctionCall * function_call_node = dynamic_cast<FunctionCall *>(node);
+
+    string function_name = function_call_node->getFunctionName();
+
+    FunctionSymbol function_symbol =
+        function_call_node->getFunctionSymbol();
+
+    ActivationRecord ar = ActivationRecord(
+            function_name,
+            ARType::FUNCTION,
+            function_symbol.getLevel() + 1);
+
+
+    vector<VarSymbol> formal_parameters =
+        function_symbol.getParams();
+    vector<AST *> actual_parameters =
+        function_call_node->getActualParameters();
+
+    // parameters pushing
+    long unsigned int idx = 0;
+    while (idx < formal_parameters.size() ) {
+        VarSymbol parameter_symbol = formal_parameters.at(idx);
+        AST * parameter_node = actual_parameters.at(idx);
+
+        string var_name = parameter_symbol.getName();
+        ar[var_name] = visit(parameter_node);
+
+        ++ idx;
+    }
+
+    m_call_stack.push(ar);
+
+    // log
+    if (m_if_print_stack) {
+        cout << "ENTER FUNCTION: " << function_name << endl;
+        printStack();
+    }
+
+    visit((AST *)function_symbol.getFunctionBlock());
+
+    // log
+    if (m_if_print_stack) {
+        cout << "LEAVE FUNCTION: " << function_name << endl;
+        printStack();
+    }
+
+    Any return_value = m_call_stack.peek()[function_name];
+
+    m_call_stack.pop();
+
+    return return_value;
 }
 
 // ===== =====

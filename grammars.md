@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-11-14 09:06:48
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-07 21:39:15
+ * @LastEditTime : 2021-05-08 18:16:17
  * @Description  :
 -->
 
@@ -49,6 +49,7 @@ factor : PLUS factor
          | FALSE
          | LPAREN expr RPAREN
          | variable
+         | function_call
 
 term : factor((MUL | INTEGER_DIV | FLOAT_DIV) factor)*
 
@@ -63,5 +64,8 @@ procedure_call_statement :
 function_declaration :
     FUNCTION ID (LPAREN formal_parameter_list RPAREN)?
     COLON type_spec SEMI block SEMI
+
+function_call :
+    ID LPAREN (expr(COMMA expr)*)? RPAREN
 
 ```

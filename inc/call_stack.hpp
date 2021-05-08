@@ -11,7 +11,8 @@ namespace ESI {
 // Type of activation record.
 enum class ARType {
     PROGRAM,
-    PROCEDURE
+    PROCEDURE,
+    FUNCTION
 };
 
 // An activation record is a dictionary-like object

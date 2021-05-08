@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-07 21:27:14
+ * @LastEditTime : 2021-05-08 17:46:28
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -48,7 +48,8 @@ enum class NodeType {
     STRING,
     BOOLEAN,
 
-    FUNCTION_DECL
+    FUNCTION_DECL,
+    FUNCTION_CALL
 };
 
 
@@ -282,6 +283,7 @@ public:
 };
 
 // Token inside should be token of id of procedure name.
+// Actual parameters pointers should pointing to nodes on heap.
 class ProcedureCall : public AST {
 private :
     // procedure name
@@ -299,7 +301,7 @@ public :
     ProcedureCall(
         std::string procedure_name,
         std::vector<AST *> & actual_parameters,
-        Token token,
+        Token name_id_token,
         ProcedureSymbol procudure_symbol = ProcedureSymbol("none", 0));
 
     virtual ~ProcedureCall();
@@ -359,6 +361,39 @@ public:
     AST * getType() const;
     // Return piontor of the block node.
     AST * getBlock() const ;
+};
+
+// Function call node.
+// Token inside should be token of id of function name.
+// Actual parameters pointers should pointing to nodes on heap.
+class FunctionCall : public AST {
+private:
+    // function name
+    std::string m_func_name;
+
+    // actual parameters
+    // All actual parameters are child (node).
+    std::vector<AST *> m_actual_param;
+
+    // procedure symbol
+    FunctionSymbol m_func_symbol;
+    Block * m_func_block;
+
+public:
+    FunctionCall(
+        std::string function_name,
+        std::vector<AST *> & actual_parameters,
+        Token name_id_token,
+        FunctionSymbol function_symbol =
+            FunctionSymbol("none", 0, SymbolType::NONE));
+
+    virtual ~FunctionCall();
+
+    std::string getFunctionName() const;
+    std::vector<AST *> getActualParameters() const;
+    FunctionSymbol getFunctionSymbol() const;
+
+    void setFunctionSymbol(const FunctionSymbol & function_symbol);
 };
 
 } // namespace ESI
