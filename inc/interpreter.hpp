@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:22:37
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-09 00:08:53
+ * @LastEditTime : 2021-05-09 09:18:22
  * @Description  :
 *********************************************/
 
@@ -23,6 +23,12 @@ class Interpreter : public NodeVisitor {
 private:
     CallStack m_call_stack;
     bool m_if_print_stack;
+
+    // Throw a interperter error.
+    void error(
+        std::string message,
+        ErrorCode error_code = ErrorCode::NONE,
+        Token token = Token());
 
 
     // It will transfer a funtion
@@ -70,7 +76,11 @@ class InterpreterError : public Exception {
 private :
 
 public:
-    InterpreterError(const std::string & message);
+    InterpreterError(
+        const std::string & message,
+        ErrorCode error_code = ErrorCode::NONE,
+        Token token = Token());
+
     virtual ~InterpreterError();
 
     virtual const std::string what() const ;

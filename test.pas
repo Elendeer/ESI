@@ -7,7 +7,7 @@ var
     function add(a, b : integer) : integer;
     var
     begin
-        {add := a + b;}
+        add := a + b;
     end;
 
     procedure p(a : integer);

@@ -40,6 +40,9 @@ void ActivationRecord::print() const {
 }
 
 Any ActivationRecord::at(string key) const {
+    if (m_members_map.find(key) == m_members_map.end()) {
+        return Any();
+    }
     return m_members_map.at(key);
 }
 

@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-09 00:30:29
+ * @LastEditTime : 2021-05-09 09:26:27
  * @Description  :
  *********************************************/
 
@@ -24,6 +24,13 @@ Interpreter::Interpreter(AST * root, bool if_print_stack)
     }
 
 Interpreter::~Interpreter() {}
+
+void Interpreter::error(
+    string message,
+    ErrorCode error_code,
+    Token token) {
+        throw InterpreterError(message, error_code, token);
+    }
 
 Any Interpreter::visit(AST *node) {
 
@@ -142,10 +149,12 @@ Any Interpreter::visitNum(AST *node) {
         return node->getToken().getVal();
     }
     else {
-        throw std::runtime_error(
+        error(
             "Unsupported tokentype met when visiting a Num node"
         );
     }
+
+    return Any();
 }
 
 /*********************************************
@@ -362,13 +371,21 @@ Any Interpreter::visitFunctionCall(AST * node) {
 
     visit((AST *)function_symbol.getFunctionBlock());
 
+    // get return value and judge
+    Any return_value = m_call_stack.peek().at(function_name);
+    if (return_value.getType() == DataType::Empty) {
+        string message = "In function '"
+            + function_name
+            + "': Function return value have not defined.";
+        error(message);
+    }
+
+
     // log
     if (m_if_print_stack) {
         cout << "LEAVE FUNCTION: " << function_name << endl;
         printStack();
     }
-
-    Any return_value = m_call_stack.peek()[function_name];
 
     m_call_stack.pop();
 
@@ -407,8 +424,12 @@ void Interpreter::printStack() {
 // ===== ===== InterpreterError
 // ===== =====
 
-InterpreterError::InterpreterError(const string & message) :
-    Exception(message) {}
+InterpreterError::InterpreterError(
+    const string & message,
+    ErrorCode error_code,
+    Token token) :
+    Exception(message, error_code, token) {}
+
 
 InterpreterError::~InterpreterError() {}
 
