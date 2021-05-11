@@ -29,8 +29,11 @@ Exception::Exception(
         else if (error_code == ErrorCode::UNKNOW_TYPE) {
             m_msg = message + "\tErrorCode: Unknow type; ";
         }
+        else if (error_code == ErrorCode::WRONG_USAGE) {
+            m_msg = message + "\tErrorCode: Wrong usage; ";
+        }
         else {
-            m_msg = message + "\tError code not found;";
+            m_msg = message + "\tError code not found; ";
         }
 
         m_msg = m_msg + "When scanning token: " + token.getStringRepr();

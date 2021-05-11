@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-11-14 09:06:48
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-08 18:16:17
+ * @LastEditTime : 2021-05-10 19:20:31
  * @Description  :
 -->
 
@@ -34,6 +34,8 @@ statement_list : statement
 statement : compound_statement
          | assignment_statement
          | procedure_call_statement
+         | read_statement
+         | write_statement
          | empty
 
 assignment_statement : variable ASSIGN expr
@@ -67,5 +69,11 @@ function_declaration :
 
 function_call :
     ID LPAREN (expr(COMMA expr)*)? RPAREN
+
+read_statement :
+    READ LPAREN ID (COMMA ID)* RPAREN
+
+write_statement :
+    WRITE LPAREN expr RPAREN
 
 ```

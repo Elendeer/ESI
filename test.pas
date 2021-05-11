@@ -17,6 +17,6 @@ var
 
 begin
 
-    result := add(9, 1);
+    result := 1 + true;
 
 end.

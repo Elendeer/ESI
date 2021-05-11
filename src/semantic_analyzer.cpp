@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-09 01:33:29
+ * @LastEditTime : 2021-05-09 15:31:26
  * @Description  :
 *********************************************/
 //
@@ -557,6 +557,12 @@ Any SemanticAnalyzer::visitFunctionCall(AST * node) {
             "Function call no matched: Undefined function name.",
             ErrorCode::ID_NOT_FOUND,
             function_call_node -> getToken());
+    }
+
+    if (p_symbol->getCategory() == SymbolCategory::PROCEDURE_SYMBOL) {
+        error("Call a procedure as a function.",
+            ErrorCode::WRONG_USAGE,
+            function_call_node->getToken());
     }
 
     FunctionSymbol * p_function_symbol =
