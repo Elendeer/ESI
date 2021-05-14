@@ -98,7 +98,7 @@ void Parser::eat(TokenType token_type) {
 //          | STRING
 //          | TRUE
 //          | FALSE
-//          | LPAREN expr RPAREN
+//          | LPAREN relational_expr RPAREN
 //          | variable
 //          | function_call
 // Memmory allocations inside, may thorw exceptions.
@@ -145,7 +145,7 @@ AST *Parser::factor() {
     else if (token.getType() == TokenType::LPAREN) {
         eat(TokenType::LPAREN);
 
-        AST * node = expr();
+        AST * node = relationalExpr();
 
         try {
             eat(TokenType::RPAREN);
@@ -183,18 +183,9 @@ AST *Parser::term() {
         || m_current_token.getType() == TokenType::INTEGER_DIV
         || m_current_token.getType() == TokenType::FLOAT_DIV) {
 
-        if (m_current_token.getType() == TokenType::MUL) {
-            eat(TokenType::MUL);
+            eat(m_current_token.getType());
+            node = new BinOp(node, token, factor());
         }
-        else if (m_current_token.getType() == TokenType::INTEGER_DIV) {
-            eat(TokenType::INTEGER_DIV);
-        }
-        else {
-            eat(TokenType::FLOAT_DIV);
-        }
-
-        node = new BinOp(node, token, factor());
-    }
 
     return node;
 
@@ -218,15 +209,9 @@ AST *Parser::expr() {
     while (m_current_token.getType() == TokenType::PLUS
         || m_current_token.getType() == TokenType::MINUS) {
 
-        if (m_current_token.getType() == TokenType::PLUS) {
-            eat(TokenType::PLUS);
+            eat(m_current_token.getType());
+            node = new BinOp(node, token, term());
         }
-        else {
-            eat(TokenType::MINUS);
-        }
-
-        node = new BinOp(node, token, term());
-    }
 
     return node;
 
@@ -588,7 +573,7 @@ AST *Parser::statement() {
     return node;
 }
 
-// assignment_statement : variable ASSIGN expr
+// assignment_statement : variable ASSIGN relational_expr
 AST *Parser::assignmentStatement() {
     AST *left = variable();
     Token token = m_current_token;
@@ -605,7 +590,7 @@ AST *Parser::assignmentStatement() {
 
     AST *right = nullptr;
     try {
-        right = expr();
+        right = relationalExpr();
     }
     catch (const ParserError & error) {
         if (left != nullptr) delete left;
@@ -741,7 +726,7 @@ vector<AST *> Parser::formalParameters() {
 
 
 // procedure_call_statement :
-//     ID LPAREN (expr(COMMA expr)*)? RPAREN
+//     ID LPAREN (relational_expr(COMMA relational_expr)*)? RPAREN
 AST * Parser::procedureCallStatement() {
     // This token will put into ProcedureCall node.
     // It's the token of id of procedure name.
@@ -755,13 +740,13 @@ AST * Parser::procedureCallStatement() {
 
     try {
         if (m_current_token.getType() != TokenType::RPAREN) {
-            AST * tmp_actual_param = expr();
+            AST * tmp_actual_param = relationalExpr();
             actual_parameters.push_back(tmp_actual_param);
         }
 
         while (m_current_token.getType() == TokenType::COMMA) {
             eat(TokenType::COMMA);
-            AST * tmp_actual_param = expr();
+            AST * tmp_actual_param = relationalExpr();
             actual_parameters.push_back(tmp_actual_param);
         }
 
@@ -859,7 +844,7 @@ AST * Parser::functionDeclaration() {
 }
 
 // function_call :
-//     ID LPAREN (expr(COMMA expr)*)? RPAREN
+//     ID LPAREN (relational_expr(COMMA relatinal_expr)*)? RPAREN
 AST * Parser::functionCall() {
     // This token will put into FunctionCall node.
     // It's the token of id of function name.
@@ -873,13 +858,13 @@ AST * Parser::functionCall() {
 
     try {
         if (m_current_token.getType() != TokenType::RPAREN) {
-            AST * tmp_actual_param = expr();
+            AST * tmp_actual_param = relationalExpr();
             actual_parameters.push_back(tmp_actual_param);
         }
 
         while (m_current_token.getType() == TokenType::COMMA) {
             eat(TokenType::COMMA);
-            AST * tmp_actual_param = expr();
+            AST * tmp_actual_param = relationalExpr();
             actual_parameters.push_back(tmp_actual_param);
         }
 
@@ -940,7 +925,7 @@ AST * Parser::readStatement() {
 }
 
 // write_statement :
-//     (WRITE | WRITELN) LPAREN expr RPAREN
+//     (WRITE | WRITELN) LPAREN relational_expr RPAREN
 AST * Parser::writeStatement() {
     bool is_writeln = false;
     if (m_current_token.getType() == TokenType::WRITE) {
@@ -956,7 +941,7 @@ AST * Parser::writeStatement() {
     AST * p_expr = nullptr;
 
     try {
-        p_expr = expr();
+        p_expr = relationalExpr();
         eat(TokenType::RPAREN);
 
         return new Write(p_expr, is_writeln);
@@ -965,6 +950,42 @@ AST * Parser::writeStatement() {
         if (p_expr != nullptr) {
             delete p_expr;
             p_expr = nullptr;
+        }
+
+        throw error;
+    }
+}
+
+// relational_expr : expr ((EQUAL | NOT_EQUAL
+//                     | LESS_THAN | LESS_THAN_OR_EQUAL_TO
+//                     | GREATER_THAN | GREATER_THAN_OR_EQUAL_TO) expr)*
+AST * Parser::relationalExpr() {
+    AST * p_node = expr();
+
+    Token token = m_current_token;
+
+    try {
+        // while is relational operator
+        if (m_current_token.getType() == TokenType::EQUAL
+            || m_current_token.getType() == TokenType::NOT_EQUAL
+            || m_current_token.getType() == TokenType::LESS_THAN
+            || m_current_token.getType()
+                == TokenType::LESS_THAN_OR_EQUAL_TO
+            || m_current_token.getType() == TokenType::GREATER_THAN
+            || m_current_token.getType()
+                == TokenType::GREATER_THAN_OR_EQUAL_TO) {
+
+                    eat(m_current_token.getType());
+
+                    p_node = new BinOp(p_node, token, expr());
+                }
+
+        return p_node;
+    }
+    catch (LexerError & error) {
+        if (p_node != nullptr) {
+            delete p_node;
+            p_node = nullptr;
         }
 
         throw error;

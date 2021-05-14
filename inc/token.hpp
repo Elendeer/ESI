@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 08:43:19
+ * @LastEditTime : 2021-05-14 20:39:55
 * @Description  :
 *********************************************/
 
@@ -54,6 +54,7 @@ enum class TokenType {
     INTEGER_CONST,
     REAL_CONST,
 
+    // arithmetical opreators
     MUL,
     FLOAT_DIV,
     PLUS,
@@ -70,6 +71,14 @@ enum class TokenType {
     ID,
 
     COLON,
+
+    // relational operators
+    EQUAL,
+    NOT_EQUAL,
+    LESS_THAN,
+    LESS_THAN_OR_EQUAL_TO,
+    GREATER_THAN,
+    GREATER_THAN_OR_EQUAL_TO,
 };
 
 /*********************************************

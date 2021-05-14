@@ -313,6 +313,57 @@ Token Lexer::getNextToken() {
             advance();
             return readString();
         }
+        else if (m_current_char == '=') {
+            advance();
+            return Token(
+                    TokenType::EQUAL,
+                    (string)"=",
+                    m_line_no,
+                    m_column);
+        }
+        else if (m_current_char == '<' && peek() == '>') {
+            advance();
+            advance();
+            return Token(
+                    TokenType::NOT_EQUAL,
+                    (string)"<>",
+                    m_line_no,
+                    m_column);
+        }
+        else if (m_current_char == '<') {
+            advance();
+            return Token(
+                    TokenType::LESS_THAN,
+                    (string)"<",
+                    m_line_no,
+                    m_column);
+        }
+        else if (m_current_char == '<' && peek() == '=') {
+            advance();
+            advance();
+            return Token(
+                    TokenType::LESS_THAN_OR_EQUAL_TO,
+                    (string)"<=",
+                    m_line_no,
+                    m_column);
+        }
+        else if (m_current_char == '>') {
+            advance();
+            return Token(
+                    TokenType::GREATER_THAN,
+                    (string)">",
+                    m_line_no,
+                    m_column);
+        }
+        else if (m_current_char == '>' && peek() == '=') {
+            advance();
+            advance();
+            return Token(
+                    TokenType::GREATER_THAN_OR_EQUAL_TO,
+                    (string)">=",
+                    m_line_no,
+                    m_column);
+        }
         else {
             error("Invailid Character met.", ErrorCode::NONE);
         }

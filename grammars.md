@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-11-14 09:06:48
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-10 19:20:31
+ * @LastEditTime : 2021-05-14 21:37:11
  * @Description  :
 -->
 
@@ -38,7 +38,7 @@ statement : compound_statement
          | write_statement
          | empty
 
-assignment_statement : variable ASSIGN expr
+assignment_statement : variable ASSIGN relational_expr
 
 variable : ID
 
@@ -49,7 +49,7 @@ factor : PLUS factor
          | STRING
          | TRUE
          | FALSE
-         | LPAREN expr RPAREN
+         | LPAREN relational_expr RPAREN
          | variable
          | function_call
 
@@ -61,19 +61,28 @@ procedure_declaration :
     PROCEDURE ID (LPAREN formal_parameter_list RPAREN)? SEMI block SEMI
 
 procedure_call_statement :
-    ID LPAREN (expr(COMMA expr)*)? RPAREN
+    ID LPAREN (relational_expr(COMMA relational_expr)*)? RPAREN
 
 function_declaration :
     FUNCTION ID (LPAREN formal_parameter_list RPAREN)?
     COLON type_spec SEMI block SEMI
 
 function_call :
-    ID LPAREN (expr(COMMA expr)*)? RPAREN
+    ID LPAREN (relational_expr(COMMA relational_expr)*)? RPAREN
 
 read_statement :
     READ LPAREN ID (COMMA ID)* RPAREN
 
 write_statement :
-    (WRITE | WRITELN) LPAREN expr RPAREN
+    (WRITE | WRITELN) LPAREN relational_expr RPAREN
+
+relational_expr : expr ((EQUAL | NOT_EQUAL
+                    | LESS_THAN | LESS_THAN_OR_EQUAL_TO
+                    | GREATER_THAN | GREATER_THAN_OR_EQUAL_TO) expr)+
+
+
+if_statement :
+    IF LPAREN relational_expr RPAREN THEN (statement | block)
+    (ELSE ((statement | block) | if_statement))+
 
 ```

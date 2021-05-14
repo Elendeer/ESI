@@ -3,6 +3,7 @@ program test;
 
 var
     a : integer;
+    b : boolean;
 
 procedure p1;
 
@@ -12,7 +13,7 @@ end;
 
 begin
     writeln('Hello word!');
-    p1();
+    b := 1 = 1;
 
 
 end.

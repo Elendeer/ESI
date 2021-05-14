@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-02-25 12:08:08
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-05 11:57:40
+ * @LastEditTime : 2021-05-14 21:52:04
  * @Description  :
 *********************************************/
 #include "../inc/any.hpp"
@@ -346,6 +346,37 @@ bool Any::operator >= (Any var) const {
 }
 bool Any::operator <= (Any var) const {
     return m_float_value <= var.m_float_value;
+}
+
+bool Any::operator == (Any var) const {
+    if (m_type_info == var.m_type_info) {
+        DataType type = m_type_info.getTypeId();
+        if (type == DataType::Empty) {
+            return true;
+        }
+        else if (type == DataType::Bool) {
+            return m_bool_value == var.m_bool_value;
+        }
+        else if (type == DataType::Char) {
+            return m_char_value == var.m_char_value;
+        }
+        else if (type == DataType::Integer) {
+            return m_int_value == var.m_int_value;
+        }
+        else if (type == DataType::Float) {
+            return m_float_value == var.m_float_value;
+        }
+        else if (type == DataType::String) {
+            return m_string_value == var.m_string_value;
+        }
+
+    }
+
+    return false;
+}
+
+bool Any::operator != (Any var) const {
+    return !operator ==(var);
 }
 
 // ===== =====

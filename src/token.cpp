@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:41:25
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 08:43:49
+ * @LastEditTime : 2021-05-14 20:40:37
 * @Description  :
 *********************************************/
 
@@ -47,6 +47,7 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     {TokenType::INTEGER_CONST, "INTEGER_CONST"},
     {TokenType::REAL_CONST, "REAL_CONST"},
 
+    // arithmetical opreators
     {TokenType::MUL, "MUL"},
     {TokenType::FLOAT_DIV, "FLOAT_DIV"},
     {TokenType::PLUS, "PLUS"},
@@ -64,6 +65,13 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
 
     {TokenType::COLON, "COLON"},
 
+    // relational operators
+    {TokenType::EQUAL, "EQUAL"},
+    {TokenType::NOT_EQUAL, "NOT_EQUAL"},
+    {TokenType::LESS_THAN, "LESS_THAN"},
+    {TokenType::LESS_THAN_OR_EQUAL_TO, "LESS_THAN_OR_EQUAL_TO"},
+    {TokenType::GREATER_THAN, "GREATER_THAN"},
+    {TokenType::GREATER_THAN_OR_EQUAL_TO, "GREATER_THAN_OR_EQUAL_TO"}
 };
 
 /*********************************************

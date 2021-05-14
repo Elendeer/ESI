@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-09 09:26:27
+ * @LastEditTime : 2021-05-14 21:42:23
  * @Description  :
  *********************************************/
 
@@ -140,9 +140,27 @@ Any Interpreter::visitBinOp(AST *node) {
     else if (type == TokenType::FLOAT_DIV) {
         return visit(bin_node->getLeft()) / visit(bin_node->getRight());
     }
+    // relational operators
+    else if (type == TokenType::EQUAL) {
+        return visit(bin_node->getLeft()) == visit(bin_node->getRight());
+    }
+    else if (type == TokenType::NOT_EQUAL) {
+        return visit(bin_node->getLeft()) != visit(bin_node->getRight());
+    }
+    else if (type == TokenType::LESS_THAN) {
+        return visit(bin_node->getLeft()) < visit(bin_node->getRight());
+    }
+    else if (type == TokenType::LESS_THAN_OR_EQUAL_TO) {
+        return visit(bin_node->getLeft()) <= visit(bin_node->getRight());
+    }
+    else if (type == TokenType::GREATER_THAN) {
+        return visit(bin_node->getLeft()) > visit(bin_node->getRight());
+    }
+    else if (type == TokenType::GREATER_THAN_OR_EQUAL_TO) {
+        return visit(bin_node->getLeft()) >= visit(bin_node->getRight());
+    }
     else {
-        // nothing else
-        // TODO: exception
+        error("Unknow binary operator");
         return Any();
     }
 }

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-23 13:05:13
+ * @LastEditTime : 2021-05-14 22:18:11
  * @Description  :
 -->
 
@@ -23,6 +23,8 @@ until the project is more complete before writing more details.
 ## What's been implement
 
 > Normally you can cheack the `./test.pas` file to see my newest test.
+> For all the features mentioned below, most of the corresponding
+> grammar checking and semantic analyzing have been implemented.
 
 ### Program
 
@@ -54,6 +56,12 @@ These types are supported now:
 | real |
 | boolean |
 | string |
+
+To use `:=` to assign a variable:
+
+```pascal
+a := 1;
+```
 
 To use a variable, just do it in a pascal's (or any language's) way.
 
@@ -104,6 +112,34 @@ write(a + 5);           {print the value of 'a' + 5}
 
 Notice, `write` will not print a newline char by default, if you want to
 do that, please use `writeln()`.
+
+### Others
+
+Those arithmetical operators are available:
+
+| sign name | operator |
+| --- | --- |
+| positive | + |
+| negative | - |
+| multiple | * |
+| integer division | div |
+| real division | / |
+| plus | + |
+| minus | - |
+
+Those relational operators are available:
+
+| sign name | operator |
+| --- | --- |
+| equal | = |
+| not equal | <> |
+| less than | < |
+| less than or equal to | <= |
+| greater than | > |
+| greater than or equal to | >= |
+
+Basically the priority of these operators mentioned above
+are decrease progressively. Some of those have the same priority.
 
 ## Build
 
