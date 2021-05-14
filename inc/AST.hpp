@@ -163,14 +163,14 @@ public:
 // It is constructed out of ID token.
 class Var : public AST {
 private:
-    std::string m_value;
+    std::string m_var_name;
 
 public:
     Var(Token token);
     virtual ~Var();
 
     // Return the name of the variable inside the node.
-    std::string getVal() const;
+    std::string getVarName() const;
 };
 
 // The Block AST node holds declarations

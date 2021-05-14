@@ -245,7 +245,7 @@ AST *Parser::expr() {
 AST *Parser::program() {
     eat(TokenType::PROGRAM);
     AST * var_node = variable();
-    std::string program_name = dynamic_cast<Var *>(var_node) -> getVal();
+    std::string program_name = dynamic_cast<Var *>(var_node) -> getVarName();
 
     try {
         eat(TokenType::SEMI);

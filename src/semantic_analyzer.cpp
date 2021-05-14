@@ -187,7 +187,7 @@ Any SemanticAnalyzer::visitAssign(AST *node) {
 Any SemanticAnalyzer::visitVar(AST *node) {
     Var * var_node = dynamic_cast<Var*>(node);
 
-    string name = var_node->getVal();
+    string name = var_node->getVarName();
 
     Symbol * p_symbol = m_p_current_scope->lookup(name);
 
@@ -245,7 +245,7 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
 
     Var * var_node = dynamic_cast<Var *>(var_decl_node->getVarChild());
     // Get variable name string.
-    string var_name = var_node->getVal();
+    string var_name = var_node->getVarName();
 
     // Dumplicat declaration checking.
     if (m_p_current_scope->lookup(var_name, true) != nullptr) {
@@ -337,7 +337,7 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
 
         Var * var_node = dynamic_cast<Var *>(param_node->getVarChild());
         // get parameter name.
-        string param_name = var_node->getVal();
+        string param_name = var_node->getVarName();
 
         // This symbol will be pushed into the procedure symbol as
         // a parameter, and will be deleted by the destructor
@@ -519,7 +519,7 @@ Any SemanticAnalyzer::visitFunctionDecl(AST * node) {
 
         Var * var_node = dynamic_cast<Var *>(param_node->getVarChild());
         // get parameter name.
-        string param_name = var_node->getVal();
+        string param_name = var_node->getVarName();
 
         // This symbol will be pushed into the function symbol as
         // a parameter, and will be deleted by the destructor

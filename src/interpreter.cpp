@@ -86,6 +86,12 @@ Any Interpreter::visit(AST *node) {
     else if (node->getType() == NodeType::FUNCTION_CALL) {
         return visitFunctionCall(node);
     }
+    else if (node->getType() == NodeType::READ) {
+        return visitRead(node);
+    }
+    else if (node->getType() == NodeType::WRITE) {
+        return visitWrite(node);
+    }
     else {
         generic_visit(node);
     }
@@ -177,7 +183,7 @@ Any Interpreter::visitNoOp() {
 Any Interpreter::visitAssign(AST *node) {
     Assign* assign_node = dynamic_cast<Assign *>(node);
 
-    string var_name = dynamic_cast<Var *>(assign_node->getLeft())->getVal();
+    string var_name = dynamic_cast<Var *>(assign_node->getLeft())->getVarName();
     Any var_value = visit(assign_node->getRight());
 
     ActivationRecord & ar = m_call_stack.peek();
@@ -187,7 +193,7 @@ Any Interpreter::visitAssign(AST *node) {
 }
 
 Any Interpreter::visitVar(AST *node) {
-    string var_name = dynamic_cast<Var *>(node)->getVal();
+    string var_name = dynamic_cast<Var *>(node)->getVarName();
 
     ActivationRecord & ar = m_call_stack.peek();
     Any var_value = ar.at(var_name);
@@ -390,6 +396,34 @@ Any Interpreter::visitFunctionCall(AST * node) {
     m_call_stack.pop();
 
     return return_value;
+}
+
+Any Interpreter::visitRead(AST * node) {
+    Read * p_read_node = dynamic_cast<Read *>(node);
+
+    ActivationRecord & ar = m_call_stack.peek();
+
+    vector<Var *> read_vars = p_read_node->getReadVars();
+    for (Var * p : read_vars) {
+        string var_name = p->getVarName();
+
+        Any var_value;
+        std::cin >> var_value;
+
+        ar[var_name] = var_value;
+    }
+
+    return Any();
+}
+
+Any Interpreter::visitWrite(AST * node) {
+    Write * p_write_node = dynamic_cast<Write *>(node);
+    AST * p_expr_node = p_write_node->getExpr();
+    Any expr_value = visit(p_expr_node);
+
+    cout << expr_value;
+
+    return Any();
 }
 
 // ===== =====

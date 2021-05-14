@@ -181,11 +181,11 @@ AST * Assign::getRight() const {
  *********************************************/
 
 Var::Var(Token token) : AST(NodeType::VAR, token) {
-    m_value = Any::anyCast<string>(token.getVal());
+    m_var_name = Any::anyCast<string>(token.getVal());
 }
 
-string Var::getVal() const {
-    return m_value;
+string Var::getVarName() const {
+    return m_var_name;
 }
 
 Var::~Var() {

@@ -60,6 +60,9 @@ private:
     Any visitFunctionDecl(AST * node);
     Any visitFunctionCall(AST * node);
 
+    Any visitRead(AST * node);
+    Any visitWrite(AST * node);
+
 public:
     Interpreter(AST * root, bool if_print_stack);
     virtual ~Interpreter();
