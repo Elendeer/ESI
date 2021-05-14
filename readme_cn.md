@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 22:45:56
+ * @LastEditTime : 2021-05-14 22:51:49
  * @Description  :
 -->
 
@@ -24,6 +24,7 @@
 ## 已经实现的功能
 
 > 一般你可以在根目录的`./test.pas`里找到我最新的测试。
+> 下述的功能，大多数对应的语法检查和语义分析已经实现。
 
 ### 程序
 
