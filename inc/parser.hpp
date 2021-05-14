@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-08 17:49:34
+ * @LastEditTime : 2021-05-14 09:14:03
  * @Description  :
 *********************************************/
 
@@ -60,6 +60,9 @@ private:
 
     AST * functionDeclaration();
     AST * functionCall();
+
+    AST * readStatement();
+    AST * writeStatement();
 
 public:
     // Might throw exception when init.

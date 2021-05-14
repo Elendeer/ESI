@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-09 15:31:26
+ * @LastEditTime : 2021-05-14 09:59:11
  * @Description  :
 *********************************************/
 //
@@ -122,6 +122,12 @@ Any SemanticAnalyzer::visit(AST *node) {
     }
     else if (node->getType() == NodeType::FUNCTION_CALL) {
         visitFunctionCall(node);
+    }
+    else if (node->getType() == NodeType::READ) {
+        visitRead(node);
+    }
+    else if (node->getType() == NodeType::WRITE) {
+        visitWrite(node);
     }
     else {
         generic_visit(node);
@@ -603,6 +609,26 @@ Any SemanticAnalyzer::visitFunctionCall(AST * node) {
 
     // put Function Symbol into ProcedureCall node
     function_call_node->setFunctionSymbol(*p_function_symbol);
+
+    return Any();
+}
+
+Any SemanticAnalyzer::visitRead(AST * node ) {
+    Read * p_read_node = dynamic_cast<Read *>(node);
+
+    vector<Var *> read_vars = p_read_node->getReadVars();
+    for (Var * p : read_vars) {
+        visit(p);
+    }
+
+    return Any();
+}
+
+Any SemanticAnalyzer::visitWrite(AST * node ) {
+    Write * p_write_node = dynamic_cast<Write *>(node);
+
+    AST * p_expr = p_write_node->getExpr();
+    visit(p_expr);
 
     return Any();
 }

@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-07 20:46:09
+ * @LastEditTime : 2021-05-14 08:43:19
 * @Description  :
 *********************************************/
 
@@ -42,6 +42,9 @@ enum class TokenType {
     PROCEDURE,
     FUNCTION,
     VAR,
+
+    READ,
+    WRITE,
 
     // End of reserved keywords
     END,

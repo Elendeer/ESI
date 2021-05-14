@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-08 22:42:18
+ * @LastEditTime : 2021-05-14 09:39:52
  * @Description  :
  *********************************************/
 
@@ -39,7 +39,10 @@ const unordered_map<NodeType, std::string> AST::map_node_type_string {
     {NodeType::STRING, "STRING"},
     {NodeType::BOOLEAN, "BOOLEAN"},
     {NodeType::FUNCTION_DECL, "FUNCTION_DECL"},
-    {NodeType::FUNCTION_CALL, "FUNCTION_CALL"}
+    {NodeType::FUNCTION_CALL, "FUNCTION_CALL"},
+
+    {NodeType::READ, "READ"},
+    {NodeType::WRITE, "WRITE"}
 };
 
 /*********************************************
@@ -480,5 +483,37 @@ void FunctionCall::setFunctionSymbol(
         m_func_symbol = function_symbol;
     }
 
+/*********************************************
+ * Read node
+*********************************************/
+
+Read::Read(vector<Var *> & read_vars):
+    AST(NodeType::READ, Token()) {
+        for (Var * p : read_vars) {
+            m_read_vars.push_back(p);
+            m_children.push_back(p);
+        }
+    }
+
+Read::~Read() {}
+
+vector<Var *> Read::getReadVars() const {
+    return m_read_vars;
+}
+
+/*********************************************
+ * Write node
+*********************************************/
+
+Write::Write(AST * p_expr) :
+    AST(NodeType::WRITE, Token()), m_p_expr(p_expr) {
+        m_children.push_back(p_expr);
+    }
+
+Write::~Write() {}
+
+AST * Write::getExpr() const {
+    return m_p_expr;
+}
 
 } // namespace ESI

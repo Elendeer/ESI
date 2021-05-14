@@ -559,6 +559,8 @@ vector<AST *> Parser::statementList() {
 // statement : compound_statement
 //          | assignment_statement
 //          | procedure_call_statement
+//          | read_statement
+//          | write_statement
 //          | empty
 AST *Parser::statement() {
     AST *node = nullptr;
@@ -571,6 +573,12 @@ AST *Parser::statement() {
     }
     else if (m_current_token.getType() == TokenType::ID) {
         node = assignmentStatement();
+    }
+    else if (m_current_token.getType() == TokenType::READ) {
+        node = readStatement();
+    }
+    else if (m_current_token.getType() == TokenType::WRITE) {
+        node = writeStatement();
     }
     else {
         node = empty();
@@ -887,6 +895,67 @@ AST * Parser::functionCall() {
                 delete p;
                 p = nullptr;
             }
+        }
+
+        throw error;
+    }
+}
+
+// read_statement :
+//     READ LPAREN ID (COMMA ID)* RPAREN
+AST * Parser::readStatement() {
+    eat(TokenType::READ);
+    eat(TokenType::LPAREN);
+
+    vector<Var *> read_vars;
+    Token id_token = m_current_token;
+    eat(TokenType::ID);
+
+    try {
+        read_vars.push_back(new Var(id_token));
+
+        while (m_current_token.getType() == TokenType::COMMA) {
+            eat(TokenType::COMMA);
+            Token id_token = m_current_token;
+            eat(TokenType::ID);
+            read_vars.push_back(new Var(id_token));
+        }
+
+        eat(TokenType::RPAREN);
+
+        return new Read(read_vars);
+    }
+    catch (ParserError & error) {
+        for (Var * p : read_vars) {
+            if (p != nullptr) {
+                delete p;
+                p = nullptr;
+            }
+        } // for
+
+        throw error;
+    } // catch
+
+}
+
+// write_statement :
+//     WRITE LPAREN expr RPAREN
+AST * Parser::writeStatement() {
+    eat(TokenType::WRITE);
+    eat(TokenType::LPAREN);
+
+    AST * p_expr = nullptr;
+
+    try {
+        p_expr = expr();
+        eat(TokenType::RPAREN);
+
+        return new Write(p_expr);
+    }
+    catch (ParserError & error) {
+        if (p_expr != nullptr) {
+            delete p_expr;
+            p_expr = nullptr;
         }
 
         throw error;

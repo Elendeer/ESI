@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-08 17:46:28
+ * @LastEditTime : 2021-05-14 09:31:09
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -49,7 +49,10 @@ enum class NodeType {
     BOOLEAN,
 
     FUNCTION_DECL,
-    FUNCTION_CALL
+    FUNCTION_CALL,
+
+    READ,
+    WRITE
 };
 
 
@@ -396,6 +399,37 @@ public:
     void setFunctionSymbol(const FunctionSymbol & function_symbol);
 };
 
+
+// Node of read statement.
+// No token inside.
+class Read : public AST {
+private:
+    std::vector<Var * > m_read_vars;
+
+public:
+    Read(
+        std::vector<Var *> & read_vars);
+
+    virtual ~Read();
+
+    std::vector<Var *> getReadVars() const;
+};
+
+// Node of write statement.
+// No token inside.
+class Write : public AST {
+private:
+    // Pointing to the expression which going to be write.
+    AST * m_p_expr;
+
+public:
+    Write(
+        AST * p_expr);
+
+    virtual ~Write();
+
+    AST * getExpr() const;
+};
 } // namespace ESI
 
 #endif

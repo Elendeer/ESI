@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:41:25
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-07 20:46:43
+ * @LastEditTime : 2021-05-14 08:43:49
 * @Description  :
 *********************************************/
 
@@ -36,6 +36,8 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     {TokenType::PROCEDURE, "PROCEDURE"},
     {TokenType::FUNCTION, "FUNCTION"},
     {TokenType::VAR, "VAR"},
+    {TokenType::READ, "READ"},
+    {TokenType::WRITE, "WRITE"},
 
     // End of reserved keywords
     {TokenType::END, "END"},
