@@ -577,7 +577,8 @@ AST *Parser::statement() {
     else if (m_current_token.getType() == TokenType::READ) {
         node = readStatement();
     }
-    else if (m_current_token.getType() == TokenType::WRITE) {
+    else if (m_current_token.getType() == TokenType::WRITE
+            || m_current_token.getType() == TokenType::WRITELN) {
         node = writeStatement();
     }
     else {
@@ -939,9 +940,17 @@ AST * Parser::readStatement() {
 }
 
 // write_statement :
-//     WRITE LPAREN expr RPAREN
+//     (WRITE | WRITELN) LPAREN expr RPAREN
 AST * Parser::writeStatement() {
-    eat(TokenType::WRITE);
+    bool is_writeln = false;
+    if (m_current_token.getType() == TokenType::WRITE) {
+        eat(TokenType::WRITE);
+    }
+    else {
+        eat(TokenType::WRITELN);
+        is_writeln = true;
+    }
+
     eat(TokenType::LPAREN);
 
     AST * p_expr = nullptr;
@@ -950,7 +959,7 @@ AST * Parser::writeStatement() {
         p_expr = expr();
         eat(TokenType::RPAREN);
 
-        return new Write(p_expr);
+        return new Write(p_expr, is_writeln);
     }
     catch (ParserError & error) {
         if (p_expr != nullptr) {

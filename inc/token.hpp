@@ -45,6 +45,7 @@ enum class TokenType {
 
     READ,
     WRITE,
+    WRITELN,
 
     // End of reserved keywords
     END,

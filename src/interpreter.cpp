@@ -421,7 +421,12 @@ Any Interpreter::visitWrite(AST * node) {
     AST * p_expr_node = p_write_node->getExpr();
     Any expr_value = visit(p_expr_node);
 
-    cout << expr_value;
+    if (p_write_node->isWriteln()) {
+        cout << expr_value << endl;
+    }
+    else {
+        cout << expr_value;
+    }
 
     return Any();
 }

@@ -22,98 +22,86 @@ until the project is more complete before writing more details.
 
 ## What's been implement
 
-> You can cheack the `./test.pas` file to see my newest test, normally it
-> shows all features I have implement.
+> Normally you can cheack the `./test.pas` file to see my newest test.
 
-An Example (from `./test.pas`):
+### Program
+
+A ESI program looks like this:
+
+```note
+program <program name>;
+[variable declarations]
+[procedure declarations] || [function declarations]
+begin
+    [statement list]
+end.
+```
+
+### Variable declarations
+
+Variable declarations start with a key word `var`.
+
+```note
+var
+    <variable name> : <variable type>;
+```
+
+These types are supported now:
+
+| Build-in Type |
+| --- |
+| integer |
+| real |
+| boolean |
+| string |
+
+### Procedure
+
+A ESI procedure is just like a pascal procedure.
+
+```note
+procedure <procedure name>[(parameter list)];
+[variable declarations]
+[procedure declarations] || [function declarations]
+begin
+    [statement list]
+end;
+```
+
+A procedure don't have a return value.
+Nested declarations are supported too.
+
+### Function
+
+A ESI funciton is just like a pascal one.
+
+```note
+function <function name>[(parameter list)];
+[variable declarations]
+[procedure declarations] || [function declarations]
+begin
+    [statement list]
+end;
+```
+
+A funciton will return a variable, the name of this variable is
+the same with funciton name.
+Nested declarations are supported too.
+
+### I/O
+
+You can use `read`, `write` and `writeln` to input/output values.
+For example:
 
 ```pascal
-{ comment supported. }
-{ program name : test }
-{ key words should be all upper case or lower case. }
-PROGRAM test;
-
-{ variable declaration supported. }
-VAR
-{ have only two build-in types so far. }
-a : INTEGER;
-b : REAL;
-
-{ procedure declaration supported. }
-PROCEDURE P1;
-VAR
-    a : INTEGER;
-BEGIN
-    a := 666;
-END;
-
-{ procedure declaration with parameters supported. }
-PROCEDURE P2(a, b : REAL; c : INTEGER);
-VAR
-    a : INTEGER; {duplicat declaration here, will throw a semantic error.}
-    {that is, name solution and nested scope supported. }
-BEGIN
-END;
-
-BEGIN
-
-{ arithmetic expression & assign statement supported. }
-a := (1 + 2) * 3;
-b := a + 0.25;
-
-END.
-
-{ semantic analysis is more complete then interpreting so far. }
+write('input a: ');     {print string 'input a :'}
+read(a);                {input variable 'a'}
+writeln(a);             {print the value of 'a' and open a new line}
+write(a + 5);           {print the value of 'a' + 5}
 ```
 
-If you remove the duplicate declaration of variable `a` in procedure `P2`
-then run `./ESI ./test.pas` in your shell, you will get output like:
-
-```shell
-Semantic analyzing ...
-ENTER global scope
-ENTER scope: P1
-scope name: P1
-level: 2
-enclosing scope: global
-===== ===== ===== =====
-[a] : Symbol<type : INTEGER, name : a>
------ ----- ----- -----
-LEAVE scope: P1
-ENTER scope: P2
-scope name: P2
-level: 2
-enclosing scope: global
-===== ===== ===== =====
-[c] : variable-symbol<type : INTEGER, name : c>
-[a] : variable-symbol<type : REAL, name : a>
-[b] : variable-symbol<type : REAL, name : b>
------ ----- ----- -----
-LEAVE scope: P2
-scope name: global
-level: 1
-enclosing scope: NONE
-===== ===== ===== =====
-[b] : Symbol<type : REAL, name : b>
-[a] : Symbol<type : INTEGER, name : a>
------ ----- ----- -----
-LEAVE global scope
-scope name: build-in tyep
-level: -1
-enclosing scope: NONE
-===== ===== ===== =====
-[REAL] : Symbol<type : REAL, name : REAL>
-[INTEGER] : Symbol<type : INTEGER, name : INTEGER>
------ ----- ----- -----
-Semantic analysis finished.
-
-Interpreting ...
-===== global scope =====
-Variable        Value
-a       9
-b       9.25
-===== ===== =====
-```
+Notice, `write` will not print a newline char by default, if you want to
+do that, please use `writeln()`.
 
 ## Build
 
@@ -148,7 +136,6 @@ Example:
 You will see output in your shell.
 
 Please use `\` as path separator in windows.
-
 
 ## Licence
 

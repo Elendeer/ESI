@@ -421,14 +421,18 @@ class Write : public AST {
 private:
     // Pointing to the expression which going to be write.
     AST * m_p_expr;
+    bool m_is_writeln;
 
 public:
     Write(
-        AST * p_expr);
+        AST * p_expr,
+        bool is_writeln);
 
     virtual ~Write();
 
     AST * getExpr() const;
+
+    bool isWriteln() const;
 };
 } // namespace ESI
 

@@ -2,13 +2,17 @@
 program test;
 
 var
-    result : integer;
+    a : integer;
+
+procedure p1;
 
 begin
+    writeln('p1: Hello word!');
+end;
 
-    result := 1 + 1;
-    write(result + 7);
-    read(result);
-    write(result);
+begin
+    writeln('Hello word!');
+    p1();
+
 
 end.

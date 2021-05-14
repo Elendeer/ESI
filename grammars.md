@@ -74,6 +74,6 @@ read_statement :
     READ LPAREN ID (COMMA ID)* RPAREN
 
 write_statement :
-    WRITE LPAREN expr RPAREN
+    (WRITE | WRITELN) LPAREN expr RPAREN
 
 ```

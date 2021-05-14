@@ -38,6 +38,7 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     {TokenType::VAR, "VAR"},
     {TokenType::READ, "READ"},
     {TokenType::WRITE, "WRITE"},
+    {TokenType::WRITELN, "WRITELN"},
 
     // End of reserved keywords
     {TokenType::END, "END"},

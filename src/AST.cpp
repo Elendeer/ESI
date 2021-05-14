@@ -505,15 +505,20 @@ vector<Var *> Read::getReadVars() const {
  * Write node
 *********************************************/
 
-Write::Write(AST * p_expr) :
+Write::Write(AST * p_expr, bool is_writeln) :
     AST(NodeType::WRITE, Token()), m_p_expr(p_expr) {
         m_children.push_back(p_expr);
+        m_is_writeln = is_writeln;
     }
 
 Write::~Write() {}
 
 AST * Write::getExpr() const {
     return m_p_expr;
+}
+
+bool Write::isWriteln() const {
+    return m_is_writeln;
 }
 
 } // namespace ESI
