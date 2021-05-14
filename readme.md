@@ -37,7 +37,7 @@ begin
 end.
 ```
 
-### Variable declarations
+### Variable
 
 Variable declarations start with a key word `var`.
 
@@ -54,6 +54,8 @@ These types are supported now:
 | real |
 | boolean |
 | string |
+
+To use a variable, just do it in a pascal's (or any language's) way.
 
 ### Procedure
 

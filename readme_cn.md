@@ -26,98 +26,85 @@
 
 ## 已经实现的功能
 
-> 一般来讲`./test.pas`文件是我最新的测试文件，你可以通过查看它来获知我目前已经
-> 实现的所有功能。
+> 一般你可以在根目录的`./test.pas`里找到我最新的测试。
 
-现下不妨使用`./test.pas`文件举例：
+### 程序
+
+一个ESI程序一般长这样：
+
+```note
+program <program name>;
+[variable declarations]
+[procedure declarations] || [function declarations]
+begin
+    [statement list]
+end.
+```
+
+### 变量
+
+变量定义以一个关键字`var`开始。
+
+```note
+var
+    <variable name> : <variable type>;
+```
+
+这些类型已经支持:
+
+| Build-in Type |
+| --- |
+| integer |
+| real |
+| boolean |
+| string |
+
+变量的使用和pascal或其他语言并无不同。
+
+### 过程
+
+一个ESI过程和pascal过程相似。
+
+```note
+procedure <procedure name>[(parameter list)];
+[variable declarations]
+[procedure declarations] || [function declarations]
+begin
+    [statement list]
+end;
+```
+
+过程没有返回值。支持嵌套定义。
+
+### 函数
+
+一个ESI函数和pascal函数类似。
+
+```note
+function <function name>[(parameter list)];
+[variable declarations]
+[procedure declarations] || [function declarations]
+begin
+    [statement list]
+end;
+```
+
+函数将返回一个值，这个返回值在函数内的变量名默认是函数名。
+支持嵌套定义。
+
+### I/O
+
+你可以使用`read`，`write`和`writeln`来输入输出变量和值。
+例如：
 
 ```pascal
-{ 支持注释 }
-{ program name 即程序名为 test }
-{ 关键字需要全大写 }
-PROGRAM test;
-
-{ 支持变量声明 }
-VAR
-{ 目前只有两个内置类型 }
-a : INTEGER;
-b : REAL;
-
-{ 支持procedure（过程）声明 }
-PROCEDURE P1;
-VAR
-    a : INTEGER;
-BEGIN
-    a := 666;
-END;
-
-{ 支持带参的procedure声明 }
-PROCEDURE P2(a, b : REAL; c : INTEGER);
-VAR
-    a : INTEGER; {与参数表的a同名，重复声明，将会抛出一个语义错误 }
-    {即，支持变量名称解析和嵌套作用域}
-BEGIN
-END;
-
-BEGIN
-
-{ 支持数学表达式和赋值语句 }
-a := (1 + 2) * 3;
-b := a + 0.25;
-
-END.
-
-{ 目前，语义分析的部分比解释的部分更完善，因此下文的输出主要是语义分析 }
+write('input a: ');     {print string 'input a :'}
+read(a);                {input variable 'a'}
+writeln(a);             {print the value of 'a' and open a new line}
+write(a + 5);           {print the value of 'a' + 5}
 ```
 
-如果你去除重复定义变量`a`的语句，并在shell中运行`./ESI ./test.pas`，
-你将会得到如下输出：
-
-```shell
-Semantic analyzing ...
-ENTER global scope
-ENTER scope: P1
-scope name: P1
-level: 2
-enclosing scope: global
-===== ===== ===== =====
-[a] : Symbol<type : INTEGER, name : a>
------ ----- ----- -----
-LEAVE scope: P1
-ENTER scope: P2
-scope name: P2
-level: 2
-enclosing scope: global
-===== ===== ===== =====
-[c] : variable-symbol<type : INTEGER, name : c>
-[a] : variable-symbol<type : REAL, name : a>
-[b] : variable-symbol<type : REAL, name : b>
------ ----- ----- -----
-LEAVE scope: P2
-scope name: global
-level: 1
-enclosing scope: NONE
-===== ===== ===== =====
-[b] : Symbol<type : REAL, name : b>
-[a] : Symbol<type : INTEGER, name : a>
------ ----- ----- -----
-LEAVE global scope
-scope name: build-in tyep
-level: -1
-enclosing scope: NONE
-===== ===== ===== =====
-[REAL] : Symbol<type : REAL, name : REAL>
-[INTEGER] : Symbol<type : INTEGER, name : INTEGER>
------ ----- ----- -----
-Semantic analysis finished.
-
-Interpreting ...
-===== global scope =====
-Variable        Value
-a       9
-b       9.25
-===== ===== =====
-```
+注意，`write` 默认输出后不换行，如果你希望输出后换行，请使用`writeln()`。
 
 ## 如何构建
 
