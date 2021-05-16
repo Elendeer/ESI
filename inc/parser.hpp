@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 21:35:21
+ * @LastEditTime : 2021-05-16 10:31:11
  * @Description  :
 *********************************************/
 
@@ -65,6 +65,7 @@ private:
     AST * writeStatement();
 
     AST * relationalExpr();
+    AST * logicalExpr();
 
 public:
     // Might throw exception when init.

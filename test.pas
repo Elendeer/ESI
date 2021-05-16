@@ -13,7 +13,7 @@ end;
 
 begin
     writeln('Hello word!');
-    b := 1 = 1;
+    b := not true xor (1 <= 2);
 
 
 end.

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-02-25 12:08:08
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 21:52:04
+ * @LastEditTime : 2021-05-16 12:24:57
  * @Description  :
 *********************************************/
 #include "../inc/any.hpp"
@@ -377,6 +377,18 @@ bool Any::operator == (Any var) const {
 
 bool Any::operator != (Any var) const {
     return !operator ==(var);
+}
+
+bool Any::operator && (Any var) const {
+    return m_bool_value && var.m_bool_value;
+}
+
+bool Any::operator || (Any var) const {
+    return m_bool_value || var.m_bool_value;
+}
+
+bool Any::operator ! () const {
+    return !m_bool_value;
 }
 
 // ===== =====

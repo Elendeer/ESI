@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:41:25
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 20:40:37
+ * @LastEditTime : 2021-05-16 10:30:08
 * @Description  :
 *********************************************/
 
@@ -40,6 +40,12 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     {TokenType::WRITE, "WRITE"},
     {TokenType::WRITELN, "WRITELN"},
 
+    // logical operators are also reserved keywords
+    {TokenType::AND, "AND"},
+    {TokenType::OR, "OR"},
+    {TokenType::NOT, "NOT"},
+    {TokenType::XOR, "XOR"},
+
     // End of reserved keywords
     {TokenType::END, "END"},
 
@@ -72,6 +78,7 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     {TokenType::LESS_THAN_OR_EQUAL_TO, "LESS_THAN_OR_EQUAL_TO"},
     {TokenType::GREATER_THAN, "GREATER_THAN"},
     {TokenType::GREATER_THAN_OR_EQUAL_TO, "GREATER_THAN_OR_EQUAL_TO"}
+
 };
 
 /*********************************************

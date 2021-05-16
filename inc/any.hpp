@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-02-25 11:51:26
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 21:44:07
+ * @LastEditTime : 2021-05-16 12:24:02
  * @Description  :
 *********************************************/
 
@@ -108,6 +108,10 @@ public:
 
     bool operator == (Any var) const ;
     bool operator != (Any var) const ;
+
+    bool operator && (Any var) const ;
+    bool operator || (Any var) const ;
+    bool operator ! () const ;
 
     operator bool();
     operator std::string();

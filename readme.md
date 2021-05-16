@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 22:18:11
+ * @LastEditTime : 2021-05-16 20:41:11
  * @Description  :
 -->
 
@@ -119,24 +119,33 @@ Those arithmetical operators are available:
 
 | sign name | operator |
 | --- | --- |
-| positive | + |
-| negative | - |
-| multiple | * |
-| integer division | div |
-| real division | / |
-| plus | + |
-| minus | - |
+| positive | `+` |
+| negative | `-` |
+| multiple | `*` |
+| integer division | `div` |
+| real division | `/` |
+| plus | `+` |
+| minus | `-` |
 
 Those relational operators are available:
 
 | sign name | operator |
 | --- | --- |
-| equal | = |
-| not equal | <> |
-| less than | < |
-| less than or equal to | <= |
-| greater than | > |
-| greater than or equal to | >= |
+| equal | `=` |
+| not equal | `<>` |
+| less than | `<` |
+| less than or equal to | `<=` |
+| greater than | `>` |
+| greater than or equal to | `>=` |
+
+Those logical operators are available:
+
+| sign name | operator |
+| --- | --- |
+| not | `not` |
+| and | `and` |
+| or | `or` |
+| xor | `xor` |
 
 Basically the priority of these operators mentioned above
 are decrease progressively. Some of those have the same priority.

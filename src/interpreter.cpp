@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 21:42:23
+ * @LastEditTime : 2021-05-16 17:49:54
  * @Description  :
  *********************************************/
 
@@ -110,11 +110,14 @@ Any Interpreter::visitUnaryOp(AST *node) {
     TokenType type = p_unaryop_node->getToken().getType();
     if (type == TokenType::PLUS) {
         return +visit(p_unaryop_node->getExpr());
-
-    } else if (type == TokenType::MINUS) {
+    }
+    else if (type == TokenType::MINUS) {
         return -visit(p_unaryop_node->getExpr());
-
-    } else {
+    }
+    else if (type == TokenType::NOT) {
+        return !visit(p_unaryop_node->getExpr());
+    }
+    else {
         // nothing else
         // TODO: exception
         return Any();
@@ -158,6 +161,21 @@ Any Interpreter::visitBinOp(AST *node) {
     }
     else if (type == TokenType::GREATER_THAN_OR_EQUAL_TO) {
         return visit(bin_node->getLeft()) >= visit(bin_node->getRight());
+    }
+    // logical operators
+    else if (type == TokenType::AND) {
+        return visit(bin_node->getLeft())
+                && visit(bin_node->getRight());
+    }
+    else if (type == TokenType::OR) {
+        return visit(bin_node->getLeft())
+                || visit(bin_node->getRight());
+    }
+    else if (type == TokenType::XOR) {
+        Any left = visit(bin_node->getLeft());
+        Any right = visit(bin_node->getRight());
+        if (left == true && right == true) return false;
+        return  left || right;
     }
     else {
         error("Unknow binary operator");
@@ -342,8 +360,9 @@ Any Interpreter::visitString(AST * node) {
 
 Any Interpreter::visitBoolean(AST * node) {
     Boolean * boolean_node = dynamic_cast<Boolean * >(node);
-
-    return boolean_node -> getToken().getVal();
+    TokenType type = boolean_node->getToken().getType();
+    if (type == TokenType::TRUE) return true;
+    return false;
 }
 
 Any Interpreter::visitFunctionDecl(AST * node) {

@@ -330,14 +330,6 @@ Token Lexer::getNextToken() {
                     m_line_no,
                     m_column);
         }
-        else if (m_current_char == '<') {
-            advance();
-            return Token(
-                    TokenType::LESS_THAN,
-                    (string)"<",
-                    m_line_no,
-                    m_column);
-        }
         else if (m_current_char == '<' && peek() == '=') {
             advance();
             advance();
@@ -347,11 +339,11 @@ Token Lexer::getNextToken() {
                     m_line_no,
                     m_column);
         }
-        else if (m_current_char == '>') {
+        else if (m_current_char == '<') {
             advance();
             return Token(
-                    TokenType::GREATER_THAN,
-                    (string)">",
+                    TokenType::LESS_THAN,
+                    (string)"<",
                     m_line_no,
                     m_column);
         }
@@ -361,6 +353,14 @@ Token Lexer::getNextToken() {
             return Token(
                     TokenType::GREATER_THAN_OR_EQUAL_TO,
                     (string)">=",
+                    m_line_no,
+                    m_column);
+        }
+        else if (m_current_char == '>') {
+            advance();
+            return Token(
+                    TokenType::GREATER_THAN,
+                    (string)">",
                     m_line_no,
                     m_column);
         }

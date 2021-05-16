@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 20:39:55
+ * @LastEditTime : 2021-05-16 10:29:33
 * @Description  :
 *********************************************/
 
@@ -47,6 +47,12 @@ enum class TokenType {
     WRITE,
     WRITELN,
 
+    // logical operators are also reserved keywords
+    AND,
+    OR,
+    NOT,
+    XOR,
+
     // End of reserved keywords
     END,
 
@@ -78,7 +84,7 @@ enum class TokenType {
     LESS_THAN,
     LESS_THAN_OR_EQUAL_TO,
     GREATER_THAN,
-    GREATER_THAN_OR_EQUAL_TO,
+    GREATER_THAN_OR_EQUAL_TO
 };
 
 /*********************************************
