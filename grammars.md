@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-11-14 09:06:48
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 20:20:14
+ * @LastEditTime : 2021-05-17 21:33:52
  * @Description  :
 -->
 
@@ -37,6 +37,7 @@ statement : compound_statement
          | read_statement
          | write_statement
          | if_statement
+         | while_statement
          | empty
 
 assignment_statement : variable ASSIGN logical_expr
@@ -90,4 +91,7 @@ if_statement :
     (statement | compound_statement)
     (ELSE ((statement | block) | if_statement))+
 
+while_statement :
+    WHILE LPAREN logical_xepr RPAREN DO
+    (statement | compound_statement)
 ```

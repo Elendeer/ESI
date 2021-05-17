@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 20:55:55
+ * @LastEditTime : 2021-05-17 21:57:23
  * @Description  :
 -->
 
@@ -127,15 +127,48 @@ if (a = 1) then
 ```pascal
 if (a = 1) then
     writeln('input 1')
-else if (a = 3) then
-    writeln('input 3')
+else if (a <= 3 and a >= 0) then
+    begin
+        writeln('input num belong [0, 3]');
+        writeln('compound');
+    end
 else
     writeln('input else');
 ```
 
 对于上述代码，如果`a`等于1为真，程序将打印字符串`input 1`。
-如果`a`等于3为真，程序将打印字符串`input 3`。
+如果`a <= 3`且`a >= 0`为真，程序将打印字符串`input num belong [0, 3]`
+和`compound`。你可以看到，你可以使用`begin`和`end`在if语句
+的一个分支中包含多条语句。
 如果都为假，程序将打印字符串`input else`。
+
+### While Statement
+
+While语句用于循环。你可以按如下使用它：
+
+```pascal
+while (a >= 0) do writeln(a);
+```
+
+若`a >= 0`成立，上述程序将持续打印变量`a`的值。
+这样的循环无法跳出，因此一般循环内有更多的语句。
+
+```pascal
+a := 2;
+while (a >= 0) do
+begin
+    writeln(a);
+    a := a - 1;
+end;
+```
+
+若运行上述代码，将得到如下输出：
+
+```note
+2
+1
+0
+```
 
 ### 其他
 

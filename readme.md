@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 20:52:26
+ * @LastEditTime : 2021-05-17 21:54:06
  * @Description  :
 -->
 
@@ -131,19 +131,52 @@ onto the screen.
 ```pascal
 if (a = 1) then
     writeln('input 1')
-else if (a = 3) then
-    writeln('input 3')
+else if (a <= 3 and a >= 0) then
+    begin
+        writeln('input num belong [0, 3]');
+        writeln('compound');
+    end
 else
     writeln('input else');
 ```
 
 For the code above, if `a` equal 1 is true, string `input 1` will be printed
 onto the screen.
-If `a` equal 3 is true, string `input 3` will be printed
-onto the screen.
+If `a <= 3 and a >= 0` is true, string `input num belong [0, 3]` and
+`compound` will be printed onto the screen. As you can see, a compound
+statement between `begin` and `end` can be nested in if statement.
 If they are not true, string `input else` will be printed
 onto the screen.
 
+### While Statement
+
+While statement is used to do a loop.
+You can use it like this:
+
+```pascal
+while (a >= 0) do writeln(a);
+```
+
+The program will keep print the value of a if `a >= 0` is true.
+You can't stop the while loop above, so we'd better not to write
+a program like that.
+
+```pascal
+a := 2;
+while (a >= 0) do
+begin
+    writeln(a);
+    a := a - 1;
+end;
+```
+
+If you run the code above, you will get output like:
+
+```note
+2
+1
+0
+```
 
 ### Others
 

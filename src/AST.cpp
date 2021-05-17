@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 20:16:48
+ * @LastEditTime : 2021-05-17 21:41:54
  * @Description  :
  *********************************************/
 
@@ -44,7 +44,8 @@ const unordered_map<NodeType, std::string> AST::map_node_type_string {
     {NodeType::READ, "READ"},
     {NodeType::WRITE, "WRITE"},
 
-    {NodeType::IF, "IF"}
+    {NodeType::IF, "IF"},
+    {NodeType::WHILE, "WHILE"}
 };
 
 /*********************************************
@@ -555,6 +556,26 @@ AST * If::getElse() const {
     return m_p_else;
 }
 
+/*********************************************
+ * If node
+*********************************************/
 
+While::While(AST * p_condition, AST * p_body):
+    AST(NodeType::WHILE, Token()),
+    m_p_condition(p_condition),
+    m_p_body(p_body) {
+        m_children.push_back(p_condition);
+        m_children.push_back(p_body);
+    }
+
+While::~While() {}
+
+AST * While::getCondition() const {
+    return m_p_condition;
+}
+
+AST * While::getBody() const {
+    return m_p_body;
+}
 
 } // namespace ESI

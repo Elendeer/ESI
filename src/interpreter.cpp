@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 20:40:43
+ * @LastEditTime : 2021-05-17 21:45:06
  * @Description  :
  *********************************************/
 
@@ -94,6 +94,9 @@ Any Interpreter::visit(AST *node) {
     }
     else if (node->getType() == NodeType::IF) {
         visitIf(node);
+    }
+    else if (node->getType() == NodeType::WHILE) {
+        visitWhile(node);
     }
     else {
         generic_visit(node);
@@ -484,6 +487,21 @@ Any Interpreter::visitIf(AST * node ) {
     }
     else if (p_else != nullptr) {
         visit(p_else);
+    }
+
+    return Any();
+}
+
+Any Interpreter::visitWhile(AST * node ) {
+    While * p_while_node = dynamic_cast<While * >(node);
+
+    AST * p_condition = p_while_node->getCondition();
+    AST * p_body = p_while_node->getBody();
+
+    bool flag = (bool)visit(p_condition);
+    while (flag) {
+        visit(p_body);
+        flag = (bool)visit(p_condition);
     }
 
     return Any();

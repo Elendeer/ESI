@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 20:22:05
+ * @LastEditTime : 2021-05-17 21:25:56
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -54,7 +54,8 @@ enum class NodeType {
     READ,
     WRITE,
 
-    IF
+    IF,
+    WHILE
 };
 
 
@@ -464,6 +465,21 @@ public:
     AST * getBody() const;
     // Return nullptr if do not have a eles.
     AST * getElse() const;
+};
+
+// Node of while statement.
+// No token inside.
+class While : public AST {
+private:
+    AST * m_p_condition;
+    AST * m_p_body;
+
+public:
+    While(AST * p_condition, AST * p_body);
+    virtual ~While();
+
+    AST * getCondition() const ;
+    AST * getBody() const ;
 };
 
 } // namespace ESI

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 20:33:41
+ * @LastEditTime : 2021-05-17 21:42:25
  * @Description  :
 *********************************************/
 //
@@ -131,6 +131,9 @@ Any SemanticAnalyzer::visit(AST *node) {
     }
     else if (node->getType() == NodeType::IF) {
         visitIf(node);
+    }
+    else if (node->getType() == NodeType::WHILE) {
+        visitWhile(node);
     }
     else {
         generic_visit(node);
@@ -648,6 +651,18 @@ Any SemanticAnalyzer::visitIf(AST * node ) {
     if (p_else != nullptr) {
         visit(p_else);
     }
+
+    return Any();
+}
+
+Any SemanticAnalyzer::visitWhile(AST * node ) {
+    While * p_if_node = dynamic_cast<While * >(node);
+
+    AST * p_condition = p_if_node->getCondition();
+    AST * p_body = p_if_node->getBody();
+
+    visit(p_condition);
+    visit(p_body);
 
     return Any();
 }

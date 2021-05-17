@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 19:35:44
+ * @LastEditTime : 2021-05-17 21:29:41
  * @Description  :
 *********************************************/
 
@@ -74,6 +74,7 @@ private:
     AST * logicalExpr();
 
     AST * ifStatement();
+    AST * whileStatement();
 
 public:
     // Might throw exception when init.

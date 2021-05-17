@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:41:25
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 18:02:56
+ * @LastEditTime : 2021-05-17 21:22:17
 * @Description  :
 *********************************************/
 
@@ -50,6 +50,10 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     {TokenType::IF, "IF"},
     {TokenType::THEN, "THEN"},
     {TokenType::ELSE, "ELSE"},
+
+    // while statement
+    {TokenType::WHILE, "WHILE"},
+    {TokenType::DO, "DO"},
 
     // End of reserved keywords
     {TokenType::END, "END"},

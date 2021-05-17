@@ -569,6 +569,9 @@ AST *Parser::statement() {
     else if (m_current_token.getType() == TokenType::IF) {
         node = ifStatement();
     }
+    else if (m_current_token.getType() == TokenType::WHILE) {
+        node = whileStatement();
+    }
     else {
         node = empty();
     }
@@ -1081,6 +1084,42 @@ AST * Parser::ifStatement() {
             p_else = nullptr;
         }
 
+        throw error;
+    }
+}
+
+// while_statement :
+//     WHILE LPAREN logical_xepr RPAREN DO
+//     (statement | compound_statement)
+AST * Parser::whileStatement() {
+    eat(TokenType::WHILE);
+    eat(TokenType::LPAREN);
+
+    AST * p_logical_expr = logicalExpr();
+    AST * p_body = nullptr;
+
+    try {
+        eat(TokenType::RPAREN);
+        eat(TokenType::DO);
+
+        if (m_current_token.getType() == TokenType::BEGIN) {
+            p_body = compoundStatement();
+        }
+        else {
+            p_body = statement();
+        }
+
+        return new While(p_logical_expr, p_body);
+    }
+    catch (ParserError & error) {
+        if (p_logical_expr != nullptr) {
+            delete p_logical_expr;
+            p_logical_expr = nullptr;
+        }
+        if (p_body != nullptr) {
+            delete p_body;
+            p_body = nullptr;
+        }
         throw error;
     }
 }

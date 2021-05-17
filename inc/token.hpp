@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 18:02:00
+ * @LastEditTime : 2021-05-17 21:21:53
 * @Description  :
 *********************************************/
 
@@ -57,6 +57,10 @@ enum class TokenType {
     IF,
     THEN,
     ELSE,
+
+    // while statement
+    WHILE,
+    DO,
 
     // End of reserved keywords
     END,

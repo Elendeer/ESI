@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:27:27
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 20:24:39
+ * @LastEditTime : 2021-05-17 21:40:01
  * @Description  :
 *********************************************/
 #ifndef INC_SYMBOL_TABLE_BUILDER_HPP_
@@ -61,6 +61,7 @@ private :
     Any visitWrite(AST * node);
 
     Any visitIf(AST * node);
+    Any visitWhile(AST * node);
 
 public :
     SemanticAnalyzer(AST * root, bool if_print);
