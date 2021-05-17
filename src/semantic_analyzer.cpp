@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 23:32:20
+ * @LastEditTime : 2021-05-17 23:49:08
  * @Description  :
 *********************************************/
 //
@@ -539,6 +539,10 @@ Any SemanticAnalyzer::visitFunctionDecl(AST * node) {
         m_p_current_scope->define(var_symbol);
         func_symbol->pushParameter(var_symbol);
     }
+
+    // Define function itself inside this scope for
+    // recursive function call.
+    m_p_current_scope->define(*func_symbol);
 
     visitBlock(function_decl_node->getBlock());
 

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 21:54:06
+ * @LastEditTime : 2021-05-18 00:08:33
  * @Description  :
 -->
 
@@ -81,6 +81,33 @@ end;
 A procedure don't have a return value.
 Nested declarations are supported too.
 
+Recuresive call of procedrue is available too. When you run
+the code below:
+
+```pascal
+program test;
+
+procedure p1(n : integer);
+begin
+    writeln(n);
+
+    if (n > 0) then
+        p1(n - 1);
+end;
+
+begin
+    writeln(p1(3));
+end.
+```
+
+you will get output:
+
+```note
+3
+2
+1
+```
+
 ### Function
 
 A ESI funciton is just like a pascal one.
@@ -97,6 +124,24 @@ end;
 A funciton will return a variable, the name of this variable is
 the same with funciton name.
 Nested declarations are supported too.
+
+Recuresive call of function is available too. When you run
+the code below, you will get output `8`.
+
+```pascal
+program test;
+
+function fibonacci(n : integer) : integer;
+begin
+    if (n = 0) then fibonacci := 0
+    else if (n = 1) then fibonacci := 1
+    else fibonacci := fibonacci(n - 1) + fibonacci(n - 2);
+end;
+
+begin
+    writeln(fibonacci(6));
+end.
+```
 
 ### I/O
 

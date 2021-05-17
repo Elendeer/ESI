@@ -3,11 +3,12 @@ program test;
 
 var
     a : integer;
-    b : boolean;
 
-function func : integer;
+function fibonacci(n : integer) : integer;
 begin
-    func := 1;
+    if (n = 0) then fibonacci := 0
+    else if (n = 1) then fibonacci := 1
+    else fibonacci := fibonacci(n - 1) + fibonacci(n - 2);
 end;
 
 procedure p1(n : integer);
@@ -19,6 +20,5 @@ begin
 end;
 
 begin
-
-    p1(3);
+    writeln(fibonacci(6));
 end.

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 21:58:32
+ * @LastEditTime : 2021-05-18 00:09:57
  * @Description  :
 -->
 
@@ -80,6 +80,32 @@ end;
 
 过程没有返回值。支持嵌套定义。
 
+支持递归调用过程。当你运行下面的代码：
+
+```pascal
+program test;
+
+procedure p1(n : integer);
+begin
+    writeln(n);
+
+    if (n > 0) then
+        p1(n - 1);
+end;
+
+begin
+    writeln(p1(3));
+end.
+```
+
+你将得到下列输出：
+
+```note
+3
+2
+1
+```
+
 ### 函数
 
 一个ESI函数和pascal函数类似。
@@ -95,6 +121,23 @@ end;
 
 函数将返回一个值，这个返回值在函数内的变量名默认是函数名。
 支持嵌套定义。
+
+支持递归函数调用。当你运行下面运算斐波那契数列的代码，你将得到输出：`8`。
+
+```pascal
+program test;
+
+function fibonacci(n : integer) : integer;
+begin
+    if (n = 0) then fibonacci := 0
+    else if (n = 1) then fibonacci := 1
+    else fibonacci := fibonacci(n - 1) + fibonacci(n - 2);
+end;
+
+begin
+    writeln(fibonacci(6));
+end.
+```
 
 ### I/O
 
