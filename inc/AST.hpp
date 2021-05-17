@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 09:31:09
+ * @LastEditTime : 2021-05-17 20:22:05
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -52,7 +52,9 @@ enum class NodeType {
     FUNCTION_CALL,
 
     READ,
-    WRITE
+    WRITE,
+
+    IF
 };
 
 
@@ -434,6 +436,36 @@ public:
 
     bool isWriteln() const;
 };
+
+// Node of if statement.
+// No token inside.
+class If : public AST {
+private:
+    // The condition in if.
+    AST * m_p_condition;
+    // Code body of if statement, may be a compound statement
+    // or a single statement.
+    AST * m_p_body;
+    // Pointing to next If node if still have a else,
+    // store nullptr if not.
+    AST * m_p_else;
+
+public:
+    If(
+        AST * p_condition,
+        AST * p_body,
+        AST * p_else);
+
+    virtual ~If();
+
+    // Return the pointer pointing to the condition expression node.
+    AST * getCondition() const;
+    // Return a pointer pointing to code body of the if.
+    AST * getBody() const;
+    // Return nullptr if do not have a eles.
+    AST * getElse() const;
+};
+
 } // namespace ESI
 
 #endif

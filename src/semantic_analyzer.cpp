@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-16 11:56:29
+ * @LastEditTime : 2021-05-17 20:33:41
  * @Description  :
 *********************************************/
 //
@@ -128,6 +128,9 @@ Any SemanticAnalyzer::visit(AST *node) {
     }
     else if (node->getType() == NodeType::WRITE) {
         visitWrite(node);
+    }
+    else if (node->getType() == NodeType::IF) {
+        visitIf(node);
     }
     else {
         generic_visit(node);
@@ -629,6 +632,22 @@ Any SemanticAnalyzer::visitWrite(AST * node ) {
 
     AST * p_expr = p_write_node->getExpr();
     visit(p_expr);
+
+    return Any();
+}
+
+Any SemanticAnalyzer::visitIf(AST * node ) {
+    If * p_if_node = dynamic_cast<If * >(node);
+
+    AST * p_condition = p_if_node->getCondition();
+    AST * p_body = p_if_node->getBody();
+    AST * p_else = p_if_node->getElse();
+
+    visit(p_condition);
+    visit(p_body);
+    if (p_else != nullptr) {
+        visit(p_else);
+    }
 
     return Any();
 }

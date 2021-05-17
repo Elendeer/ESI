@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-16 10:29:33
+ * @LastEditTime : 2021-05-17 18:02:00
 * @Description  :
 *********************************************/
 
@@ -52,6 +52,11 @@ enum class TokenType {
     OR,
     NOT,
     XOR,
+
+    // if statement
+    IF,
+    THEN,
+    ELSE,
 
     // End of reserved keywords
     END,

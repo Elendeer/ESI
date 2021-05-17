@@ -13,7 +13,14 @@ end;
 
 begin
     writeln('Hello word!');
-    b := not true xor (1 <= 2);
+    read(a);
+
+    if (a = 1) then
+        writeln('input 1')
+    else if (a = 3) then
+        writeln('input 3')
+    else
+        writeln('input else');
 
 
 end.

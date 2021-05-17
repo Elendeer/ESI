@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-14 09:39:52
+ * @LastEditTime : 2021-05-17 20:16:48
  * @Description  :
  *********************************************/
 
@@ -42,7 +42,9 @@ const unordered_map<NodeType, std::string> AST::map_node_type_string {
     {NodeType::FUNCTION_CALL, "FUNCTION_CALL"},
 
     {NodeType::READ, "READ"},
-    {NodeType::WRITE, "WRITE"}
+    {NodeType::WRITE, "WRITE"},
+
+    {NodeType::IF, "IF"}
 };
 
 /*********************************************
@@ -520,5 +522,39 @@ AST * Write::getExpr() const {
 bool Write::isWriteln() const {
     return m_is_writeln;
 }
+
+/*********************************************
+ * If node
+*********************************************/
+
+If::If(
+        AST * p_condition,
+        AST * p_body,
+        AST * p_else) :
+            AST(NodeType::IF, Token()),
+            m_p_condition(p_condition),
+            m_p_body(p_body),
+            m_p_else(p_else) {
+                m_children.push_back(p_condition);
+                m_children.push_back(p_body);
+
+                if (p_else != nullptr)
+                    m_children.push_back(p_else);
+            }
+If::~If() {}
+
+AST * If::getCondition() const {
+    return m_p_condition;
+}
+
+AST * If::getBody() const {
+    return m_p_body;
+}
+
+AST * If::getElse() const {
+    return m_p_else;
+}
+
+
 
 } // namespace ESI

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-11-14 09:06:48
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-16 11:00:41
+ * @LastEditTime : 2021-05-17 20:20:14
  * @Description  :
 -->
 
@@ -36,6 +36,7 @@ statement : compound_statement
          | procedure_call_statement
          | read_statement
          | write_statement
+         | if_statement
          | empty
 
 assignment_statement : variable ASSIGN logical_expr
@@ -85,7 +86,8 @@ logical_expr :
     relational_expr ((AND | OR | XOR) relational_expr)*
 
 if_statement :
-    IF LPAREN logical_expr RPAREN THEN (statement | block)
+    IF LPAREN logical_expr RPAREN THEN
+    (statement | compound_statement)
     (ELSE ((statement | block) | if_statement))+
 
 ```

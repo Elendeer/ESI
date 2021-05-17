@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:33:54
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-16 17:49:54
+ * @LastEditTime : 2021-05-17 20:40:43
  * @Description  :
  *********************************************/
 
@@ -91,6 +91,9 @@ Any Interpreter::visit(AST *node) {
     }
     else if (node->getType() == NodeType::WRITE) {
         return visitWrite(node);
+    }
+    else if (node->getType() == NodeType::IF) {
+        visitIf(node);
     }
     else {
         generic_visit(node);
@@ -463,6 +466,24 @@ Any Interpreter::visitWrite(AST * node) {
     }
     else {
         cout << expr_value;
+    }
+
+    return Any();
+}
+
+Any Interpreter::visitIf(AST * node ) {
+    If * p_if_node = dynamic_cast<If * >(node);
+
+    AST * p_condition = p_if_node->getCondition();
+    AST * p_body = p_if_node->getBody();
+    AST * p_else = p_if_node->getElse();
+
+    bool flag = (bool)visit(p_condition);
+    if (flag) {
+        visit(p_body);
+    }
+    else if (p_else != nullptr) {
+        visit(p_else);
     }
 
     return Any();

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-16 20:42:31
+ * @LastEditTime : 2021-05-17 20:55:55
  * @Description  :
 -->
 
@@ -109,6 +109,33 @@ write(a + 5);           {print the value of 'a' + 5}
 ```
 
 注意，`write` 默认输出后不换行，如果你希望输出后换行，请使用`writeln()`。
+
+### If 语句
+
+If语句用于流程控制。
+你可以这样使用：
+
+```pascal
+if (a = 1) then
+    writeln('input 1')
+```
+
+对于上述代码，如果`a`等于1为真，程序将打印字符串`input 1`。
+
+你也可以使用`if-else if-else`。
+
+```pascal
+if (a = 1) then
+    writeln('input 1')
+else if (a = 3) then
+    writeln('input 3')
+else
+    writeln('input else');
+```
+
+对于上述代码，如果`a`等于1为真，程序将打印字符串`input 1`。
+如果`a`等于3为真，程序将打印字符串`input 3`。
+如果都为假，程序将打印字符串`input else`。
 
 ### 其他
 

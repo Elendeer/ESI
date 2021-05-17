@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-16 10:31:11
+ * @LastEditTime : 2021-05-17 19:35:44
  * @Description  :
 *********************************************/
 
@@ -31,10 +31,16 @@ private:
             ErrorCode error_code = ErrorCode::NONE,
             Token token = Token());
 
+    //  Compare the current token type with the passed token
+    //  type and if they match then "eat" the current token
+    //  and assign the next token to the this->m_current_token,
+    //  otherwise throw an exception.
+    //
+    //  Might throw exceptions in Lexer::error() or
+    //  Parser::error().
     void eat(TokenType token_type);
 
     // ===== non-terminals =====
-
 
     AST *factor();
     AST *term();
@@ -66,6 +72,8 @@ private:
 
     AST * relationalExpr();
     AST * logicalExpr();
+
+    AST * ifStatement();
 
 public:
     // Might throw exception when init.

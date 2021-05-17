@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:41:25
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-16 10:30:08
+ * @LastEditTime : 2021-05-17 18:02:56
 * @Description  :
 *********************************************/
 
@@ -45,6 +45,11 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     {TokenType::OR, "OR"},
     {TokenType::NOT, "NOT"},
     {TokenType::XOR, "XOR"},
+
+    // if statement
+    {TokenType::IF, "IF"},
+    {TokenType::THEN, "THEN"},
+    {TokenType::ELSE, "ELSE"},
 
     // End of reserved keywords
     {TokenType::END, "END"},

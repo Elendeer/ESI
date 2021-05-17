@@ -61,13 +61,6 @@ void Parser::error(
             throw ParserError(message, error_code, token);
         }
 
-//  Compare the current token type with the passed token
-//  type and if they match then "eat" the current token
-//  and assign the next token to the this->m_current_token,
-//  otherwise throw an exception.
-//
-//  Might throw exceptions in Lexer::error() or
-//  Parser::error().
 void Parser::eat(TokenType token_type) {
     if (m_current_token.getType() == token_type) {
         m_current_token = m_lexer.getNextToken();
@@ -552,6 +545,7 @@ vector<AST *> Parser::statementList() {
 //          | procedure_call_statement
 //          | read_statement
 //          | write_statement
+//          | if_statement
 //          | empty
 AST *Parser::statement() {
     AST *node = nullptr;
@@ -571,6 +565,9 @@ AST *Parser::statement() {
     else if (m_current_token.getType() == TokenType::WRITE
             || m_current_token.getType() == TokenType::WRITELN) {
         node = writeStatement();
+    }
+    else if (m_current_token.getType() == TokenType::IF) {
+        node = ifStatement();
     }
     else {
         node = empty();
@@ -1022,6 +1019,66 @@ AST * Parser::logicalExpr() {
         if (p_node != nullptr) {
             delete p_node;
             p_node = nullptr;
+        }
+
+        throw error;
+    }
+}
+
+// if_statement :
+//     IF LPAREN logical_expr RPAREN THEN
+//     (statement | compound_statement)
+//     (ELSE ((statement | compound_statement) | if_statement))+
+AST * Parser::ifStatement() {
+    eat(TokenType::IF);
+    eat(TokenType::LPAREN);
+
+    AST * p_logical_expr = logicalExpr();
+    AST * p_body = nullptr;
+    AST * p_else = nullptr;
+
+    try {
+        eat(TokenType::RPAREN);
+        eat(TokenType::THEN);
+
+        if (m_current_token.getType() == TokenType::BEGIN) {
+            p_body = compoundStatement();
+        }
+        else {
+            p_body = statement();
+        }
+
+        if (m_current_token.getType() == TokenType::ELSE) {
+            eat(TokenType::ELSE);
+            if (m_current_token.getType() == TokenType::IF) {
+                p_else = ifStatement();
+            }
+            else if (m_current_token.getType() == TokenType::BEGIN) {
+                p_else = compoundStatement();
+            }
+            else {
+                p_else = statement();
+            }
+        }
+
+        return new If(
+            p_logical_expr,
+            p_body,
+            p_else);
+
+    }
+    catch (ParserError & error) {
+        if (p_logical_expr != nullptr) {
+            delete p_logical_expr;
+            p_logical_expr = nullptr;
+        }
+        if (p_body != nullptr) {
+            delete p_body;
+            p_body = nullptr;
+        }
+        if (p_else != nullptr) {
+            delete p_else;
+            p_else = nullptr;
         }
 
         throw error;
