@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 21:57:23
+ * @LastEditTime : 2021-05-17 21:58:32
  * @Description  :
 -->
 
@@ -142,7 +142,7 @@ else
 的一个分支中包含多条语句。
 如果都为假，程序将打印字符串`input else`。
 
-### While Statement
+### While 语句
 
 While语句用于循环。你可以按如下使用它：
 

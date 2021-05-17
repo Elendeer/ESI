@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-23 09:40:43
+ * @LastEditTime : 2021-05-17 22:09:37
 * @Description  : main function
 *********************************************/
 
@@ -17,7 +17,7 @@
 int main(int num_command_arguments, char * pointer_array_command[]) {
     using namespace std;
     using namespace ESI;
-    // cout << "starting ... " << endl;
+    // TODO: command line arguments supporting
 
     if (num_command_arguments != 2) {
         cout << "Invailid command line arguments" << endl;

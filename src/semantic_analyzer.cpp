@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 21:42:25
+ * @LastEditTime : 2021-05-17 23:32:20
  * @Description  :
 *********************************************/
 //
@@ -356,7 +356,9 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
         proc_symbol->pushParameter(var_symbol);
     }
 
-    // cout << proc_name << ": " << proc_symbol->getParams().size() << endl;
+    // Define procedure itself inside this scope for
+    // recursive procedure call.
+    m_p_current_scope->define(*proc_symbol);
 
     visitBlock(procedure_decl_node->getBlock());
 
@@ -386,15 +388,15 @@ Any SemanticAnalyzer::visitProcedureCall(AST * node) {
     Symbol * p_symbol = m_p_current_scope -> lookup(procedure_name);
     if (p_symbol == nullptr) {
         error(
-            "Procedure call no matched: Undefined procedure name.",
+            "Procedure call no matched: Undefined procedure name. ",
             ErrorCode::ID_NOT_FOUND,
             procedure_call_node -> getToken());
     }
 
     // If function call be used as a statement, it will be
     // recognized as a procedure call.
-    if (p_symbol->getCategory() == SymbolCategory::FUNCTION_SYMBOL) {
-        error("Call a function as a procedure(unused return value).",
+    if (p_symbol->getCategory() != SymbolCategory::PROCEDURE_SYMBOL) {
+        error("Symbol " + procedure_name + " is not a procedure. " ,
             ErrorCode::WRONG_USAGE,
             procedure_call_node->getToken());
     }
@@ -566,13 +568,13 @@ Any SemanticAnalyzer::visitFunctionCall(AST * node) {
     Symbol * p_symbol = m_p_current_scope -> lookup(function_name);
     if (p_symbol == nullptr) {
         error(
-            "Function call no matched: Undefined function name.",
+            "Function call no matched: Undefined function name. ",
             ErrorCode::ID_NOT_FOUND,
             function_call_node -> getToken());
     }
 
-    if (p_symbol->getCategory() == SymbolCategory::PROCEDURE_SYMBOL) {
-        error("Call a procedure as a function.",
+    if (p_symbol->getCategory() != SymbolCategory::FUNCTION_SYMBOL) {
+        error("Symbol " + function_name + " is not a function. ",
             ErrorCode::WRONG_USAGE,
             function_call_node->getToken());
     }

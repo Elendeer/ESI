@@ -5,32 +5,20 @@ var
     a : integer;
     b : boolean;
 
-procedure p1;
-
+function func : integer;
 begin
-    writeln('p1: Hello word!');
+    func := 1;
+end;
+
+procedure p1(n : integer);
+begin
+    writeln(n);
+
+    if (n > 0) then
+        p1(n - 1);
 end;
 
 begin
-    writeln('Hello word!');
 
-    a := 2;
-
-    if (a = 1) then
-        writeln('input 1')
-    else if (a <= 3 and a >= 0) then
-        begin
-            writeln('input num belong [0, 3]');
-            writeln('compound');
-        end
-    else
-        writeln('input else');
-
-    while (a >= 0) do
-        begin
-            writeln(a);
-            a := a - 1;
-        end;
-
-
+    p1(3);
 end.
