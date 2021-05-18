@@ -964,7 +964,7 @@ AST * Parser::writeStatement() {
 
 // relational_expr : expr ((EQUAL | NOT_EQUAL
 //                     | LESS_THAN | LESS_THAN_OR_EQUAL_TO
-//                     | GREATER_THAN | GREATER_THAN_OR_EQUAL_TO) expr)*
+//                     | GREATER_THAN | GREATER_THAN_OR_EQUAL_TO) expr)?
 AST * Parser::relationalExpr() {
     AST * p_node = expr();
 
@@ -1031,7 +1031,7 @@ AST * Parser::logicalExpr() {
 // if_statement :
 //     IF LPAREN logical_expr RPAREN THEN
 //     (statement | compound_statement)
-//     (ELSE ((statement | compound_statement) | if_statement))+
+//     (ELSE ((statement | compound_statement) | if_statement))?
 AST * Parser::ifStatement() {
     eat(TokenType::IF);
     eat(TokenType::LPAREN);
