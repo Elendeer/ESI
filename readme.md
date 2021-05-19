@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-18 00:08:33
+ * @LastEditTime : 2021-05-19 16:25:10
  * @Description  :
 -->
 
@@ -24,7 +24,7 @@ until the project is more complete before writing more details.
 
 > Normally you can cheack the `./test.pas` file to see my newest test.
 > For all the features mentioned below, most of the corresponding
-> grammar checking and semantic analyzing have been implemented.
+> grammar checking and semantic analyzing have been implemented too.
 
 ### Program
 
@@ -281,8 +281,13 @@ Write down your code in a file.
 Open a shell in directory of ESI, run
 
 ```shell
-./ESI [absolute path of your code file] | [relative path of your code file]
+./ESI <file path> [--scope] [--stack]
 ```
+
+If `scope` option is set, semantic analyzer will print scoped symbol
+table when semantic analyzing.
+If `stack` option is set, interpreter will print call stack
+when interpreting.
 
 Example:
 

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-10-25 15:22:22
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-18 00:09:57
+ * @LastEditTime : 2021-05-19 16:29:34
  * @Description  :
 -->
 
@@ -248,6 +248,29 @@ end;
 | 异或 | `xor` |
 
 以上运算符的优先级基本按照提及的顺序递减，部分平级。
+
+## 如何使用
+
+将代码写入到ASCII文本文件中。
+
+在ESI目录下打开shell并运行：
+
+```shell
+./ESI <file path> [--scope] [--stack]
+```
+
+若激活`scope`项，语义分析器将在进行语义分析的时候输出符号表。
+若激活`stack`项，解释器将在解释代码时输出调用栈。
+
+例:
+
+```shell
+./ESI ./test.pas
+```
+
+你将会在shell中看到执行结果。
+
+在Windows下，请使用`\`作为地址分隔符。
 
 ## 如何构建
 

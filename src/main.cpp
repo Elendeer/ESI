@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 22:09:37
+ * @LastEditTime : 2021-05-19 16:20:15
 * @Description  : main function
 *********************************************/
 
@@ -17,17 +17,42 @@
 int main(int num_command_arguments, char * pointer_array_command[]) {
     using namespace std;
     using namespace ESI;
-    // TODO: command line arguments supporting
 
-    if (num_command_arguments != 2) {
-        cout << "Invailid command line arguments" << endl;
+    if (num_command_arguments < 2 || num_command_arguments > 4) {
+        cout << "Invailid command line arguments. " << endl;
+        cout << "Usage : ESI <file path> [--scope] [--stack] " << endl;
         return 1;
     }
 
     string file_path = pointer_array_command[1];
 
     FileReader file_reader;
-    string text = file_reader.readFile(file_path);
+    string text;
+    try {
+        text = file_reader.readFile(file_path);
+    }
+    catch (string & error) {
+        cout << error << endl;
+        return 1;
+    }
+
+    bool print_scope = false;
+    bool print_stack = false;
+
+    for (int i = 2; i < num_command_arguments; ++ i) {
+        if (strcmp(pointer_array_command[i], "--scope") == 0) {
+            print_scope = true;
+        }
+        else if (strcmp(pointer_array_command[i], "--stack") == 0) {
+            print_stack = true;
+        }
+        else {
+            cout << "Unknow command line argument: "
+            + (string)pointer_array_command[i] << endl;
+            cout << "Usage : ESI <file path> [--scope] [--stack] " << endl;
+            return 1;
+        }
+    }
 
     Lexer lexer(text);
 
@@ -43,7 +68,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
             return 1;
         }
 
-        SemanticAnalyzer semantic_analyzer(ast_root, true);
+        SemanticAnalyzer semantic_analyzer(ast_root, print_scope);
 
         try {
             cout << "Semantic analyzing ..." << endl;
@@ -64,7 +89,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
             return 1;
         }
 
-        Interpreter interpreter(ast_root, true);
+        Interpreter interpreter(ast_root, print_stack);
 
         try {
             cout << "Interpreting ..." << endl;

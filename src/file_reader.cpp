@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-12-30 15:50:09
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-04 16:58:09
+ * @LastEditTime : 2021-05-19 15:58:25
  * @Description  :
 *********************************************/
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(NT)
@@ -40,7 +40,7 @@ string FileReader::readFile(string path) {
 
     if (!reader.good()) {
 
-		throw (string)"opening error";
+		throw (string)"file opening error. ";
     }
 
 	while (!reader.eof()) {
