@@ -19,6 +19,14 @@ begin
         p1(n - 1);
 end;
 
+{
+procedure p1(n : integer);
+begin
+    writeln('hello');
+end;
+}
+
 begin
     writeln(fibonacci(6));
+    p1(2);
 end.

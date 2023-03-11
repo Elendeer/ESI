@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:27:18
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-07 20:49:41
+ * @LastEditTime : 2022-12-31 16:35:44
  * @Description  :
 *********************************************/
 
@@ -35,7 +35,7 @@ private:
     int m_column;
 
     // Map of reserved key words.
-    // Will be build according to enum class TokenType.
+    // Will be built according to enum class TokenType.
     std::unordered_map<std::string, Token>m_reserved_keyword_map ;
 
 

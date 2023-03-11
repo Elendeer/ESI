@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 21:29:41
+ * @LastEditTime : 2023-03-11 00:30:42
  * @Description  :
 *********************************************/
 
@@ -16,7 +16,7 @@
 namespace ESI {
 
 // Organizing AST according tokens and grammar.
-// Only produce AST, will not manager to delete it.
+// Only produce AST, will not manage to delete it except errors are met.
 class Parser {
 private:
     Lexer m_lexer;

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 23:49:08
+ * @LastEditTime : 2023-03-11 00:43:41
  * @Description  :
 *********************************************/
 //
@@ -299,7 +299,7 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
 
     // Symbol creating
     // Must define the symbol first than take the pointer out,
-    // because these two pointer is pointing to different object.
+    // because these two pointers are pointing to different objects.
     //
     // The block pointer is accessed by the interpreter
     // when executing procedure call.

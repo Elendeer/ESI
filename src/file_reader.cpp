@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-12-30 15:50:09
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-19 15:58:25
+ * @LastEditTime : 2023-03-11 11:43:12
  * @Description  :
 *********************************************/
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(NT)
@@ -32,7 +32,7 @@ FileReader::~FileReader() {}
 
 string FileReader::readFile(string path) {
     std::ifstream reader;
-	string txt;
+	string txt = "";
 
 	string abs_path = m_address_parser.parseRelativePath(path);
 
@@ -43,14 +43,8 @@ string FileReader::readFile(string path) {
 		throw (string)"file opening error. ";
     }
 
-	while (!reader.eof()) {
-		// For reading bug in linux file.
-		if (reader.peek() != (char)-1) {
-			txt += reader.get();
-		}
-		else {
-			reader.ignore();
-		}
+	while (reader.peek() != EOF) {
+		txt += reader.get();
 	}
 	reader.close();
 
