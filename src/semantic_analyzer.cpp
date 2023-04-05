@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2023-03-11 00:43:41
+ * @LastEditTime : 2023-03-14 15:18:08
  * @Description  :
 *********************************************/
 //
@@ -153,6 +153,17 @@ Any SemanticAnalyzer::visitUnaryOp(AST *node) {
 Any SemanticAnalyzer::visitBinOp(AST *node) {
     BinOp * bin_op_node = dynamic_cast<BinOp *>(node);
 
+    // Token token = node->getToken();
+    // TokenType token_type = token.getType();
+
+    // if (token_type == TokenType::FLOAT_DIV ||
+    //     token_type == TokenType::INTEGER_DIV) {
+    //         Any right_val = visit(bin_op_node->getRight());
+    //         if (right_val == 0) {
+    //             error("Div zero.", ErrorCode::DIV_ZERO, token);
+    //         }
+    //     }
+
     visit(bin_op_node->getLeft());
     visit(bin_op_node->getRight());
     return Any();
@@ -298,7 +309,7 @@ Any SemanticAnalyzer::visitProcedureDecl(AST * node) {
     string proc_name = procedure_decl_node->getName();
 
     // Symbol creating
-    // Must define the symbol first than take the pointer out,
+    // Must define the symbol first then take the pointer out,
     // because these two pointers are pointing to different objects.
     //
     // The block pointer is accessed by the interpreter

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 10:12:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-04-03 10:17:52
+ * @LastEditTime : 2023-03-12 20:50:47
  * @Description  :
  * Symbol table is a map from string(name of the symble)
  * to Symbol. The reason that these is a need to build a
@@ -51,7 +51,7 @@ public:
     // Define a symbol in symbol table.
     void define(const Symbol & symbol);
 
-    // Cheack if the name's corresponding symbol exist in symbol table.
+    // Check if the name's corresponding symbol exist in symbol table.
     // It will recursively go up to check the scope tree by using
     // m_p_enclosing_scope pointer by default(current_scope_only = false).
     // Return nullptr if corresponding symbol no found.

@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-02-25 11:51:26
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-16 12:24:02
+ * @LastEditTime : 2023-03-12 17:36:18
  * @Description  :
 *********************************************/
 
@@ -134,7 +134,8 @@ static TypeInfo typeFloat = TypeInfo(DataType::Float);
 static TypeInfo typeChar = TypeInfo(DataType::Char);
 static TypeInfo typeString = TypeInfo(DataType::String);
 
-// I don't really understand what this one for.
+// this provide a template for different type of
+// function pointers.
 template<typename T>
 T (*cast)();
 

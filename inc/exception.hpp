@@ -17,6 +17,7 @@ enum class ErrorCode {
 
     UNKNOW_TYPE,
     WRONG_USAGE
+    // DIV_ZERO
 };
 
 // Base class for exceptions used by this project.

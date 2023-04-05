@@ -32,6 +32,9 @@ Exception::Exception(
         else if (error_code == ErrorCode::WRONG_USAGE) {
             m_msg = message + "\tErrorCode: Wrong usage; ";
         }
+        // else if (error_code == ErrorCode::DIV_ZERO) {
+        //     m_msg = message + "\tErrorCode: Div zero; ";
+        // }
         else {
             m_msg = message + "\tError code not found; ";
         }
