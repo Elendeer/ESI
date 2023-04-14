@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-12-30 15:50:09
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-03-04 21:35:58
+ * @LastEditTime : 2023-04-13 10:50:19
  * @Description  :
 *********************************************/
 
@@ -54,22 +54,17 @@ string AddressParser::getCwd() const {
 
 string AddressParser::parseRelativePath(string path) {
 	if (isAbsPath(path)) return path;
-
 	// Count num of ../
 	int up = 0;
 	// Record the index of string for cutting.
 	int idx = 0;
-
 	for (int i = 0; i < (int)path.size(); ++ i ) {
-
 		// Find the relative path prefix.
 		if (i + 1 < (int)path.size()
 			&& path[i] == '.') {
-
 			// Found ./
 			if (path[i + 1] == ADDRESS_BREAK) {
 				idx = i + 1;
-
 				// Skip next char
 				++ i;
 				continue;
@@ -80,7 +75,6 @@ string AddressParser::parseRelativePath(string path) {
 					&& path[i + 2] == ADDRESS_BREAK) {
 				idx = i + 2;
 				++ up;
-
 				// Skip next two char
 				i += 2;
 				continue;
@@ -88,7 +82,6 @@ string AddressParser::parseRelativePath(string path) {
 			else {
 				continue;
 			}
-
 		}
 		else {
 			break;

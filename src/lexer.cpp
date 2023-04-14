@@ -124,7 +124,8 @@ Token Lexer::id() {
         m_current_char != NOCHAR
         && ((m_current_char >= '0' && m_current_char <= '9')
         || (m_current_char >= 'a' && m_current_char <= 'z')
-        || (m_current_char >= 'A' && m_current_char <= 'Z'))) {
+        || (m_current_char >= 'A' && m_current_char <= 'Z')
+        || m_current_char == '_')) {
 
         result += m_current_char;
         advance();
@@ -263,7 +264,8 @@ Token Lexer::getNextToken() {
         }
         // Symbols about
         else if ((m_current_char >= 'a' && m_current_char <= 'z')
-                || (m_current_char >= 'A' && m_current_char <= 'Z')) {
+                || (m_current_char >= 'A' && m_current_char <= 'Z')
+                || m_current_char == '_') {
             return id();
         }
 
