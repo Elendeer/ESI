@@ -2,11 +2,15 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2020-11-14 09:06:48
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 21:33:52
+ * @LastEditTime : 2023-04-14 18:32:43
  * @Description  :
 -->
 
 # Grammars
+
+- __+__ : appear once or more
+- __*__ : appear zero or more times
+- __?__ : appear zero or one time
 
 ```note
 
@@ -24,7 +28,10 @@ formal_parameter_list : formal_parameters
 
 formal_parameters : ID (COMMA ID)* COLON type_spec
 
-type_spec : INTEGER | REAL | STRING | BOOLEAN
+type_spec : INTEGER | REAL | STRING | BOOLEAN | array_type
+
+array_type :  ARRAY LSQUARE type_spec  RSQUARE
+                OF INTEGER_CONST DOT DOT INTEGER_CONST
 
 compound_statement : BEGIN statement_list END
 

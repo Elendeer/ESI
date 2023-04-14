@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-07 11:16:08
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-07 22:19:20
+ * @LastEditTime : 2023-04-14 21:49:14
  * @Description  :
 *********************************************/
 #ifndef INC_SYMBOL_HPP_
@@ -20,7 +20,7 @@ enum class SymbolType {
     REAL,
 
     STRING,
-    BOOLEAN
+    BOOLEAN,
 };
 
 // Used in category judging.
@@ -30,7 +30,9 @@ enum class SymbolCategory {
     VAR_SYMBOL,
 
 	PROCEDURE_SYMBOL,
-	FUNCTION_SYMBOL
+	FUNCTION_SYMBOL,
+
+    ARRAY_SYMBOL
 };
 
 // As a base class.
@@ -138,6 +140,25 @@ public :
     std::vector<VarSymbol> getParams();
 
     const FunctionSymbol & operator= (const FunctionSymbol & obj);
+};
+
+class ArraySymbol : public Symbol {
+private:
+    int m_start_idx;
+    int m_end_idx;
+
+public:
+    ArraySymbol(std::string name,
+            int level,
+            SymbolType type,
+            int start_idx,
+            int end_idx);
+    ArraySymbol(const ArraySymbol & obj) = default;
+    virtual ~ArraySymbol();
+
+    virtual SymbolCategory getCategory() const;
+    int getStartIdx() const;
+    int getEndIdx() const;
 };
 
 } // namespace ESI

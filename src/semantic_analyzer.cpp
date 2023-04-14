@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 20:31:02
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2023-03-14 15:18:08
+ * @LastEditTime : 2023-04-14 20:38:19
  * @Description  :
 *********************************************/
 //
@@ -276,21 +276,53 @@ Any SemanticAnalyzer::visitVarDecl(AST * node) {
     }
 
     Type * type_node = dynamic_cast<Type *>(var_decl_node->getTypeChild());
-    string var_type_str = type_node->getVal();
-    Symbol * var_type_symbol = m_build_in_type_scope.lookup(var_type_str);
+    // if is not an array
+    if (!(type_node->isArrayType())) {
+        string var_type_str = type_node->getVal();
+        Symbol * var_type_symbol = m_build_in_type_scope.lookup(var_type_str);
 
-    if (var_type_symbol == nullptr) {
-        error("Invailid Syntax: declare a variable with unknow type.",
-                ErrorCode::UNKNOW_TYPE,
-                var_node->getToken());
+        if (var_type_symbol == nullptr) {
+            error("Invailid Syntax: declare a variable with unknow type.",
+                    ErrorCode::UNKNOW_TYPE,
+                    var_node->getToken());
+        }
+        // Get variable symble type .
+        SymbolType var_type = var_type_symbol->getType();
+
+        m_p_current_scope->define(
+                Symbol(var_name,
+                    m_p_current_scope->getScopeLevel(),
+                    var_type));
+
     }
-    // Get variable symble type .
-    SymbolType var_type = var_type_symbol->getType();
+    // else is an array
+    else {
+        string array_type_str = type_node->getArrayTypeVal();
+        // cout << array_type_str << endl;
+        Symbol * array_type_symbol = m_build_in_type_scope.lookup(array_type_str);
+        if (array_type_symbol == nullptr) {
+            error("Invailid Syntax: declare an array with unknow type.",
+                    ErrorCode::UNKNOW_TYPE,
+                    var_node->getToken());
+        }
+        SymbolType array_type = array_type_symbol->getType();
+        // Token start_token =
+        //     dynamic_cast<Num *>(type_node->getArrayStart())->getToken();
+        Token start_token =
+            type_node->getArrayStart()->getToken();
 
-    m_p_current_scope->define(
-            Symbol(var_name,
-                m_p_current_scope->getScopeLevel(),
-                var_type));
+        Token end_token =
+            type_node->getArrayEnd()->getToken();
+
+        m_p_current_scope->define(
+                ArraySymbol(var_name,
+                    m_p_current_scope->getScopeLevel(),
+                    array_type,
+                    Any::anyCast<int>(start_token.getVal()),
+                    Any::anyCast<int>(end_token.getVal()))
+                    );
+
+    }
 
     return Any();
 }

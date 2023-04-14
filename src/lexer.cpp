@@ -94,7 +94,8 @@ Token Lexer::number() {
         result = result * 10 + (int)(m_current_char - '0');
         advance();
     }
-    if (m_current_char == '.') {
+    if (m_current_char == '.'
+        && (peek() >='0' && peek() <= '9')) {
         advance();
         int power = 10;
 
@@ -363,6 +364,23 @@ Token Lexer::getNextToken() {
             return Token(
                     TokenType::GREATER_THAN,
                     (string)">",
+                    m_line_no,
+                    m_column);
+        }
+        // array about
+        else if (m_current_char == '[') {
+            advance();
+            return Token(
+                    TokenType::LSQUARE,
+                    (string)"[",
+                    m_line_no,
+                    m_column);
+        }
+        else if (m_current_char == ']') {
+            advance();
+            return Token(
+                    TokenType::RSQUARE,
+                    (string)"]",
                     m_line_no,
                     m_column);
         }

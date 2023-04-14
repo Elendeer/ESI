@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:21:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 21:21:53
+ * @LastEditTime : 2023-04-14 20:26:15
 * @Description  :
 *********************************************/
 
@@ -31,6 +31,9 @@ enum class TokenType {
     REAL,
     STRING,
     BOOLEAN,
+
+    ARRAY,
+    OF,
 
     // bool values
     TRUE,
@@ -65,6 +68,10 @@ enum class TokenType {
     // End of reserved keywords
     END,
 
+
+    // squere brackets use by array
+    LSQUARE,
+    RSQUARE,
 
     INTEGER_CONST,
     REAL_CONST,
@@ -111,6 +118,9 @@ private:
 public:
     // Appointment: None type token by default.
     Token(int line_no = -1, int column = -1);
+    // When passing a string value to Any type, please add a explicit cast.
+    // Example: Token test(TokenType::INTEGER, (string)"INTEGER");
+    // You can also chose to pass a string variable instead.
     Token(TokenType type, Any value, int line_no = -1, int column = -1);
     Token(const Token &obj) = default;
 

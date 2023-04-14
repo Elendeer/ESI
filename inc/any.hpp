@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-02-25 11:51:26
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2023-03-12 17:36:18
+ * @LastEditTime : 2023-04-14 20:50:40
  * @Description  :
 *********************************************/
 
@@ -26,7 +26,7 @@ enum class DataType {
     Char,
     Integer,
     Float,
-    String
+    String,
 };
 
 class TypeInfo {
@@ -115,6 +115,7 @@ public:
 
     operator bool();
     operator std::string();
+    operator std::vector<int>();
 
     friend std::ostream & operator << (std::ostream & output, Any & d);
     friend std::istream & operator >> (std::istream & output, Any & d);

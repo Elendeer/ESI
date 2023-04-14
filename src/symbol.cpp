@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-07 11:34:16
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-09 01:27:45
+ * @LastEditTime : 2023-04-14 21:48:19
  * @Description  :
 *********************************************/
 
@@ -48,6 +48,9 @@ string Symbol::strRepr() {
     }
     else if (category == SymbolCategory::FUNCTION_SYMBOL) {
         category_str = "function-symbol<";
+    }
+    else if (category == SymbolCategory::ARRAY_SYMBOL) {
+        category_str = "array-symbol<";
     }
     else {
         category_str = "unknow-symbol<";
@@ -219,4 +222,26 @@ const FunctionSymbol & FunctionSymbol::operator= (
 
     return obj;
 }
+
+// ===== ArraySymbol Class =====
+
+ArraySymbol::ArraySymbol(std::string name, int level,
+            SymbolType type, int start_idx, int end_idx)
+            : Symbol(name, level, type),
+            m_start_idx(start_idx),
+            m_end_idx(end_idx) {}
+
+ArraySymbol::~ArraySymbol() {}
+
+
+SymbolCategory ArraySymbol::getCategory() const{
+    return SymbolCategory::ARRAY_SYMBOL;
+}
+int ArraySymbol::getStartIdx() const {
+    return m_start_idx;
+}
+int ArraySymbol::getEndIdx() const {
+    return m_end_idx;
+}
+
 } // namespace ESI

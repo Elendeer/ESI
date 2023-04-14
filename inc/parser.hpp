@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 15:45:21
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2023-03-11 00:30:42
+ * @LastEditTime : 2023-04-14 16:00:45
  * @Description  :
 *********************************************/
 
@@ -52,6 +52,7 @@ private:
     std::vector<AST *> variableDeclaration();
     AST * procedureDeclaration();
     AST * typeSpec();
+    AST * arrayType();
 
     AST *compoundStatement();
     std::vector<AST *> statementList();

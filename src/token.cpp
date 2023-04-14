@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 08:41:25
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 21:22:17
+ * @LastEditTime : 2023-04-14 20:26:08
 * @Description  :
 *********************************************/
 
@@ -25,6 +25,9 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     {TokenType::REAL, "REAL"},
     {TokenType::STRING, "STRING"},
     {TokenType::BOOLEAN, "BOOLEAN"},
+
+    {TokenType::ARRAY, "ARRAY"},
+    {TokenType::OF, "OF"},
 
     // bool values
     {TokenType::TRUE, "TRUE"},
@@ -58,6 +61,10 @@ const unordered_map<TokenType, string> Token::map_token_type_string {
     // End of reserved keywords
     {TokenType::END, "END"},
 
+
+    // squere brackets use by array
+    {TokenType::LSQUARE, "LSQUARE"},
+    {TokenType::RSQUARE, "RSQUARE"},
 
     {TokenType::INTEGER_CONST, "INTEGER_CONST"},
     {TokenType::REAL_CONST, "REAL_CONST"},
@@ -147,6 +154,9 @@ string Token::getStringRepr() {
 		    + bool_str + ")"
             + position_str;
 	}
+    // else if (m_type == TokenType::ARRAY) {
+
+    // }
 	else {
         // TokenType::STRING and else
 

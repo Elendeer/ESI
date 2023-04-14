@@ -373,8 +373,31 @@ vector<AST *> Parser::variableDeclaration() {
 
     try {
         for (auto p_var_node : var_nodes) {
-            AST * p_type_node = new Type(p_tmp_type_node -> getToken());
-            var_decl.push_back(new VarDecl(p_var_node, p_type_node));
+            if (dynamic_cast<Type*>(p_tmp_type_node)->isArrayType()) {
+                Token type_token = p_tmp_type_node->getToken();
+                AST * p_tmp_array_type =
+                    dynamic_cast<Type*>(p_tmp_type_node)->getArrayTypeChild();
+                AST * p_tmp_start =
+                    dynamic_cast<Type*>(p_tmp_type_node)->getArrayStart();
+                AST * p_tmp_end =
+                    dynamic_cast<Type*>(p_tmp_type_node)->getArrayEnd();
+
+                AST * p_array_type =
+                    new Type(*dynamic_cast<Type*>(p_tmp_array_type));
+                AST * p_start =
+                    new Num(*dynamic_cast<Num*>(p_tmp_start));
+                AST * p_end =
+                    new Num(*dynamic_cast<Num*>(p_tmp_end));
+
+                AST * p_type_node =
+                    new Type(type_token,p_array_type, p_start, p_end);
+
+                var_decl.push_back(new VarDecl(p_var_node, p_type_node));
+            }
+            else {
+                AST * p_type_node = new Type(p_tmp_type_node -> getToken());
+                var_decl.push_back(new VarDecl(p_var_node, p_type_node));
+            }
         }
 
         delete p_tmp_type_node;
@@ -456,7 +479,7 @@ AST * Parser::procedureDeclaration() {
     return procedure_node;
 }
 
-// type_spec : INTERGER | REAL | STRING | BOOL
+// type_spec : INTERGER | REAL | STRING | BOOL | array_type
 AST * Parser::typeSpec() {
     Token token = m_current_token;
     if (m_current_token.getType() == TokenType::INTEGER) {
@@ -475,12 +498,58 @@ AST * Parser::typeSpec() {
         eat(TokenType::BOOLEAN);
         return new Type(token);
     }
+    else if (m_current_token.getType() == TokenType::ARRAY) {
+        try {
+            return arrayType();
+        } // try
+        catch (const ParserError & error) {
+            throw error;
+        }
+    }
     else {
         error("Invailid Syntax : Expected typeSpec token");
     }
 
     // useless.
     return nullptr;
+}
+
+// array_type :  ARRAY LSQUARE type_spec  RSQUARE
+//                 OF INTEGER_CONST DOT DOT INTEGER_CONST
+AST * Parser::arrayType() {
+    Token array_token = m_current_token;
+
+    eat(TokenType::ARRAY);
+    eat(TokenType::LSQUARE);
+
+    AST * p_idx_start = nullptr;
+    AST * p_idx_end = nullptr;
+    AST * p_array_type = nullptr;
+    try {
+        p_array_type = typeSpec();
+        eat(TokenType::RSQUARE);
+        eat(TokenType::OF);
+
+        Token token = m_current_token;
+        eat(TokenType::INTEGER_CONST);
+        p_idx_start = new Num(token);
+
+        eat(TokenType::DOT);
+        eat(TokenType::DOT);
+
+        token = m_current_token;
+        eat(TokenType::INTEGER_CONST);
+        p_idx_end = new Num(token);
+    } // try
+    catch (const ParserError & error) {
+        if (p_array_type != nullptr) delete p_array_type;
+        if (p_idx_start != nullptr) delete p_idx_start;
+        if (p_idx_end != nullptr) delete p_idx_end;
+        throw error;
+    }
+
+    return new Type(array_token, p_array_type,
+        p_idx_start, p_idx_end);
 }
 
 

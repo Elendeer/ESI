@@ -11,7 +11,8 @@ int main() {
     string input = "\
     program test;{comments}\
     var\
-        a : integer;\
+        a : array [integer] of 0..10;\
+        {a : integer;}\
     function testfunc : real;\
     begin\
         testfunc := 3.3;\

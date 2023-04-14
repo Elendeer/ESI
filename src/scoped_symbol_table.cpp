@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-03-08 10:18:07
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-17 23:42:49
+ * @LastEditTime : 2023-04-14 21:56:25
  * @Description  :
 *********************************************/
 #include <iostream>
@@ -121,6 +121,12 @@ void ScopedSymbolTable::define(const Symbol & symbol) {
             dynamic_cast<const FunctionSymbol&>(symbol);
 
         m_map[name] = new FunctionSymbol(function_symbol);
+    }
+    else if (category == SymbolCategory::ARRAY_SYMBOL) {
+        const ArraySymbol& array_symbol =
+            dynamic_cast<const ArraySymbol&>(symbol);
+
+        m_map[name] = new ArraySymbol(array_symbol);
     }
     else {
         std::cout << "category not found" << std::endl;

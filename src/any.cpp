@@ -2,7 +2,7 @@
  * @Author       : Daniel_Elendeer
  * @Date         : 2021-02-25 12:08:08
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2021-05-16 12:24:57
+ * @LastEditTime : 2023-04-14 20:59:49
  * @Description  :
 *********************************************/
 #include "../inc/any.hpp"
@@ -10,6 +10,7 @@
 
 using std::map;
 using std::string;
+using std::vector;
 
 namespace ESI {
 
@@ -167,6 +168,7 @@ Any Any::operator = (string var) {
 
     return var;
 }
+
 
 // ===== Operating =====
 

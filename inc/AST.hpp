@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 08:19:49
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2023-04-05 20:01:04
+ * @LastEditTime : 2023-04-14 18:42:27
  * @Description  : Abstract syntax tree header
  * Base class AST support basic node menegerment.
  * Derived classes support more specific node definition.
@@ -167,13 +167,16 @@ public:
 class Var : public AST {
 private:
     std::string m_var_name;
+    bool m_is_array;
 
 public:
-    Var(Token token);
+    Var(Token token, bool is_array = false);
     virtual ~Var();
 
     // Return the name of the variable inside the node.
     std::string getVarName() const;
+
+    bool isArray() const;
 };
 
 // The Block AST node holds declarations
@@ -226,13 +229,41 @@ public:
 class Type : public AST {
 private:
     // m_value is the value of Token inside.
+    // Here in Type node, m_value will store a string
+    // represents a type.
     std::string m_value;
+
+    // TODO: simplify
+    bool m_is_array;
+    // Pointing to a Type node.
+    AST * m_array_type_child;
+    // Pointing to a Num node.
+    AST * m_array_start_child;
+    // Pointing to a Num node.
+    AST * m_array_end_child;
 
 public:
     Type(Token type_token);
+    Type(Token type_token, AST * array_type,
+        AST * array_start, AST * array_end);
     virtual ~Type();
 
+    // Return a string represents a type.
     std::string getVal() const;
+    // Return a string represents a type of this array type node.
+    // Return an empty string if this Type node is
+    // not an array type node.
+    std::string getArrayTypeVal() const;
+    AST * getArrayTypeChild() const;
+
+    // Return a pointor pointing to a Num node.
+    AST * getArrayStart() const;
+    // Return a pointor pointing to a Num node.
+    AST * getArrayEnd() const;
+
+    // Return true if this Type node represents an array type.
+    // Return false otherwise.
+    bool isArrayType() const;
 };
 
 // No-operation node is used to represent

@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2023-04-13 10:24:58
+ * @LastEditTime : 2023-04-14 18:48:47
  * @Description  :
  *********************************************/
 
@@ -183,16 +183,21 @@ AST * Assign::getRight() const {
  * Variable node
  *********************************************/
 
-Var::Var(Token token) : AST(NodeType::VAR, token) {
+Var::Var(Token token, bool is_array)
+    : AST(NodeType::VAR, token), m_is_array(is_array) {
     m_var_name = Any::anyCast<string>(token.getVal());
+}
+
+Var::~Var() {
+    // std::cout << "~Var()" << std::endl;
 }
 
 string Var::getVarName() const {
     return m_var_name;
 }
 
-Var::~Var() {
-    // std::cout << "~Var()" << std::endl;
+bool Var::isArray() const {
+    return m_is_array;
 }
 
 /*********************************************
@@ -268,14 +273,57 @@ AST * VarDecl::getTypeChild() const {
  * Type node
 *********************************************/
 
-Type::Type(Token type_token) : AST(NodeType::TYPE, type_token) {
-    m_value = Any::anyCast<string>(type_token.getVal());
-}
+Type::Type(Token type_token)
+    : AST(NodeType::TYPE, type_token),
+    m_is_array(false),
+    m_array_type_child(nullptr),
+    m_array_start_child(nullptr),
+    m_array_end_child(nullptr) {
+        m_value = Any::anyCast<string>(type_token.getVal());
+        m_children.push_back(m_array_type_child);
+        m_children.push_back(m_array_start_child);
+        m_children.push_back(m_array_end_child);
+    }
+Type::Type(Token type_token, AST * array_type,
+    AST * array_start, AST * array_end)
+    : AST(NodeType::TYPE, type_token),
+    m_is_array(true),
+    m_array_type_child(array_type),
+    m_array_start_child(array_start),
+    m_array_end_child(array_end) {
+        m_value = Any::anyCast<string>(type_token.getVal());
+        m_children.push_back(m_array_type_child);
+        m_children.push_back(m_array_start_child);
+        m_children.push_back(m_array_end_child);
+    }
+
 Type::~Type() {
 }
 
 string Type::getVal() const {
     return m_value;
+}
+
+string Type::getArrayTypeVal() const {
+    if (!m_is_array) return "";
+
+    Type * p_array_type_node = dynamic_cast<Type *>(m_array_type_child);
+    return p_array_type_node -> getVal();
+}
+AST * Type::getArrayTypeChild() const {
+    return m_array_type_child;
+}
+
+
+AST * Type::getArrayStart() const {
+    return m_array_start_child;
+}
+AST * Type::getArrayEnd() const {
+    return m_array_end_child;
+}
+
+bool Type::isArrayType() const {
+    return m_is_array;
 }
 
 

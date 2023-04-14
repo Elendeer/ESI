@@ -44,4 +44,4 @@ exception.o : exception.cpp exception.hpp
 
 .PHONY:clean
 clean :
-	rm -rf lexer_test.o lexer.o token.o
+	rm -rf semantic_analyzer_test.o semantic_analyzer.o  node_visitor.o scoped_symbol_table.o symbol.o parser.o AST.o lexer.o token.o any.o exception.o
