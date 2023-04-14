@@ -1,7 +1,5 @@
 {注释：经典斐波那契数列递归函数测试}
 program fibonacciTest;
-var
-    n : integer;
 
 function fibonacci(n : integer) : integer;
 begin
@@ -11,10 +9,5 @@ begin
 end;
 
 begin
-    write('input a num :');
-    read(n);
-    write('fibonacci(');
-    write(n);
-    write(') = ');
-    writeln(fibonacci(n));
+    writeln(fibonacci(6));
 end.

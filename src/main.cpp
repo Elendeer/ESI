@@ -2,7 +2,7 @@
 * @Author       : Elendeer
 * @Date         : 2020-06-05 16:37:36
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2023-04-05 19:51:42
+ * @LastEditTime : 2021-05-19 16:20:15
 * @Description  : main function
 *********************************************/
 
@@ -74,7 +74,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
             cout << "Semantic analyzing ..." << endl;
             semantic_analyzer.analyze();
 			// semantic_analyzer.printBuildInTypeSymbolTable();
-            cout << "Semantic analysis finished.\n" << endl;
+            cout << "Semantic analysis finished." << endl << endl;
         }
         catch (const SemanticError & error) {
             cout << "When building symbol table from AST :" << endl;
@@ -92,7 +92,7 @@ int main(int num_command_arguments, char * pointer_array_command[]) {
         Interpreter interpreter(ast_root, print_stack);
 
         try {
-            cout << "Interpreting ...\n" << endl;
+            cout << "Interpreting ..." << endl;
             interpreter.interpret();
         }
         catch (const Exception & error) {

@@ -2,7 +2,7 @@
  * @Author       : Elendeer
  * @Date         : 2020-06-05 16:05:51
  * @LastEditors  : Daniel_Elendeer
- * @LastEditTime : 2023-04-14 18:48:47
+ * @LastEditTime : 2023-04-14 22:18:49
  * @Description  :
  *********************************************/
 
@@ -511,8 +511,6 @@ FunctionCall::FunctionCall(
         m_func_symbol(function_symbol) {
             for (AST * p : actual_parameters) {
                 m_actual_param.push_back(p);
-                // TODO: consider to simplyfy
-                // let base class destruct these nodes.
                 m_children.push_back(p);
             }
         }
