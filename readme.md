@@ -20,7 +20,7 @@ My friend [Chipen](https://github.com/zsiothsu) and
 It is still an extremely crude work-in-progress, so I will keep working on it
 until the project is more complete before writing more details.
 
-## What's been implement
+## What's been implemented
 
 > Normally you can cheack the `./test.pas` file to see my newest test.
 > For all the features mentioned below, most of the corresponding
